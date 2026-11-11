@@ -211,8 +211,22 @@
 <section class="sec sec--sand" id="roles">
   <div class="wrap">
     <p class="eyebrow">Кому что даёт</p>
-    <h2 class="h2">Выберите свою роль</h2>
-    <p class="lead">Покажем только те разделы, которые нужны именно вам. Все роли входят в один пакет компании — людей без ограничения.</p>
+    <h2 class="h2">От тендера до сдачи проекта</h2>
+    <p class="lead">Каждый раздел делает свою часть и отдаёт готовый документ, а не совет.</p>
+
+    <div class="pipe">
+      <div class="pipe__row">
+        <b>До начала строительства</b>
+        <div class="pipe__items"><span>Тендеры</span><span>Себестоимость</span><span>Проверка сметы</span><span>Снабженец</span><span>Юрист</span><span>Архитектор</span></div>
+      </div>
+      <div class="pipe__row">
+        <b>В процессе строительства</b>
+        <div class="pipe__items"><span>Начальник участка</span><span>Прораб и мастер</span><span>Проверка объёмов</span><span>Документооборот</span><span>Финансист</span><span>Техника</span></div>
+      </div>
+    </div>
+
+    <h3 class="h3">Выберите свою роль</h3>
+    <p class="lead" style="margin-top:6px">Покажем только те разделы, которые нужны именно вам. Все роли входят в один пакет компании — людей без ограничения.</p>
 
     <div class="rolebar" role="tablist" aria-label="Роль в компании" id="rolebar">
       <button class="tab" role="tab" type="button" data-role="director" aria-selected="true">Директор</button>
@@ -236,14 +250,19 @@
         <p>Считает объёмы по чертежам, подставляет цены и собирает ведомость материалов.</p>
         <div class="io"><div><span>Вы даёте</span><b>альбомы проекта (PDF, DWG)</b></div><div><span>Получаете</span><b>смету в Excel, Word и PDF</b></div></div>
       </article>
+      <article class="card" data-roles="gip pto director">
+        <h3>Проверка сметы</h3>
+        <p>Находит в готовой смете ошибки арифметики, двойной счёт и пропущенные работы.</p>
+        <div class="io"><div><span>Вы даёте</span><b>готовую смету</b></div><div><span>Получаете</span><b>список ошибок и исправлений</b></div></div>
+      </article>
       <article class="card" data-roles="director">
         <h3>Тендеры</h3>
-        <p>Находит тендеры под вашу специализацию и показывает, выгодно ли участвовать.</p>
+        <p>Ведёт ленту тендеров, отбирает подходящие вашей компании, разбирает условия и показывает, выгодно ли участвовать.</p>
         <div class="io"><div><span>Вы даёте</span><b>чем занимается компания</b></div><div><span>Получаете</span><b>подходящие тендеры</b></div></div>
       </article>
       <article class="card" data-roles="director fin">
         <h3>Финансист</h3>
-        <p>Показывает, сколько пришло от заказчика, сколько потрачено и сколько осталось.</p>
+        <p>Показывает, сколько пришло от заказчика, сколько потрачено и сколько осталось. Считает налоги Казахстана по ставкам 2026 года.</p>
         <div class="io"><div><span>Вы даёте</span><b>таблицу доходов и расходов</b></div><div><span>Получаете</span><b>план, факт и остаток денег</b></div></div>
       </article>
       <article class="card" data-roles="director">
@@ -263,7 +282,7 @@
       </article>
       <article class="card" data-roles="gip pto foreman">
         <h3>Документооборот</h3>
-        <p>Заполняет акты и исполнительную документацию по формам РК.</p>
+        <p>Заполняет АОСР, акты 2В, дефектные акты и наряд-задания по формам РК. Реквизиты подставляются сами.</p>
         <div class="io"><div><span>Вы даёте</span><b>проект и что сделано</b></div><div><span>Получаете</span><b>готовые акты в Word и Excel</b></div></div>
       </article>
       <article class="card" data-roles="gip site">
@@ -273,7 +292,7 @@
       </article>
       <article class="card" data-roles="foreman site">
         <h3>Прораб и мастер</h3>
-        <p>Получает задачи в Telegram и сдаёт выполненный объём.</p>
+        <p>Получает задачи в Telegram и сдаёт выполненный объём. Вход в бот — по коду от руководителя.</p>
         <div class="io"><div><span>Вы даёте</span><b>объём за день</b></div><div><span>Получаете</span><b>задачи от начальника участка</b></div></div>
       </article>
       <article class="card" data-roles="site">
@@ -286,6 +305,25 @@
         <p>По описанию дома рисует план, разрез и фасад и считает примерную стоимость.</p>
         <div class="io"><div><span>Вы даёте</span><b>«дом 10×12 м, 2 этажа»</b></div><div><span>Получаете</span><b>чертежи и стоимость</b></div></div>
       </article>
+    </div>
+
+    <div class="bot" id="tenders">
+      <div>
+        <h3>Тендеры: находит, разбирает и считает, стоит ли участвовать</h3>
+        <p>Система сама ведёт ленту тендеров и отбирает те, что подходят вашей компании. До подачи заявки вы уже знаете себестоимость.</p>
+        <ul class="roles">
+          <li><b>1. Подбор</b><span>лента тендеров, отбор по профилю компании</span></li>
+          <li><b>2. Разбор</b><span>условия и требования тендера — коротко и по делу</span></li>
+          <li><b>3. Расчёт</b><span>себестоимость по проекту показывает рентабельность участия</span></li>
+        </ul>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <div class="mock__head"><b>Тендер</b><span>подходит вашей компании</span></div>
+        <div class="row"><span>Профиль компании</span><b><i class="chip chip--ok">совпадает</i></b></div>
+        <div class="row"><span>Условия и требования</span><b><i class="chip chip--ok">разобраны</i></b></div>
+        <div class="row"><span>Себестоимость по проекту</span><b><i class="chip chip--ok">посчитана</i></b></div>
+        <div class="mock__foot">Участвовать или нет — видно до подачи заявки</div>
+      </div>
     </div>
 
     <div class="cta-row">

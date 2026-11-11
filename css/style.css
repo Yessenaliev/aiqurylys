@@ -466,6 +466,15 @@ section[id], header[id] { scroll-margin-top: 76px; }
 .scenes__down { position: absolute; left: 0; right: 0; bottom: 8px; z-index: 2; text-align: center; padding: 12px; font-size: 15px; font-weight: 600; color: rgba(255, 255, 255, .8); text-decoration: none; }
 .scenes__down:hover { color: #fff; }
 
+/* ---------- Цепочка «от тендера до сдачи» ---------- */
+.pipe { display: grid; gap: 12px; margin-top: 28px; }
+.pipe__row { display: grid; grid-template-columns: 230px 1fr; gap: 16px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; }
+.pipe__row b { font-size: 16px; }
+.pipe__items { display: flex; flex-wrap: wrap; gap: 8px 6px; align-items: center; }
+.pipe__items span { font-size: 15px; font-weight: 600; background: var(--blue-soft); color: var(--blue); border-radius: 8px; padding: 7px 11px; }
+.h3 { font: 800 clamp(20px, 2.4vw, 26px)/1.15 var(--head); letter-spacing: -.02em; margin-top: 48px; }
+.bot .mock { justify-self: stretch; max-width: none; }
+
 /* ---------- Роли ---------- */
 .rolebar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; }
 .rolebar .tab { background: #fff; border: 1px solid var(--line); color: var(--text); }
@@ -491,6 +500,8 @@ section[id], header[id] { scroll-margin-top: 76px; }
   .mock--hub { max-width: none; }
 }
 @media (max-width: 640px) {
+  .pipe__row { grid-template-columns: 1fr; gap: 10px; padding: 14px; }
+  .pipe__items span { font-size: 14px; padding: 6px 9px; }
   .scene__lead { font-size: 16px; margin-top: 12px; }
   .scene__btns { margin-top: 18px; }
   .scene__btns .btn { width: 100%; }
