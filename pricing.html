@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Цены — AIQurylys</title>
+<meta name="description" content="Сколько стоит AIQurylys: бесплатное знакомство, генподрядчику от 250 000 ₸ за проект, подрядчику 50 000 ₸ за альбом. Калькулятор цены для вашей компании.">
+<meta name="theme-color" content="#131720">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Цены — AIQurylys">
+<meta property="og:description" content="Бесплатное знакомство и калькулятор цены для вашей компании.">
+<link rel="icon" href="img/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="logo" href="index.html"><b>AI</b>Qurylys</a>
+    <div class="nav__links" id="menu">
+      <a href="index.html#example">Пример</a>
+      <a href="index.html#how">Как работает</a>
+      <a href="index.html#features">Возможности</a>
+      <a href="index.html#projects">Проекты</a>
+      <a href="pricing.html" aria-current="page">Цены</a>
+      <a class="nav__login" href="https://ai-qurylys.kz/login">Войти</a>
+    </div>
+    <a class="btn btn--primary btn--sm nav__cta" href="https://ai-qurylys.kz/register">Посчитать<span>&nbsp;бесплатно</span></a>
+    <button class="burger" id="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu"><span></span></button>
+  </div>
+</nav>
+
+<main>
+
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Цены</p>
+    <h1>Сколько стоит AIQurylys</h1>
+    <p class="lead">Сначала проверьте систему на своих файлах бесплатно. Потом соберите цену для своей компании в калькуляторе.</p>
+
+    <div class="plans">
+      <div class="plan plan--free">
+        <small>Знакомство</small>
+        <b>Бесплатно</b>
+        <i>без карты, только почта и пароль</i>
+        <p>Один расчёт себестоимости и каждый раздел по одному разу — на ваших файлах.</p>
+        <a class="btn btn--primary btn--wide" style="margin-top:18px" href="https://ai-qurylys.kz/register">Начать бесплатно</a>
+      </div>
+      <div class="plan">
+        <small>Генподрядчик</small>
+        <b>от 250 000 ₸</b>
+        <i>за проект в месяц</i>
+        <p>Один проект — все альбомы (КЖ, КМ, АР, ТХ и другие) и все разделы системы.</p>
+      </div>
+      <div class="plan">
+        <small>Подрядчик и субподрядчик</small>
+        <b>50 000 ₸</b>
+        <i>за альбом в месяц</i>
+        <p>Один альбом одного проекта. Каждый следующий альбом или проект — ещё 50 000 ₸.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="calc" style="padding-top:56px">
+  <div class="wrap">
+    <h2 class="h2">Посчитайте цену для своей компании</h2>
+    <p class="lead">Пример уже заполнен — поменяйте под себя. Цена складывается из четырёх частей: пакет, расчёты себестоимости, тендеры и хранилище.</p>
+
+    <div class="calc">
+      <div class="panel">
+        <div class="field">
+          <h3>1. Кто вы в строительстве</h3>
+          <div class="opts opts--2" id="role">
+            <button class="opt" type="button" data-v="gc" aria-pressed="true">Генподрядчик<small>от 250 000 ₸ за проект в месяц</small></button>
+            <button class="opt" type="button" data-v="sub" aria-pressed="false">Подрядчик, субподрядчик<small>50 000 ₸ за альбом в месяц</small></button>
+          </div>
+        </div>
+
+        <div class="field">
+          <h3 id="units-title">2. Сколько проектов ведёте одновременно</h3>
+          <p id="units-hint">Один проект — все его альбомы. Сдали проект — место освобождается для нового.</p>
+          <div class="stepper" data-step="units">
+            <button type="button" data-d="-1" aria-label="Меньше">−</button>
+            <output id="units-out">1</output>
+            <button type="button" data-d="1" aria-label="Больше">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <h3>3. Сколько расчётов себестоимости в месяц</h3>
+          <p>Один расчёт — один альбом. Школа с альбомами КЖ, АР и ЭОМ — три расчёта.</p>
+          <div class="opts" id="calcs">
+            <button class="opt" type="button" data-v="0">0</button>
+            <button class="opt" type="button" data-v="1">1</button>
+            <button class="opt" type="button" data-v="5">5</button>
+            <button class="opt" type="button" data-v="10">10</button>
+            <button class="opt" type="button" data-v="20">20</button>
+            <button class="opt" type="button" data-v="30">30</button>
+            <button class="opt" type="button" data-v="40">40</button>
+            <button class="opt" type="button" data-v="50">50</button>
+          </div>
+          <div class="stepper" data-step="calcs">
+            <button type="button" data-d="-1" aria-label="Меньше">−</button>
+            <output id="calcs-out">10</output>
+            <button type="button" data-d="1" aria-label="Больше">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <h3>4. Тендеры</h3>
+          <p>Поиск и подборка тендеров под вашу компанию — 50 000 ₸ в месяц.</p>
+          <label class="switch"><input type="checkbox" id="tenders" checked> Включить тендеры</label>
+        </div>
+
+        <div class="field">
+          <h3>5. Объём хранилища</h3>
+          <p>Альбомы, сметы, документы и фото с площадки — на всю компанию. 1 ГБ входит в пакет.</p>
+          <div class="opts" id="storage">
+            <button class="opt" type="button" data-v="0">1 ГБ<small>входит</small></button>
+            <button class="opt" type="button" data-v="1">5 ГБ<small>1 500 ₸</small></button>
+            <button class="opt" type="button" data-v="2">10 ГБ<small>2 500 ₸</small></button>
+            <button class="opt" type="button" data-v="3">50 ГБ<small>7 500 ₸</small></button>
+            <button class="opt" type="button" data-v="4">100 ГБ<small>12 000 ₸</small></button>
+            <button class="opt" type="button" data-v="5">500 ГБ<small>39 000 ₸</small></button>
+            <button class="opt" type="button" data-v="6">1 ТБ<small>65 000 ₸</small></button>
+            <button class="opt" type="button" data-v="7">2 ТБ<small>110 000 ₸</small></button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="bill" aria-live="polite">
+        <h3>Ваша цена</h3>
+        <ul id="bill-lines"></ul>
+        <div class="bill__total"><span>Каждый месяц</span><b id="bill-total">—</b></div>
+        <a class="btn btn--primary btn--wide" href="https://ai-qurylys.kz/register">Начать бесплатно</a>
+        <p class="note">Сначала проверьте всё на своих файлах — без карты. Заявку с этим набором отправите после входа.</p>
+        <button class="bill__copy" type="button" id="copy">Скопировать расчёт</button>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--sand">
+  <div class="wrap">
+    <h2 class="h2">Что входит в пакет</h2>
+    <div class="two">
+      <div class="panel">
+        <h3 style="font:700 19px/1.2 var(--body)">Генподрядчик — пакет «Проект»</h3>
+        <p class="note" style="margin-top:4px">от 250 000 ₸ за проект в месяц · только по этому проекту</p>
+        <ul class="list">
+          <li>Себестоимость — все альбомы проекта, до 20 расчётов на проект</li>
+          <li>Проверка объёмов работ</li>
+          <li>Документооборот и юрист</li>
+          <li>Начальник участка, прораб и мастер</li>
+          <li>Финансист</li>
+          <li>Инспектор по технике</li>
+          <li>Снабженец</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3 style="font:700 19px/1.2 var(--body)">Подрядчик — пакет «Альбом»</h3>
+        <p class="note" style="margin-top:4px">50 000 ₸ за альбом в месяц · один альбом одного проекта</p>
+        <ul class="list">
+          <li>Себестоимость — только этот альбом, один расчёт на проект</li>
+          <li>Проверка объёмов работ — только этот альбом</li>
+          <li>Документооборот и юрист — по этому проекту</li>
+          <li>Начальник участка, прораб и мастер — по этому проекту</li>
+          <li>Финансист и инспектор по технике — по этому проекту</li>
+          <li>Снабженец</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:16px">
+      <h3 style="font:700 19px/1.2 var(--body)">Расчёты себестоимости</h3>
+      <p class="note" style="margin-top:4px">Цена для всех одна. Скидка 5 % за каждые 10 расчётов. Покупаются отдельно от пакета, каждый месяц заново.</p>
+      <div class="tbl-wrap">
+        <table class="tbl" id="pack-table">
+          <thead><tr><th>Пакет</th><th>Цена пакета</th><th>За расчёт</th><th>Выгода</th></tr></thead>
+          <tbody>
+            <tr data-n="1"><td>1 расчёт</td><td>8 000 ₸</td><td>8 000 ₸</td><td>—</td></tr>
+            <tr data-n="5"><td>5 расчётов</td><td>40 000 ₸</td><td>8 000 ₸</td><td>—</td></tr>
+            <tr data-n="10"><td>10 расчётов</td><td>76 000 ₸</td><td>7 600 ₸</td><td>−5 %</td></tr>
+            <tr data-n="20"><td>20 расчётов</td><td>144 000 ₸</td><td>7 200 ₸</td><td>−10 %</td></tr>
+            <tr data-n="30"><td>30 расчётов</td><td>204 000 ₸</td><td>6 800 ₸</td><td>−15 %</td></tr>
+            <tr data-n="40"><td>40 расчётов</td><td>256 000 ₸</td><td>6 400 ₸</td><td>−20 %</td></tr>
+            <tr data-n="50"><td>50 расчётов</td><td>300 000 ₸</td><td>6 000 ₸</td><td>−25 %</td></tr>
+            <tr data-n="51"><td>больше 50</td><td>300 000 ₸ + 5 600 ₸ за каждый сверх 50</td><td>5 600 ₸</td><td>−30 %</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <h2 class="h2">Частые вопросы</h2>
+    <div class="faq">
+      <details>
+        <summary>Что такое «один расчёт»?</summary>
+        <p>Один расчёт — это себестоимость одного альбома ПСД: система читает чертежи, считает объёмы, подставляет цены и собирает свод. Школа с альбомами КЖ, АР и ЭОМ — три расчёта. Все файлы ПСД одним расчётом не считаются.</p>
+      </details>
+      <details>
+        <summary>Что расходует пакет расчётов, а что нет?</summary>
+        <p>Расходует только расчёт себестоимости. Проверка готовой сметы, сверка объёмов с актом подрядчика, финансовый отчёт, документы, вопросы боту и выгрузки в Excel, Word и PDF пакет не расходуют. Неудачный расчёт, где система ничего не смогла извлечь, повтор тех же файлов и правка сохранённого расчёта тоже не тратят пакет.</p>
+      </details>
+      <details>
+        <summary>Переносятся ли неиспользованные расчёты?</summary>
+        <p>Нет. Расчёты покупаются на месяц и на следующий не переносятся. На один проект — до 20 расчётов у генподрядчика и один расчёт альбома у подрядчика.</p>
+      </details>
+      <details>
+        <summary>Что входит в бесплатное «Знакомство»?</summary>
+        <p>Все разделы открыты, каждый — один раз: один расчёт себестоимости по файлам до 15 МБ, в остальных разделах — файлы до 2 МБ за один раз. Выгрузка в Excel, Word и PDF. «Знакомство» даётся один раз и само не обновляется.</p>
+      </details>
+      <details>
+        <summary>Как оплатить?</summary>
+        <p>Сейчас подписка оплачивается по счёту — для юридических лиц и индивидуальных предпринимателей. После заявки с вами свяжутся, уточнят набор и пришлют договор, счёт, акт и электронный счёт-фактуру. Доступ открывается после поступления денег. Оплата картой подключается.</p>
+      </details>
+      <details>
+        <summary>Что будет, если не оплатить следующий месяц?</summary>
+        <p>За неделю до конца оплаченного периода система предупредит. Если оплата не поступила, доступ к сайту, документам и боту закрывается до оплаты. Данные сохраняются.</p>
+      </details>
+      <details>
+        <summary>Сколько человек может работать?</summary>
+        <p>Сколько нужно. Число людей в компании не ограничено и на цену не влияет.</p>
+      </details>
+      <details>
+        <summary>Есть ли месячный предел работы системы?</summary>
+        <p>Да. Он рассчитан на ваш пакет расчётов и повседневную работу с запасом и обновляется первого числа каждого месяца. Быстрее обычного его расходуют только очень большие альбомы. Если предел исчерпан, начатый расчёт доводится до конца, а продолжить раньше срока поможет поддержка.</p>
+      </details>
+      <details>
+        <summary>Цены с НДС?</summary>
+        <p>Цены указаны без НДС: продавец не является плательщиком налога на добавленную стоимость. Оплата вносится на месяц вперёд.</p>
+      </details>
+      <details>
+        <summary>Нужно больше, чем в калькуляторе?</summary>
+        <p>Больше 200 проектов, свои формы документов, несколько юрлиц — позвоните или напишите в Telegram, подписку соберут под вашу работу.</p>
+      </details>
+    </div>
+
+    <p class="contact-line" style="margin-top:26px">Остались вопросы? <a href="tel:+77075226588">+7 707 522 65 88</a> или <a href="https://t.me/AIQurylys_Bot" target="_blank" rel="noopener">Telegram @AIQurylys_Bot</a></p>
+    <p class="note" style="margin-top:10px">Условия и возврат — в <a href="https://ai-qurylys.kz/offer">публичной оферте</a> и на странице <a href="https://ai-qurylys.kz/payment">«Оплата и возврат»</a>. Что происходит с вашими файлами — в <a href="https://ai-qurylys.kz/privacy">политике конфиденциальности</a>.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__grid">
+      <div>
+        <a class="logo" href="index.html"><b>AI</b>Qurylys</a>
+        <p style="margin-top:10px;max-width:340px">Смета, себестоимость и контроль стройки для генподрядчиков и подрядчиков Казахстана.</p>
+      </div>
+      <div>
+        <h4>Связаться</h4>
+        <ul>
+          <li><a href="tel:+77075226588">+7 707 522 65 88</a></li>
+          <li><a href="https://t.me/AIQurylys_Bot" target="_blank" rel="noopener">Telegram @AIQurylys_Bot</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Документы</h4>
+        <ul>
+          <li><a href="index.html">О продукте</a></li>
+          <li><a href="https://ai-qurylys.kz/offer">Публичная оферта</a></li>
+          <li><a href="https://ai-qurylys.kz/privacy">Конфиденциальность</a></li>
+          <li><a href="https://ai-qurylys.kz/payment">Оплата и возврат</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="foot__legal">ТОО «AveTech», БИН 261040011832. 010000, г. Астана, ул. Жулдыз, д. 4.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/calc.js"></script>
+</body>
+</html>
