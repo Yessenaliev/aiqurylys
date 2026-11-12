@@ -474,6 +474,8 @@ section[id], header[id] { scroll-margin-top: 76px; }
 .pipe__items span { font-size: 15px; font-weight: 600; background: var(--blue-soft); color: var(--blue); border-radius: 8px; padding: 7px 11px; }
 .h3 { font: 800 clamp(20px, 2.4vw, 26px)/1.15 var(--head); letter-spacing: -.02em; margin-top: 48px; }
 .bot .mock { justify-self: stretch; max-width: none; }
+#tenders { grid-template-columns: 1.2fr .8fr; }
+@media (max-width: 1040px) { #tenders { grid-template-columns: 1fr; } }
 
 /* ---------- Роли ---------- */
 .rolebar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; }
