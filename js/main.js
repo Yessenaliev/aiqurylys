@@ -138,7 +138,10 @@ var selectRole = (function () {
       var base = 'media/scenes/' + variants[k];
       var img = new Image();
       img.alt = '';
-      img.onerror = function () { attempt(k + 1); };
+      img.onerror = function () {
+        if (img.src.indexOf('.webp') !== -1) { img.src = base + '.jpg'; return; }
+        attempt(k + 1);
+      };
       img.onload = function () {
         var bg = document.createElement('div');
         bg.className = 'scene__bg';
@@ -153,7 +156,7 @@ var selectRole = (function () {
         s.insertBefore(bg, s.firstChild);
         if (!scrolly && s.classList.contains('is-active')) playBg(s);
       };
-      img.src = base + '.jpg';
+      img.src = base + '.webp';
     }
     attempt(0);
   });
