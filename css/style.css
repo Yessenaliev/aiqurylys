@@ -371,6 +371,7 @@ section[id], header[id] { scroll-margin-top: 76px; }
     radial-gradient(500px 400px at 8% 100%, rgba(240, 93, 18, .16), transparent 70%);
 }
 .scenes__stage { display: grid; position: relative; }
+.scenes__stage > .scenes__ui, .scenes__stage > .scenes__down { grid-area: auto; }
 .scene {
   grid-area: 1 / 1; display: flex; align-items: center;
   min-height: min(calc(100vh - 64px), 780px); min-height: min(calc(100svh - 64px), 780px);
@@ -465,6 +466,35 @@ section[id], header[id] { scroll-margin-top: 76px; }
 #sc-count { min-width: 44px; text-align: center; font-size: 15px; font-variant-numeric: tabular-nums; color: rgba(255, 255, 255, .8); }
 .scenes__down { position: absolute; left: 0; right: 0; bottom: 8px; z-index: 2; text-align: center; padding: 12px; font-size: 15px; font-weight: 600; color: rgba(255, 255, 255, .8); text-decoration: none; }
 .scenes__down:hover { color: #fff; }
+
+/* ---------- Режим прокрутки (десктоп): экран закреплён, прокрутка листает сцены ---------- */
+.scenes.scrolly { overflow: visible; overflow: clip; }
+.scenes.scrolly::before { display: none; }
+.scenes.scrolly .scenes__stage {
+  position: sticky; top: 64px; height: calc(100vh - 64px); grid-template-rows: 100%; overflow: hidden;
+  background:
+    radial-gradient(700px 500px at 82% 30%, rgba(31, 78, 150, .45), transparent 70%),
+    radial-gradient(500px 400px at 8% 100%, rgba(240, 93, 18, .16), transparent 70%),
+    var(--ink);
+}
+.scenes.scrolly .scene { min-height: 0; height: 100%; padding: 32px 0 140px; }
+.scenes.scrolly .scene > .wrap { transform: translateY(calc(var(--k, 0) * -56px)); will-change: transform; }
+.scenes.scrolly #sc-pause { display: none; }
+.scenes.scrolly .dot i b,
+.scenes.scrolly .dot.done i b,
+.scenes.scrolly .dot[aria-selected="true"] i b { animation: none; transform: scaleX(var(--p, 0)); background: var(--orange); }
+.scenes__trans { grid-area: 1 / 1; position: relative; overflow: hidden; pointer-events: none; }
+.scenes__trans video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+.scenes__trans video.on { opacity: 1; }
+.scenes__trans::after {
+  content: ""; position: absolute; inset: 0; opacity: 0;
+  background:
+    linear-gradient(90deg, rgba(19, 23, 32, .93) 0%, rgba(19, 23, 32, .78) 48%, rgba(19, 23, 32, .5) 100%),
+    linear-gradient(0deg, rgba(19, 23, 32, .9) 0%, rgba(19, 23, 32, 0) 34%);
+}
+.scenes.in-trans .scenes__trans::after { opacity: 1; }
+.scene__bg { transition: opacity .2s; }
+.scenes.in-trans .scene__bg { opacity: 0; }
 
 /* ---------- Цепочка «от тендера до сдачи» ---------- */
 .pipe { display: grid; gap: 12px; margin-top: 28px; }
