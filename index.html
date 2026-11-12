@@ -230,12 +230,15 @@
 
     <div class="rolebar" role="tablist" aria-label="Роль в компании" id="rolebar">
       <button class="tab" role="tab" type="button" data-role="director" aria-selected="true">Директор</button>
+      <button class="tab" role="tab" type="button" data-role="manager" aria-selected="false">Руководитель</button>
       <button class="tab" role="tab" type="button" data-role="gip" aria-selected="false">ГИП</button>
       <button class="tab" role="tab" type="button" data-role="pto" aria-selected="false">ПТО и сметчик</button>
       <button class="tab" role="tab" type="button" data-role="supply" aria-selected="false">Снабженец</button>
       <button class="tab" role="tab" type="button" data-role="site" aria-selected="false">Начальник участка</button>
       <button class="tab" role="tab" type="button" data-role="foreman" aria-selected="false">Прораб и мастер</button>
       <button class="tab" role="tab" type="button" data-role="fin" aria-selected="false">Финансист</button>
+      <button class="tab" role="tab" type="button" data-role="lawyer" aria-selected="false">Юрист</button>
+      <button class="tab" role="tab" type="button" data-role="marketer" aria-selected="false">Маркетолог</button>
       <button class="tab" role="tab" type="button" data-role="all" aria-selected="false">Все разделы</button>
     </div>
 
@@ -245,7 +248,7 @@
     </div>
 
     <div class="cards" id="role-cards">
-      <article class="card" data-roles="gip pto supply">
+      <article class="card" data-roles="manager gip pto supply marketer">
         <h3>Себестоимость</h3>
         <p>Считает объёмы по чертежам, подставляет цены и собирает ведомость материалов.</p>
         <div class="io"><div><span>Вы даёте</span><b>альбомы проекта (PDF, DWG)</b></div><div><span>Получаете</span><b>смету в Excel, Word и PDF</b></div></div>
@@ -255,24 +258,24 @@
         <p>Находит в готовой смете ошибки арифметики, двойной счёт и пропущенные работы.</p>
         <div class="io"><div><span>Вы даёте</span><b>готовую смету</b></div><div><span>Получаете</span><b>список ошибок и исправлений</b></div></div>
       </article>
-      <article class="card" data-roles="director">
+      <article class="card" data-roles="director marketer">
         <h3>Тендеры</h3>
         <p>Одна лента госзакупок и площадок застройщиков. Отбирает подходящие тендеры, сверяет требования и считает прибыль.</p>
         <div class="io"><div><span>Вы даёте</span><b>документы компании и запрос: работы, город, сумма</b></div><div><span>Получаете</span><b>подходящие тендеры и ответ, участвовать ли</b></div></div>
       </article>
-      <article class="card" data-roles="director">
+      <article class="card" data-roles="director marketer">
         <h3>Маркетолог</h3>
         <p>Собирает посты, кейсы проектов и коммерческие предложения из данных самой компании.</p>
         <div class="io"><div><span>Вы даёте</span><b>проекты и фото компании</b></div><div><span>Получаете</span><b>посты, кейсы и КП</b></div></div>
       </article>
-      <article class="card" data-roles="director fin">
+      <article class="card" data-roles="director manager fin">
         <h3>Финансист</h3>
         <p>Показывает, сколько пришло от заказчика, сколько потрачено и сколько осталось. Считает налоги Казахстана по ставкам 2026 года.</p>
         <div class="io"><div><span>Вы даёте</span><b>таблицу доходов и расходов</b></div><div><span>Получаете</span><b>план, факт и остаток денег</b></div></div>
       </article>
-      <article class="card" data-roles="director">
+      <article class="card" data-roles="director lawyer">
         <h3>Юрист</h3>
-        <p>Показывает рискованные пункты договора и предлагает правки.</p>
+        <p>Проверяет присланные договоры, показывает рискованные пункты и предлагает правки. Составляет претензии.</p>
         <div class="io"><div><span>Вы даёте</span><b>договор</b></div><div><span>Получаете</span><b>риски, правки, претензии</b></div></div>
       </article>
       <article class="card" data-roles="supply">
@@ -280,17 +283,17 @@
         <p>Сам пишет поставщикам и сводит их ответы в таблицу.</p>
         <div class="io"><div><span>Вы даёте</span><b>список материалов</b></div><div><span>Получаете</span><b>цены от поставщиков</b></div></div>
       </article>
-      <article class="card" data-roles="gip pto site fin">
+      <article class="card" data-roles="manager gip pto site fin">
         <h3>Проверка объёмов</h3>
         <p>Сверяет акт подрядчика с проектом и показывает, где объём завышен.</p>
         <div class="io"><div><span>Вы даёте</span><b>акт подрядчика</b></div><div><span>Получаете</span><b>список расхождений</b></div></div>
       </article>
-      <article class="card" data-roles="gip pto foreman">
+      <article class="card" data-roles="gip pto foreman lawyer">
         <h3>Документооборот</h3>
         <p>Заполняет АОСР, акты 2В, дефектные акты и наряд-задания по формам РК. Реквизиты подставляются сами.</p>
         <div class="io"><div><span>Вы даёте</span><b>проект и что сделано</b></div><div><span>Получаете</span><b>готовые акты в Word и Excel</b></div></div>
       </article>
-      <article class="card" data-roles="gip site">
+      <article class="card" data-roles="manager gip site">
         <h3>Начальник участка</h3>
         <p>Составляет график работ и следит за его выполнением.</p>
         <div class="io"><div><span>Вы даёте</span><b>проект и срок строительства</b></div><div><span>Получаете</span><b>план и факт по графику</b></div></div>
