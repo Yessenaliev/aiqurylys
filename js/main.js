@@ -173,7 +173,7 @@ var selectRole = (function () {
   var RATE = 0.8;          // скорость ролика: 5 секунд видео идут 6,25 секунды, успеваешь прочитать
   var FALLBACK_MS = 6250;  // если ролика нет, раздел держится столько
   var ENDING_S = 0.7;      // за сколько секунд до конца слова разъезжаются и текст уходит
-  var OPEN_MS = 1300;      // сколько раскрывается проём
+  var OPEN_MS = 600;       // сколько длится плавная смена раздела
 
   var scenes = Array.prototype.slice.call(root.querySelectorAll('.scene'));
   var N = scenes.length;
@@ -261,7 +261,8 @@ var selectRole = (function () {
         var v = document.createElement('video');
         v.muted = true; v.playsInline = true; v.preload = 'none'; v.loop = false;
         v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
-        v.dataset.src = base + '.mp4';
+        // Ролик раздела = переход от его кадра к кадру следующего; у последнего раздела — его собственный ролик
+        v.dataset.src = base + (scenes.indexOf(s) < N - 1 ? '-to' : '') + '.mp4';
         v.addEventListener('error', function () { v.remove(); });
         v.addEventListener('loadeddata', function () { v.classList.add('on'); });
         bg.appendChild(v);

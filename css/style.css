@@ -766,3 +766,19 @@ body.pricing .btn--line { background: transparent; color: #fff; border-color: rg
 /* текст не должен прыгать при смене: убираем старые переходы */
 .scenes .scene > .wrap { transition: opacity .5s ease; }
 
+
+/* ================= v5: раздел = ролик перехода, пока заполняется ползунок; подача как у ERA ================= */
+/* без арки: плавная смена, новый раздел проявляется поверх старого, который доигрывает последний кадр */
+.scenes .scene { opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s linear .5s; }
+.scenes .scene.is-active { opacity: 1; visibility: visible; z-index: 2; transition: opacity .5s ease; }
+.scenes .scene.leaving:not(.is-active) { opacity: 1; visibility: visible; z-index: 1; transition: none; }
+.scenes .scene__bg, .scenes .scene.is-active .scene__bg, .scenes .scene.leaving:not(.is-active) .scene__bg { clip-path: none; transition: none; }
+.scenes .scene__bg img, .scenes .scene__bg video,
+.scenes .scene.is-active .scene__bg img, .scenes .scene.is-active .scene__bg video,
+.scenes .scene.leaving:not(.is-active) .scene__bg img, .scenes .scene.leaving:not(.is-active) .scene__bg video { transform: none; transition: none; animation: none; }
+/* текст появляется почти сразу, пока идёт ролик */
+.scenes .scene.is-active .w { transition: transform .9s cubic-bezier(.2, .7, .2, 1) calc(.35s + var(--wd, 0s)), opacity .7s ease calc(.35s + var(--wd, 0s)); }
+.scenes .scene.ending .w { transition: transform .6s cubic-bezier(.6, 0, .8, .4), opacity .5s ease; transition-delay: 0s; }
+.scenes .scene.is-active .a { animation-delay: calc(var(--d, 0) * 1s + .5s); }
+.scenes .scene.is-active .scene__num { transition: opacity 1s ease .5s, transform 1.2s cubic-bezier(.2, .7, .2, 1) .5s; }
+.scenes .scene.ending .scene__num { transition: opacity .5s ease, transform .6s ease; }
