@@ -664,3 +664,19 @@ body { background: var(--ink); }
 }
 
 [hidden] { display: none !important; }
+
+/* ---------- Страница цен: тёмная гамма, как на главной ---------- */
+body.pricing { background: var(--ink); color: #f7f5f0; }
+body.pricing .page-head h1, body.pricing .h2 { color: #fff; }
+body.pricing .lead { color: rgba(247, 245, 240, .75); }
+body.pricing .eyebrow { color: #ffb48a; }
+body.pricing .sec--sand { background: #171c28; }
+body.pricing .note { color: rgba(255, 255, 255, .62); }
+body.pricing .note a, body.pricing .contact-line a { color: #9cc0ff; }
+body.pricing .contact-line { color: rgba(255, 255, 255, .85); }
+body.pricing .panel, body.pricing .faq details, body.pricing .plan { color: var(--text); }
+body.pricing .plan--free { color: #fff; border-color: rgba(255, 255, 255, .22); background: #232a3a; }
+body.pricing .plan--free .btn { color: #fff; }
+body.pricing .panel .note { color: var(--muted); }
+body.pricing .bill { background: #232a3a; border: 1px solid rgba(255, 255, 255, .14); }
+body.pricing .foot { border-top: 1px solid rgba(255, 255, 255, .1); }
