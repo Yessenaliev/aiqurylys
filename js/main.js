@@ -163,17 +163,17 @@ var selectRole = (function () {
   update();
 })();
 
-// Презентация на первом экране.
-// Десктоп: сцены листаются прокруткой страницы, экран при этом закреплён.
-// Телефон и планшет: сцены сменяются сами и по свайпу.
+// Презентация на первом экране: идёт сама, как фильм.
+// Сцена играет своё видео и держит текст, затем включается переход к следующей сцене:
+// текст уходит, остаётся только фильм, в конце перехода возвращается текст новой сцены.
+// Прокрутка страницы обычная, презентация стоит в первом экране.
 (function () {
   var root = document.querySelector('.scenes');
   if (!root) return;
 
-  var DURATION = 8;   // секунд на сцену в автопоказе
-  var UNIT = 2.4;     // сколько экранов прокрутки занимает одна сцена вместе с переходом
-  var HOLD = 0.4;     // доля сцены, когда она стоит на месте; остальное — переход к следующей
-  var NAV_H = 64;
+  var HOLD_MS = 6500;     // сколько сцена держится с текстом (видео сцены играет 5 с и замирает на последнем кадре)
+  var TEXT_BACK = 1.3;    // за сколько секунд до конца перехода возвращается текст новой сцены
+  var LAST_HOLD_MS = 5000; // последняя сцена стоит и затем плавно возвращается к первой
 
   var stage = root.querySelector('.scenes__stage');
   var scenes = Array.prototype.slice.call(root.querySelectorAll('.scene'));
@@ -181,101 +181,91 @@ var selectRole = (function () {
   var dotsBox = document.getElementById('dots');
   var count = document.getElementById('sc-count');
   var pauseBtn = document.getElementById('sc-pause');
-  var down = document.getElementById('sc-down');
-  var downText = down ? down.textContent : '';
   var current = 0;
-  var scrolly = false;
-  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var wide = window.matchMedia ? window.matchMedia('(min-width: 961px)') : { matches: false };
-  var portrait = window.matchMedia && window.matchMedia('(max-aspect-ratio: 3/4)').matches;
+  var phase = 'hold';
+  var userPaused = false;
+  var offscreen = false;
+  var holdTimer = null, holdLeft = HOLD_MS, holdStart = 0, raf = 0;
+  var activeTrans = null, textSwitched = false;
+  var trans = [];
+  var transBox = null;
+  var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var portrait = !!(window.matchMedia && window.matchMedia('(max-aspect-ratio: 3/4)').matches);
 
+  // ---------- Точки-оглавление ----------
   var dots = scenes.map(function (s, i) {
     var b = document.createElement('button');
     b.type = 'button';
     b.className = 'dot';
     b.setAttribute('role', 'tab');
     b.setAttribute('aria-label', 'Сцена ' + (i + 1) + ': ' + s.dataset.name);
-    b.style.setProperty('--dur', DURATION + 's');
+    b.style.setProperty('--dur', ((HOLD_MS / 1000) + 5) + 's');
     var label = document.createElement('span');
     label.textContent = s.dataset.name;
     var track = document.createElement('i');
-    var fill = document.createElement('b');
-    track.appendChild(fill);
+    track.appendChild(document.createElement('b'));
     b.appendChild(label);
     b.appendChild(track);
     b.addEventListener('click', function () { go(i); });
-    fill.addEventListener('animationend', function () {
-      if (!scrolly && i === current) go(current + 1);
-    });
     dotsBox.appendChild(b);
     return b;
   });
 
   // ---------- Фоны сцен ----------
-  // media/scenes/<имя>.jpg — кадр, <имя>.mp4 — видео сцены,
-  // <имя>-to.mp4 — переход от этой сцены к следующей (только для прокрутки).
-  // Для вертикальных экранов: <имя>-m.jpg и <имя>-m.mp4, если они есть.
-  // Пока файлов нет, остаётся обычный тёмный фон.
+  // media/scenes/<имя>.webp|jpg — кадр, <имя>.mp4 — видео сцены, <имя>-to.mp4 — переход к следующей.
   scenes.forEach(function (s) {
     var name = s.dataset.bg;
     if (!name) return;
     var variants = portrait ? [name + '-m', name] : [name];
+    var exts = ['.webp', '.jpg'];
 
-    function attempt(k) {
+    function attempt(k, e) {
       if (k >= variants.length) return;
       var base = 'media/scenes/' + variants[k];
       var img = new Image();
       img.alt = '';
       img.onerror = function () {
-        if (img.src.indexOf('.webp') !== -1) { img.src = base + '.jpg'; return; }
-        attempt(k + 1);
+        if (e + 1 < exts.length) attempt(k, e + 1); else attempt(k + 1, 0);
       };
       img.onload = function () {
         var bg = document.createElement('div');
         bg.className = 'scene__bg';
         bg.appendChild(img);
         var v = document.createElement('video');
-        v.muted = true; v.playsInline = true; v.preload = 'none';
+        v.muted = true; v.playsInline = true; v.preload = 'none'; v.loop = false;
         v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
         v.dataset.src = base + '.mp4';
         v.addEventListener('error', function () { v.remove(); });
         v.addEventListener('loadeddata', function () { v.classList.add('on'); });
         bg.appendChild(v);
         s.insertBefore(bg, s.firstChild);
-        if (!scrolly && s.classList.contains('is-active')) playBg(s);
       };
-      img.src = base + '.webp';
+      img.src = base + exts[e];
     }
-    attempt(0);
+    attempt(0, 0);
   });
 
   function bgVideo(i) {
     return scenes[i] ? scenes[i].querySelector('.scene__bg video') : null;
   }
-  function playBg(s) {
-    var v = s.querySelector('.scene__bg video');
+  function warm(i) {
+    var v = bgVideo(i);
+    if (v && !v.getAttribute('src')) { v.preload = 'auto'; v.src = v.dataset.src; }
+  }
+  function playScene(i) {
+    var v = bgVideo(i);
     if (!v || reduced) return;
-    v.loop = true;
     if (!v.getAttribute('src')) v.src = v.dataset.src;
+    v.loop = false;
+    try { v.currentTime = 0; } catch (err) {}
     var p = v.play();
     if (p && p.catch) p.catch(function () {});
   }
-  function stopBg(s) {
-    var v = s.querySelector('.scene__bg video');
-    if (v && v.getAttribute('src')) v.pause();
-  }
-  // Ставит видео на нужную долю длительности (0..1) — так прокрутка «двигает фильм»
-  function scrub(v, f) {
-    if (!v) return;
-    if (!v.getAttribute('src')) { v.preload = 'auto'; v.src = v.dataset.src; return; }
-    if (!v.duration || v.seeking) return;
-    var target = Math.max(0, Math.min(1, f)) * Math.max(0, v.duration - 0.05);
-    if (Math.abs(v.currentTime - target) > 0.03) v.currentTime = target;
+  function pauseAll() {
+    scenes.forEach(function (s, i) { var v = bgVideo(i); if (v && v.getAttribute('src')) v.pause(); });
   }
 
-  // Ролики-переходы между сценами
-  var transBox = null;
-  var trans = [];
+  // Ролики-переходы
   function ensureTrans(i) {
     if (i < 0 || i >= N - 1 || trans[i] || !scenes[i].dataset.bg) return;
     if (!transBox) {
@@ -285,25 +275,22 @@ var selectRole = (function () {
     }
     var t = { el: document.createElement('video'), ok: false };
     trans[i] = t;
-    t.el.muted = true; t.el.playsInline = true; t.el.preload = 'auto';
+    t.el.muted = true; t.el.playsInline = true; t.el.preload = 'auto'; t.el.loop = false;
     t.el.setAttribute('muted', ''); t.el.setAttribute('playsinline', '');
-    t.el.dataset.src = 'media/scenes/' + scenes[i].dataset.bg + '-to.mp4';
+    t.el.addEventListener('canplaythrough', function () { t.ok = true; });
     t.el.addEventListener('loadeddata', function () { t.ok = true; });
     t.el.addEventListener('error', function () { t.ok = false; t.el.remove(); });
-    t.el.src = t.el.dataset.src;
+    t.el.src = 'media/scenes/' + scenes[i].dataset.bg + '-to.mp4';
     transBox.appendChild(t.el);
   }
-  function showTrans(i) {
-    trans.forEach(function (t, k) { if (t && t.el) t.el.classList.toggle('on', k === i); });
-    root.classList.toggle('in-trans', i >= 0);
-  }
 
-  // ---------- Смена сцен ----------
+  // ---------- Состояние ----------
+  function suspended() { return userPaused || offscreen || document.hidden || reduced; }
+
   function show(n) {
     current = n;
     scenes.forEach(function (s, i) {
       var on = i === current;
-      if (!scrolly) { if (on) playBg(s); else stopBg(s); }
       s.classList.toggle('is-active', on);
       if (on) s.removeAttribute('aria-hidden'); else s.setAttribute('aria-hidden', 'true');
       dots[i].setAttribute('aria-selected', on ? 'true' : 'false');
@@ -312,93 +299,114 @@ var selectRole = (function () {
     count.textContent = (current + 1) + ' / ' + N;
   }
 
-  function unitPx() { return window.innerHeight * UNIT; }
-  function startY() { return root.getBoundingClientRect().top + window.scrollY - NAV_H; }
+  function clearTimers() {
+    clearTimeout(holdTimer);
+    cancelAnimationFrame(raf);
+  }
+
+  function stopTrans() {
+    cancelAnimationFrame(raf);
+    if (activeTrans) {
+      activeTrans.el.pause();
+      activeTrans.el.classList.remove('on');
+      activeTrans = null;
+    }
+    root.classList.remove('in-trans', 'text-out');
+  }
+
+  function startHold(i) {
+    stopTrans();
+    clearTimers();
+    pauseAll();
+    phase = 'hold';
+    show(i);
+    ensureTrans(i);
+    warm(i + 1);
+    holdLeft = (i === N - 1) ? LAST_HOLD_MS : HOLD_MS;
+    holdStart = Date.now();
+    if (!suspended()) {
+      playScene(i);
+      holdTimer = setTimeout(afterHold, holdLeft);
+    }
+  }
+
+  function afterHold() {
+    if (current === N - 1) { startHold(0); return; }
+    var t = trans[current];
+    if (t && t.ok) startTrans(current); else startHold(current + 1);
+  }
+
+  function startTrans(i) {
+    var t = trans[i];
+    clearTimers();
+    phase = 'trans';
+    activeTrans = t;
+    textSwitched = false;
+    var v = bgVideo(i);
+    if (v) v.pause();
+    try { t.el.currentTime = 0; } catch (err) {}
+    t.el.classList.add('on');
+    root.classList.add('in-trans', 'text-out');
+    t.el.onended = function () { if (phase === 'trans') startHold(i + 1); };
+    if (!suspended()) { runTrans(); }
+  }
+
+  function runTrans() {
+    var t = activeTrans;
+    if (!t) return;
+    var p = t.el.play();
+    if (p && p.catch) p.catch(function () {});
+    (function tick() {
+      if (phase !== 'trans' || !activeTrans) return;
+      var d = t.el.duration || 5;
+      var k = Math.min(1, t.el.currentTime / d);
+      if (transBox) transBox.style.setProperty('--ov', (0.2 + 0.8 * Math.abs(2 * k - 1)).toFixed(3));
+      if (!textSwitched && d - t.el.currentTime <= TEXT_BACK) {
+        textSwitched = true;
+        show(current + 1);
+        root.classList.remove('text-out');
+      }
+      raf = requestAnimationFrame(tick);
+    })();
+  }
+
+  function suspend() {
+    clearTimeout(holdTimer);
+    cancelAnimationFrame(raf);
+    if (phase === 'hold') holdLeft = Math.max(0, holdLeft - (Date.now() - holdStart));
+    pauseAll();
+    if (activeTrans) activeTrans.el.pause();
+  }
+
+  function resume() {
+    if (suspended()) return;
+    if (phase === 'hold') {
+      holdStart = Date.now();
+      var v = bgVideo(current);
+      if (v && v.getAttribute('src')) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else playScene(current);
+      holdTimer = setTimeout(afterHold, holdLeft);
+    } else if (phase === 'trans') {
+      runTrans();
+    }
+  }
+
+  function sync() {
+    root.classList.toggle('paused', userPaused);
+    root.classList.toggle('offscreen', offscreen);
+    if (suspended()) suspend(); else resume();
+  }
 
   function go(n) {
-    if (scrolly) {
-      n = Math.max(0, Math.min(N - 1, n));
-      window.scrollTo({ top: startY() + (n === 0 ? 0 : (n + 0.04) * unitPx()), behavior: 'smooth' });
-      return;
-    }
-    show((n + N) % N);
-  }
-
-  // ---------- Режим прокрутки ----------
-  var ticking = false;
-  function frame() {
-    ticking = false;
-    if (!scrolly) return;
-    var maxP = N - 1 + HOLD;
-    var raw = (window.scrollY - startY()) / unitPx();
-    var P = Math.max(0, Math.min(maxP, raw));
-    var a = Math.min(N - 1, Math.floor(P));
-    var t = P - a;
-    var k = (a < N - 1 && t > HOLD) ? (t - HOLD) / (1 - HOLD) : 0;
-    var act = k > 0.5 ? a + 1 : a;
-    if (act !== current) show(act);
-
-    dots.forEach(function (d, i) {
-      var p = i < act ? 1 : (i === act && act === a ? Math.min(1, t / HOLD) : 0);
-      d.style.setProperty('--p', p);
-    });
-    // Текст уходит в начале перехода и возвращается в его конце: посередине виден только фильм
-    scenes.forEach(function (s, i) {
-      var cur = i === a;
-      var nxt = i === a + 1;
-      s.style.setProperty('--k', cur ? k : (nxt ? k - 1 : 0));
-      s.style.setProperty('--o', cur ? Math.max(0, 1 - k * 4) : (nxt ? Math.max(0, Math.min(1, (k - 0.75) * 4)) : 0));
-      s.classList.toggle('is-near', cur || nxt);
-    });
-    if (transBox) transBox.style.setProperty('--ov', (0.2 + 0.8 * Math.abs(2 * k - 1)).toFixed(3));
-
-    scrub(bgVideo(a), t / HOLD);
-    if (a + 1 < N && k > 0) scrub(bgVideo(a + 1), 0);
-    ensureTrans(a);
-    if (k > 0 && trans[a] && trans[a].ok) {
-      showTrans(a);
-      scrub(trans[a].el, k);
-    } else {
-      showTrans(-1);
-    }
-    root.classList.toggle('offscreen', raw > maxP + 0.6);
-  }
-  function onScroll() {
-    if (!scrolly || ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(frame);
-  }
-
-  function setMode() {
-    var want = wide.matches && !reduced;
-    if (want !== scrolly) {
-      scrolly = want;
-      root.classList.toggle('scrolly', scrolly);
-      if (scrolly) {
-        root.classList.remove('paused');
-        scenes.forEach(stopBg);
-        if (down) down.textContent = '↓ Листайте вниз · пропустить к подробностям';
-      } else {
-        root.style.height = '';
-        showTrans(-1);
-        scenes.forEach(function (s) { s.style.removeProperty('--k'); });
-        if (down) down.textContent = downText;
-        show(current);
-      }
-    }
-    if (scrolly) {
-      root.style.height = Math.round(stage.offsetHeight + (N - 1 + HOLD) * unitPx()) + 'px';
-      frame();
-    }
+    startHold((n + N) % N);
   }
 
   // ---------- Управление ----------
-  function setPaused(p) {
-    root.classList.toggle('paused', p);
-    pauseBtn.textContent = p ? '▶' : '❚❚';
-    pauseBtn.setAttribute('aria-label', p ? 'Продолжить' : 'Пауза');
-  }
-  pauseBtn.addEventListener('click', function () { setPaused(!root.classList.contains('paused')); });
+  pauseBtn.addEventListener('click', function () {
+    userPaused = !userPaused;
+    pauseBtn.textContent = userPaused ? '▶' : '❚❚';
+    pauseBtn.setAttribute('aria-label', userPaused ? 'Продолжить' : 'Пауза');
+    sync();
+  });
   document.getElementById('sc-prev').addEventListener('click', function () { go(current - 1); });
   document.getElementById('sc-next').addEventListener('click', function () { go(current + 1); });
   root.querySelectorAll('[data-go="next"]').forEach(function (b) {
@@ -406,38 +414,33 @@ var selectRole = (function () {
   });
 
   document.addEventListener('keydown', function (e) {
-    if (root.classList.contains('offscreen')) return;
-    if (e.target.closest && e.target.closest('#rolebar')) return;
+    if (offscreen) return;
+    if (e.target.closest && e.target.closest('#roles')) return;
     if (e.key === 'ArrowRight') go(current + 1);
     if (e.key === 'ArrowLeft') go(current - 1);
   });
 
-  // Свайп на телефоне
   var x0 = null, y0 = null;
   root.addEventListener('touchstart', function (e) {
     x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
   }, { passive: true });
   root.addEventListener('touchend', function (e) {
-    if (x0 === null || scrolly) { x0 = null; return; }
+    if (x0 === null) return;
     var dx = e.changedTouches[0].clientX - x0;
     var dy = e.changedTouches[0].clientY - y0;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) go(current + (dx < 0 ? 1 : -1));
     x0 = null;
   }, { passive: true });
 
-  // В автопоказе не листаем, когда презентацию не видно
+  // Не крутим фильм, когда презентацию не видно
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (entries) {
-      if (scrolly) return;
-      root.classList.toggle('offscreen', entries[0].intersectionRatio < 0.35);
-    }, { threshold: [0, 0.35, 1] }).observe(root);
+      var off = entries[0].intersectionRatio < 0.3;
+      if (off !== offscreen) { offscreen = off; sync(); }
+    }, { threshold: [0, 0.3, 1] }).observe(root);
   }
+  document.addEventListener('visibilitychange', sync);
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', setMode);
-  if (wide.addEventListener) wide.addEventListener('change', setMode);
-
-  show(0);
-  if (reduced) setPaused(true);
-  setMode();
+  if (reduced) { userPaused = true; pauseBtn.textContent = '▶'; root.classList.add('paused'); }
+  startHold(0);
 })();

@@ -707,3 +707,8 @@ body.pricing .faq summary { color: #fff; }
 body.pricing .faq summary::after { color: rgba(255, 255, 255, .6); }
 body.pricing .bill { background: linear-gradient(160deg, #2c3656, #1b2130); border: 1px solid var(--orange); }
 body.pricing .btn--line { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .35); }
+
+/* ---------- Автоплей презентации: текст уходит на время перехода ---------- */
+.scenes .scene > .wrap { transition: opacity .7s ease; }
+.scenes.text-out .scene > .wrap { opacity: 0; }
+.scenes .scenes__trans video { transition: opacity .3s; }
