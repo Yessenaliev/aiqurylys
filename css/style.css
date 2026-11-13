@@ -680,3 +680,30 @@ body.pricing .plan--free .btn { color: #fff; }
 body.pricing .panel .note { color: var(--muted); }
 body.pricing .bill { background: #232a3a; border: 1px solid rgba(255, 255, 255, .14); }
 body.pricing .foot { border-top: 1px solid rgba(255, 255, 255, .1); }
+
+/* ---------- Страница цен v2: тёмные карточки и кадр в шапке ---------- */
+body.pricing .page-head { padding: 80px 0 44px; background: linear-gradient(0deg, var(--ink) 0%, rgba(19, 23, 32, .55) 60%, rgba(19, 23, 32, .82) 100%), url(../media/scenes/intro.webp) center / cover; }
+body.pricing .page-head h1 { font-size: clamp(32px, 5vw, 56px); color: #fff; text-shadow: 0 2px 24px rgba(0, 0, 0, .5); }
+body.pricing .page-head .lead { color: rgba(255, 255, 255, .88); }
+body.pricing .panel, body.pricing .faq details, body.pricing .plan { background: #1b2130; border-color: rgba(255, 255, 255, .12); color: #f7f5f0; }
+body.pricing .plan b { color: #fff; font-size: clamp(26px, 3.2vw, 38px); }
+body.pricing .plan small { color: #ffb48a; }
+body.pricing .plan i, body.pricing .plan p, body.pricing .panel p, body.pricing .field > p, body.pricing .faq details p, body.pricing .panel .note, body.pricing .list li { color: rgba(255, 255, 255, .74); }
+body.pricing .plan--free { background: linear-gradient(135deg, #2c3656, #1b2130); border-color: var(--orange); }
+body.pricing .plan--free i, body.pricing .plan--free p { color: rgba(255, 255, 255, .82); }
+body.pricing .field h3, body.pricing .panel h3 { color: #fff; }
+body.pricing .field + .field { border-top-color: rgba(255, 255, 255, .1); }
+body.pricing .opt { background: #232a3a; border-color: rgba(255, 255, 255, .2); color: #fff; }
+body.pricing .opt small { color: rgba(255, 255, 255, .6); }
+body.pricing .opt:hover { border-color: rgba(255, 255, 255, .55); }
+body.pricing .opt[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: #fff; }
+body.pricing .opt[aria-pressed="true"] small { color: rgba(255, 255, 255, .88); }
+body.pricing .stepper button { background: #232a3a; border-color: rgba(255, 255, 255, .2); color: #fff; }
+body.pricing .stepper output, body.pricing .switch { color: #fff; }
+body.pricing .tbl th { color: rgba(255, 255, 255, .6); border-bottom-color: rgba(255, 255, 255, .4); }
+body.pricing .tbl td { border-bottom-color: rgba(255, 255, 255, .1); color: rgba(255, 255, 255, .88); }
+body.pricing .tbl tr.on td { background: rgba(240, 93, 18, .2); color: #fff; }
+body.pricing .faq summary { color: #fff; }
+body.pricing .faq summary::after { color: rgba(255, 255, 255, .6); }
+body.pricing .bill { background: linear-gradient(160deg, #2c3656, #1b2130); border: 1px solid var(--orange); }
+body.pricing .btn--line { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .35); }
