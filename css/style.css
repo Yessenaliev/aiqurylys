@@ -721,3 +721,48 @@ body.pricing .btn--line { background: transparent; color: #fff; border-color: rg
 
 /* Раздел заканчивается: текст плавно уходит перед сменой */
 .scenes .scene.ending > .wrap { opacity: 0; }
+
+/* ================= Проёмы здания: арка раскрывается поверх предыдущего раздела ================= */
+.scenes .scene { opacity: 1; visibility: hidden; transition: none; min-height: calc(100vh - 64px); min-height: calc(100svh - 64px); }
+.scenes .scene.is-active, .scenes .scene.leaving { visibility: visible; }
+.scenes .scene.is-active { z-index: 2; }
+.scenes .scene.leaving { z-index: 1; }
+
+/* окно: арка по центру, раскрывается на весь экран */
+.scenes .scene__bg { clip-path: inset(15% 33% 15% 33% round 50vw 50vw 0 0); }
+.scenes .scene.is-active .scene__bg { clip-path: inset(0% 0% 0% 0% round 0 0 0 0); transition: clip-path 1.3s cubic-bezier(.75, 0, .15, 1); }
+.scenes .scene.leaving:not(.is-active) .scene__bg { clip-path: inset(0% 0% 0% 0% round 0 0 0 0); transition: none; }
+.scenes .scene__bg img, .scenes .scene__bg video { transform: scale(1.4); }
+.scenes .scene.is-active .scene__bg img, .scenes .scene.is-active .scene__bg video { transform: scale(1); transition: transform 1.9s cubic-bezier(.2, .7, .2, 1); animation: none; }
+.scenes .scene.leaving:not(.is-active) .scene__bg img, .scenes .scene.leaving:not(.is-active) .scene__bg video { transform: scale(1); }
+@media (max-width: 960px) { .scenes .scene__bg { clip-path: inset(18% 12% 14% 12% round 50vw 50vw 0 0); } }
+
+/* слова названия разъезжаются в стороны */
+.scenes .scene__title.a { opacity: 1 !important; animation: none !important; }
+.scenes .scene .w { display: inline-block; opacity: 0; transform: translateX(-80px); will-change: transform, opacity; }
+.scenes .scene .w.r { transform: translateX(80px); }
+.scenes .scene.is-active .w {
+  opacity: 1; transform: none;
+  transition: transform 1s cubic-bezier(.2, .7, .2, 1) calc(.7s + var(--wd, 0s)), opacity .8s ease calc(.7s + var(--wd, 0s));
+}
+.scenes .scene.ending .w { opacity: 0; transition: transform .6s cubic-bezier(.6, 0, .8, .4), opacity .5s ease; transition-delay: 0s; }
+.scenes .scene.ending .w.l { transform: translateX(-90px); }
+.scenes .scene.ending .w.r { transform: translateX(90px); }
+
+/* остальные элементы текста появляются, когда проём уже почти раскрылся */
+.scenes .scene.is-active .a { animation-delay: calc(var(--d, 0) * 1s + .85s); }
+
+/* крупный номер раздела */
+.scene__num {
+  position: absolute; right: max(20px, 4vw); bottom: 108px; z-index: 1; pointer-events: none;
+  font: 800 clamp(110px, 17vw, 280px)/.8 var(--head); letter-spacing: -.04em;
+  color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, .3);
+  opacity: 0; transform: translateY(70px);
+}
+.scenes .scene.is-active .scene__num { opacity: 1; transform: none; transition: opacity 1s ease .9s, transform 1.3s cubic-bezier(.2, .7, .2, 1) .9s; }
+.scenes .scene.ending .scene__num { opacity: 0; transform: translateY(-40px); transition: opacity .5s ease, transform .6s ease; }
+@media (max-width: 640px) { .scene__num { bottom: 130px; font-size: 40vw; opacity: 0; } }
+
+/* текст не должен прыгать при смене: убираем старые переходы */
+.scenes .scene > .wrap { transition: opacity .5s ease; }
+

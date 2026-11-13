@@ -163,24 +163,24 @@ var selectRole = (function () {
   update();
 })();
 
-// Презентация на первом экране: непрерывный фильм.
-// Каждый раздел — один ролик: он и есть анимация, пока заполняется ползунок раздела.
-// Ролик раздела заканчивается кадром следующего раздела, поэтому, когда ползунок заполнен,
-// сразу начинается следующий раздел — без отдельного перехода и без повторной анимации.
+// Презентация на первом экране: проёмы здания.
+// Каждый раздел открывается как арочный проём, который раскрывается на весь экран поверх предыдущего.
+// Пока играет ролик раздела, заполняется его ползунок; когда он полный, раскрывается следующий раздел.
 (function () {
   var root = document.querySelector('.scenes');
   if (!root) return;
 
   var RATE = 0.8;          // скорость ролика: 5 секунд видео идут 6,25 секунды, успеваешь прочитать
   var FALLBACK_MS = 6250;  // если ролика нет, раздел держится столько
-  var ENDING_S = 0.6;      // за сколько секунд до конца текст раздела плавно уходит
+  var ENDING_S = 0.7;      // за сколько секунд до конца слова разъезжаются и текст уходит
+  var OPEN_MS = 1300;      // сколько раскрывается проём
 
   var scenes = Array.prototype.slice.call(root.querySelectorAll('.scene'));
   var N = scenes.length;
   var dotsBox = document.getElementById('dots');
   var count = document.getElementById('sc-count');
   var pauseBtn = document.getElementById('sc-pause');
-  var current = 0;
+  var current = -1;
   var userPaused = false;
   var offscreen = false;
   var timer = null;
@@ -188,6 +188,37 @@ var selectRole = (function () {
   var fallbackLeft = FALLBACK_MS;
   var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   var portrait = !!(window.matchMedia && window.matchMedia('(max-aspect-ratio: 3/4)').matches);
+
+  // ---------- Оформление текста: слова разъезжаются в стороны, крупный номер раздела ----------
+  function splitWords(node, state) {
+    Array.prototype.slice.call(node.childNodes).forEach(function (c) {
+      if (c.nodeType === 3) {
+        var frag = document.createDocumentFragment();
+        c.textContent.split(/(\s+)/).forEach(function (p) {
+          if (!p) return;
+          if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(' ')); return; }
+          var sp = document.createElement('span');
+          sp.className = 'w ' + (state.n % 2 ? 'r' : 'l');
+          sp.style.setProperty('--wd', (state.n * 0.07).toFixed(2) + 's');
+          sp.textContent = p;
+          state.n++;
+          frag.appendChild(sp);
+        });
+        node.replaceChild(frag, c);
+      } else if (c.nodeType === 1) {
+        splitWords(c, state);
+      }
+    });
+  }
+  scenes.forEach(function (s, i) {
+    var title = s.querySelector('.scene__title');
+    if (title) splitWords(title, { n: 0 });
+    var num = document.createElement('div');
+    num.className = 'scene__num';
+    num.setAttribute('aria-hidden', 'true');
+    num.textContent = (i < 9 ? '0' : '') + (i + 1);
+    s.appendChild(num);
+  });
 
   // ---------- Ползунки-оглавление ----------
   var dots = scenes.map(function (s, i) {
@@ -208,15 +239,12 @@ var selectRole = (function () {
   });
 
   // ---------- Фоны ----------
-  // media/scenes/<имя>.webp|jpg — кадр раздела,
-  // media/scenes/<имя>-to.mp4 — ролик раздела (от его кадра к кадру следующего),
-  // у последнего раздела ролик <имя>.mp4.
-  scenes.forEach(function (s, idx) {
+  // media/scenes/<имя>.webp|jpg — кадр раздела, media/scenes/<имя>.mp4 — его ролик.
+  scenes.forEach(function (s) {
     var name = s.dataset.bg;
     if (!name) return;
     var variants = portrait ? [name + '-m', name] : [name];
     var exts = ['.webp', '.jpg'];
-    var tail = idx < N - 1 ? '-to' : '';
 
     function attempt(k, e) {
       if (k >= variants.length) return;
@@ -233,7 +261,7 @@ var selectRole = (function () {
         var v = document.createElement('video');
         v.muted = true; v.playsInline = true; v.preload = 'none'; v.loop = false;
         v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
-        v.dataset.src = base + tail + '.mp4';
+        v.dataset.src = base + '.mp4';
         v.addEventListener('error', function () { v.remove(); });
         v.addEventListener('loadeddata', function () { v.classList.add('on'); });
         bg.appendChild(v);
@@ -253,32 +281,48 @@ var selectRole = (function () {
     var v = bgVideo(i);
     if (v && !v.getAttribute('src')) { v.preload = 'auto'; v.src = v.dataset.src; }
   }
-  function pauseAll() {
-    scenes.forEach(function (s, i) { var v = bgVideo(i); if (v && v.getAttribute('src')) v.pause(); });
+  function pauseAll(except) {
+    scenes.forEach(function (s, i) {
+      var v = bgVideo(i);
+      if (v && v.getAttribute('src') && i !== except) v.pause();
+    });
   }
 
   // ---------- Состояние ----------
   function suspended() { return userPaused || offscreen || document.hidden || reduced; }
 
   function show(n) {
+    var prev = current;
     current = n;
     scenes.forEach(function (s, i) {
-      var on = i === current;
+      var on = i === n;
+      if (on) {
+        s.classList.remove('leaving', 'ending');
+      } else if (s.classList.contains('is-active')) {
+        // уходящий раздел остаётся под раскрывающимся проёмом
+        s.classList.add('leaving');
+        setTimeout(function () {
+          if (!s.classList.contains('is-active')) s.classList.remove('leaving', 'ending');
+        }, OPEN_MS + 150);
+      }
       s.classList.toggle('is-active', on);
-      s.classList.remove('ending');
       if (on) s.removeAttribute('aria-hidden'); else s.setAttribute('aria-hidden', 'true');
       dots[i].setAttribute('aria-selected', on ? 'true' : 'false');
-      dots[i].classList.toggle('done', i < current);
-      if (i !== current) dots[i].style.removeProperty('--p');
+      dots[i].classList.toggle('done', i < n);
+      if (!on) dots[i].style.removeProperty('--p');
     });
-    dots[current].style.setProperty('--p', 0);
-    count.textContent = (current + 1) + ' / ' + N;
+    dots[n].style.setProperty('--p', 0);
+    count.textContent = (n + 1) + ' / ' + N;
+    return prev;
   }
 
   function startSection(i) {
     clearInterval(timer);
-    pauseAll();
+    // Если раздел уже на экране и мы вернулись к нему — сначала снимаем состояние «уходит»
+    var v0 = bgVideo(current);
+    if (v0 && v0.getAttribute('src') && current !== i) { /* ролик уходящего раздела доигрывать не нужно, он остаётся кадром */ v0.pause(); }
     show(i);
+    pauseAll(i);
     warm(i + 1);
     fallbackLeft = FALLBACK_MS;
     if (!suspended()) run(true);
@@ -380,5 +424,6 @@ var selectRole = (function () {
   document.addEventListener('visibilitychange', sync);
 
   if (reduced) { userPaused = true; pauseBtn.textContent = '▶'; root.classList.add('paused'); }
-  startSection(0);
+  // Небольшая пауза, чтобы страница успела отрисоваться и первый проём раскрылся плавно
+  setTimeout(function () { startSection(0); }, 250);
 })();
