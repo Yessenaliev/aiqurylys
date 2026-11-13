@@ -88,6 +88,13 @@ var selectRole = (function () {
     var node = mockFor(info[3]);
     if (node) mockBox.appendChild(node);
     if (exBtn) exBtn.hidden = role !== 'pto';
+    // Кнопка «Посмотреть кабинет»: открывает образец кабинета глазами выбранной роли
+    var cab = document.getElementById('show-cabinet');
+    if (cab) {
+      var CAB = { director: 'director', manager: 'manager', lawyer: 'lawyer', marketer: 'marketer', gip: 'gip', pto: 'pto', supply: 'supply', site: 'chief', foreman: 'foreman', fin: 'fin' };
+      cab.href = 'cabinet-prototype.html?role=' + (CAB[role] || 'director');
+      cab.textContent = role === 'all' ? 'Посмотреть кабинет →' : 'Посмотреть кабинет: ' + info[0].split(' — ')[0] + ' →';
+    }
     if (example && role !== 'pto') example.hidden = true;
   }
 

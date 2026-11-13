@@ -115,7 +115,7 @@
 </style>
 </head>
 <body>
-<div class="banner" id="banner"><span><b>Тестовый образец.</b> Выберите, кем вы работаете:</span><div class="roles" id="roles"></div><span id="rnote" style="font-size:12px;opacity:.8"></span></div>
+<div class="banner" id="banner"><a href="index.html#roles" style="color:#ffb48a;font-weight:700;text-decoration:none">← На сайт</a><span><b>Тестовый образец.</b> Выберите, кем вы работаете:</span><div class="roles" id="roles"></div><span id="rnote" style="font-size:12px;opacity:.8"></span></div>
 
 <div class="shell" id="shell"><div class="app">
   <header class="top">
@@ -473,7 +473,9 @@
   window.addEventListener('hashchange', route);
   // для проверки ссылок
   window.__aq = { roles: ORDER, setRole: setRole, find: function (r, k) { var o = role; role = k; var f = !!find(r); role = o; return f; }, hrefs: function () { return [].map.call(document.querySelectorAll('a[href^="#/"]'), function (a) { return a.getAttribute('href').slice(2); }); } };
-  fit(); setRole('director');
+  var qr = '';
+  try { qr = new URLSearchParams(location.search).get('role') || ''; } catch (e) {}
+  fit(); setRole(ROLES[qr] ? qr : 'director');
 })();
 </script>
 </body>
