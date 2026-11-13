@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кабинет AIQurylys — тестовый образец</title>
+<style>
+  :root { --bg:#f6f6f4; --card:#fff; --ink:#15181e; --muted:#667085; --line:#e3e3df; --soft:#efefeb; --acc:#15181e; --accInk:#fff; --mark:#e8590c; --markSoft:#fdebdd; --blue:#1f4e96; --blueSoft:#e7eefa; --ok:#0f7a4d; --okSoft:#e4f4ec; --shadow:0 10px 30px rgba(0,0,0,.12); }
+  :root[data-theme="dark"] { --bg:#101319; --card:#171b23; --ink:#eef0f4; --muted:#9aa3b2; --line:#2a303b; --soft:#1e232d; --acc:#eef0f4; --accInk:#101319; --markSoft:#3a2316; --blue:#8db4f0; --blueSoft:#1d2a42; --okSoft:#14301f; --shadow:0 10px 30px rgba(0,0,0,.5); }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body { margin:0; font:15px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--bg); }
+  button { font:inherit; color:inherit; cursor:pointer; }
+  a { color:inherit; }
+  .banner { background:var(--ink); color:var(--bg); font-size:13px; padding:7px 14px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .banner b { color:#ffb48a; }
+  .banner select { font:inherit; padding:3px 8px; border-radius:6px; border:0; }
+  .app { display:grid; grid-template-columns:248px 1fr; grid-template-rows:56px 1fr; height:calc(100% - 38px); }
+  .top { grid-column:1/3; display:flex; align-items:center; gap:10px; padding:0 16px; background:var(--card); border-bottom:1px solid var(--line); position:relative; z-index:20; }
+  .logo { font-weight:800; font-size:17px; letter-spacing:-.02em; margin-right:6px; text-decoration:none; }
+  .logo i { font-style:normal; color:var(--mark); }
+  .ask { flex:1; max-width:560px; display:flex; align-items:center; gap:10px; background:var(--soft); border:1px solid var(--line); border-radius:10px; padding:8px 12px; color:var(--muted); text-align:left; }
+  .ask kbd { margin-left:auto; font:12px Consolas,monospace; border:1px solid var(--line); border-radius:5px; padding:1px 6px; background:var(--card); }
+  .btn { display:inline-flex; align-items:center; gap:8px; min-height:38px; padding:8px 14px; border-radius:10px; border:1px solid var(--line); background:var(--card); font-weight:600; text-decoration:none; }
+  .btn.pri { background:var(--acc); color:var(--accInk); border-color:var(--acc); }
+  .icon { width:38px; height:38px; justify-content:center; padding:0; position:relative; }
+  .dot { position:absolute; top:5px; right:5px; min-width:16px; height:16px; border-radius:8px; background:var(--mark); color:#fff; font-size:11px; line-height:16px; text-align:center; padding:0 4px; }
+  .burger { display:none; }
+  .side { background:var(--card); border-right:1px solid var(--line); padding:12px; overflow-y:auto; display:flex; flex-direction:column; }
+  .side .grp { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:16px 8px 6px; }
+  .nav { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:9px 10px; border-radius:9px; text-decoration:none; font-weight:500; }
+  .nav:hover { background:var(--soft); }
+  .nav.on { background:var(--acc); color:var(--accInk); }
+  .nav small { font-size:11px; color:var(--muted); }
+  .nav.on small { color:inherit; opacity:.7; }
+  .tariff { margin-top:auto; border:1px solid var(--line); border-radius:12px; padding:12px; font-size:13px; background:var(--soft); }
+  .tariff .bar { height:6px; background:var(--line); border-radius:4px; margin:8px 0; overflow:hidden; }
+  .tariff .bar i { display:block; height:100%; width:0%; background:var(--mark); }
+  main { overflow-y:auto; padding:26px 30px 60px; }
+  .crumbs { font-size:13px; color:var(--muted); margin-bottom:8px; }
+  h1 { font-size:26px; margin:0 0 4px; letter-spacing:-.01em; }
+  h2 { font-size:17px; margin:0 0 10px; }
+  .lead { color:var(--muted); margin:0 0 16px; max-width:720px; }
+  .tabs { display:flex; gap:4px; border-bottom:1px solid var(--line); margin:14px 0 20px; flex-wrap:wrap; }
+  .tab { padding:9px 14px; border:0; background:none; border-bottom:2px solid transparent; color:var(--muted); font-weight:600; text-decoration:none; margin-bottom:-1px; }
+  .tab:hover { color:var(--ink); }
+  .tab.on { color:var(--ink); border-bottom-color:var(--mark); }
+  .grid { display:grid; gap:14px; }
+  .g4 { grid-template-columns:repeat(4,1fr); } .g2 { grid-template-columns:1.5fr 1fr; } .g3 { grid-template-columns:repeat(3,1fr); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .kpi b { display:block; font-size:28px; letter-spacing:-.02em; }
+  .kpi span { font-size:13px; color:var(--muted); }
+  .empty { text-align:center; padding:26px 10px; color:var(--muted); }
+  .quick { display:grid; gap:6px; }
+  .quick a { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; text-decoration:none; background:var(--card); }
+  .quick a:hover { border-color:var(--ink); }
+  .quick small { display:block; color:var(--muted); font-size:12px; }
+  .chip { display:inline-block; font-size:12px; font-weight:600; padding:2px 9px; border-radius:6px; background:var(--blueSoft); color:var(--blue); }
+  .chip.o { background:var(--markSoft); color:var(--mark); } .chip.g { background:var(--okSoft); color:var(--ok); }
+  .docs { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .docs a { border:1px solid var(--line); border-radius:12px; padding:12px; text-decoration:none; background:var(--card); }
+  .docs a:hover { border-color:var(--ink); }
+  .docs b { display:block; margin-bottom:2px; } .docs span { font-size:13px; color:var(--muted); }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); padding:8px 10px; border-bottom:1px solid var(--line); }
+  td { padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .list { margin:0; padding-left:18px; } .list li { margin:3px 0; }
+  .pop { position:absolute; background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); padding:8px; min-width:250px; z-index:40; display:none; max-height:78vh; overflow:auto; }
+  .pop.open { display:block; }
+  .pop .ph { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:8px 10px 4px; }
+  .pop a, .pop button.it { display:block; width:100%; text-align:left; padding:8px 10px; border-radius:8px; border:0; background:none; text-decoration:none; }
+  .pop a:hover, .pop button.it:hover { background:var(--soft); }
+  .pop small { display:block; color:var(--muted); font-size:12px; }
+  .create-pop { width:min(720px, 92vw); columns:2; column-gap:6px; }
+  .create-pop .col { break-inside:avoid; }
+  .overlay { position:fixed; inset:0; background:rgba(10,12,16,.5); display:none; align-items:flex-start; justify-content:center; padding-top:12vh; z-index:60; }
+  .overlay.open { display:flex; }
+  .palette { width:min(640px, 94vw); background:var(--card); border-radius:16px; box-shadow:var(--shadow); overflow:hidden; }
+  .palette input { width:100%; border:0; border-bottom:1px solid var(--line); padding:16px 18px; font:inherit; font-size:17px; background:transparent; color:var(--ink); outline:none; }
+  .palette .res { max-height:52vh; overflow:auto; padding:6px; }
+  .palette .res a { display:flex; justify-content:space-between; gap:12px; padding:9px 12px; border-radius:9px; text-decoration:none; }
+  .palette .res a.sel, .palette .res a:hover { background:var(--soft); }
+  .palette .res small { color:var(--muted); }
+  .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:10px 16px; border-radius:10px; z-index:80; display:none; max-width:90vw; }
+  .toast.on { display:block; }
+  @media (max-width:900px) {
+    .app { grid-template-columns:1fr; }
+    .side { position:fixed; left:0; top:94px; bottom:0; width:270px; z-index:30; transform:translateX(-100%); transition:transform .2s; box-shadow:var(--shadow); }
+    .side.open { transform:none; }
+    .burger { display:inline-flex; }
+    .g4 { grid-template-columns:1fr 1fr; } .g2, .g3 { grid-template-columns:1fr; } .docs { grid-template-columns:1fr 1fr; }
+    main { padding:18px 16px 60px; } .ask span.t { display:none; } .create-pop { columns:1; }
+    .hide-m { display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="banner"><span><b>Тестовый образец.</b> Навигация и структура пересобраны; рабочие экраны открываются в действующем кабинете ↗</span><span>Смотреть как:</span>
+  <select id="role" aria-label="Роль"></select></div>
+
+<div class="app">
+  <header class="top">
+    <button class="btn icon burger" id="burger" aria-label="Меню">☰</button>
+    <a class="logo" href="#/home/today"><i>AI</i>Qurylys</a>
+    <button class="ask" id="askBtn"><span>🔍</span><span class="t">Спросить или найти…</span><kbd>Ctrl K</kbd></button>
+    <span style="flex:1"></span>
+    <button class="btn pri" id="createBtn">＋ <span class="hide-m">Создать</span></button>
+    <button class="btn icon" id="bellBtn" aria-label="Уведомления">🔔<span class="dot">1</span></button>
+    <button class="btn icon" id="helpBtn" aria-label="Помощь">?</button>
+    <button class="btn" id="profBtn"><b id="avatar">Y</b> <span class="hide-m" id="uname">Yessenaliev</span> ▾</button>
+
+    <div class="pop create-pop" id="createPop" style="right:140px;top:54px"></div>
+    <div class="pop" id="bellPop" style="right:100px;top:54px"></div>
+    <div class="pop" id="helpPop" style="right:60px;top:54px"></div>
+    <div class="pop" id="profPop" style="right:12px;top:54px"></div>
+  </header>
+  <aside class="side" id="side"></aside>
+  <main id="main"></main>
+</div>
+
+<div class="overlay" id="pal"><div class="palette"><input id="palIn" placeholder="Что нужно сделать? Например: акт, смета, договор" autocomplete="off"><div class="res" id="palRes"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var BASE = 'https://ai-qurylys.kz';
+
+  // ----- Роли: что каждая видит (по данным страницы «Ещё → Доступ по должностям») -----
+  var ROLES = {
+    owner:   { n: 'Владелец',           p: 'ALL', company: true },
+    manager: { n: 'Руководитель',       p: 'ALL' },
+    chief:   { n: 'Начальник участка',  p: ['projects','documents','files','site','master','equipment'] },
+    foreman: { n: 'Прораб/Мастер',      p: ['projects','master','equipment'] },
+    pto:     { n: 'ПТО / сметчик',      p: ['projects','documents','files','estimate','volume'] },
+    staff:   { n: 'Сотрудник',          p: ['projects','master','equipment'] },
+    lawyer:  { n: 'Юрист',              p: ['projects','documents','files','legal'] },
+    supply:  { n: 'Снабженец',          p: ['projects','supplier','equipment'] },
+    arch:    { n: 'Архитектор',         p: ['projects','architect'] }
+  };
+
+  // ----- Разделы и вкладки: каждая нынешняя страница есть, у каждой указано «где было раньше» -----
+  var SEC = [
+    { id:'home', t:'Главная', tabs:[
+      { id:'today', t:'Сегодня', need:'*', home:true, was:'Главная «/» и «/welcome» — теперь один адрес' },
+      { id:'summary', t:'Сводка по компании', need:'summary', url:'/summary', d:'Деньги, сроки и отставания по всем проектам.', was:'Ещё → Сводка по компании' } ] },
+    { id:'projects', t:'Проекты', tabs:[
+      { id:'list', t:'Проекты', need:'projects', url:'/projects', d:'Адреса, стороны договора и папки документов. Кнопка «Новый проект» здесь одна.', was:'Меню «Проекты» · Ещё → Проекты компании · «Завести проект» · «Добавить проект»' },
+      { id:'files', t:'Файлы', need:'files', url:'/documents/files', d:'Альбомы, сметы, договоры и акты по разделам, версии и загрузка.', was:'Ещё → Файлы проекта' } ] },
+    { id:'tasks', t:'Задачи', tabs:[
+      { id:'mine', t:'Мои', need:'*', url:'/my', d:'Поручения, сроки и отметки о сдаче.', was:'Меню «Задачи» · Ещё → Мои задачи' },
+      { id:'issued', t:'Выданные', need:'*', url:'/my?t=issued&issue=1', d:'Задание прорабу или мастеру: кому, что, к какому сроку — придёт в бот.', was:'Создать → Площадка → Задание прорабу или мастеру' } ] },
+    { id:'calc', t:'Расчёты', group:'Работа', tabs:[
+      { id:'est', t:'Расчёт себестоимости', need:'estimate', url:'/estimate/generate', d:'Объёмы и цены по чертежам проекта, книга Excel.', was:'Ещё → Себестоимость (заголовок страницы «Себестоимость»)' },
+      { id:'check', t:'Проверка сметы', need:'estimate', url:'/estimate', d:'Арифметика, итоги и типовые ошибки готовой сметы. Раньше называлась так же, как расчёт — «Себестоимость».', was:'Главная → «Проверить смету» · страница с заголовком «Себестоимость»' },
+      { id:'offer', t:'Коммерческое предложение', need:'estimate', url:'/estimate/offers', d:'Из сохранённого расчёта: наценка и версии.', was:'Только Создать → Расчёты и проверки' },
+      { id:'vol', t:'Проверка объёмов', need:'volume', url:'/volume-check', d:'Акт подрядчика: объёмы против проекта или договора.', was:'Ещё → Проверка объёмов работ' },
+      { id:'vcmp', t:'Предложение подрядчика', need:'volume', url:'/volume-check/offer', d:'Что лишнее и чего не хватает в предложении подрядчика.', was:'Только Создать → Расчёты и проверки' } ] },
+    { id:'docs', t:'Документы', group:'Работа', tabs:[
+      { id:'new', t:'Новый документ', need:'documents', url:'/documents', docs:true, d:'Акты и пакеты по формам РК. Выберите вид — реквизиты подставятся сами.', was:'Ещё → Документооборот · Создать → Документы' },
+      { id:'made', t:'Сделанные', need:'documents', url:'/documents?view=made', d:'История документов компании.', was:'Создать → Готовые документы' } ] },
+    { id:'site', t:'Площадка', group:'Работа', tabs:[
+      { id:'chief', t:'Начальник участка', need:'site', url:'/site-chief/workspace', d:'Что сделать сегодня, график работ по прорабам и склад проекта.', was:'Ещё → Начальник участка' },
+      { id:'plan', t:'График и выдача работ', need:'site', url:'/site-chief', d:'График проекта из расчёта или вручную; выдача работ прорабам в Telegram.', was:'Только Создать → Площадка' },
+      { id:'master', t:'Прораб/Мастер', need:'master', url:'/master', d:'Мои работы по графику, объём за день, отчёт и наряд-задание.', was:'Ещё → Прораб/Мастер участка' },
+      { id:'norms', t:'Нормы расхода', need:'master', url:'/master/materials', d:'Сколько материала уходит на объём работ.', was:'Только Создать → Площадка' },
+      { id:'tech', t:'Техника', need:'equipment', url:'/equipment', d:'Парк техники, наработка, обслуживание, доходы и расходы.', was:'Ещё → Реестр техники' } ] },
+    { id:'money', t:'Деньги и снабжение', group:'Работа', tabs:[
+      { id:'fin', t:'Финансовый отчёт', need:'finance', url:'/finance', d:'Расходы, поступления и баланс по любому проекту, план и налоги.', was:'Ещё → Финансовый отчёт' },
+      { id:'budget', t:'Бюджет проекта', need:'finance', url:'/finance/budget', d:'План, факт, обязательства и остаток.', was:'Только Создать → Деньги и снабжение' },
+      { id:'sup', t:'Снабженец: сегодня', need:'supplier', url:'/supplier/panel', d:'Цены материалов, поставщики, подрядчики и торги.', was:'Ещё → Снабженец' },
+      { id:'price', t:'Цена материала', need:'supplier', url:'/supplier', d:'Все цены по позиции со ссылками.', was:'Главная → «Узнать цену материалов»' },
+      { id:'out', t:'Запросы поставщикам', need:'supplier', url:'/supplier/outreach', d:'Письма поставщикам и ответы в одной таблице.', was:'Только Создать → Деньги и снабжение' },
+      { id:'subs', t:'Подрядчики', need:'supplier', url:'/subcontractors', d:'Реестр по видам работ и запрос предложений.', was:'Только Создать → Деньги и снабжение' } ] },
+    { id:'legal', t:'Договоры', group:'Работа', tabs:[
+      { id:'contracts', t:'Договоры', need:'legal', url:'/legal', d:'Договор и приложения из реквизитов компании.', was:'Ещё → Юрист' },
+      { id:'review', t:'Проверка договора', need:'legal', url:'/legal/review', d:'Риски и спорные пункты присланного договора.', was:'Только Создать → Договоры и письма' },
+      { id:'letter', t:'Письма и претензии', need:'legal', url:'/legal/letter', d:'Официальное письмо по проекту или договору.', was:'Только Создать → Договоры и письма' },
+      { id:'chat', t:'Вопрос юристу', need:'legal', url:'/legal/chat', d:'Ответ со ссылкой на пункт договора и закон.', was:'Только Создать → Договоры и письма' } ] },
+    { id:'sales', t:'Тендеры и проекты', group:'Работа', tabs:[
+      { id:'tender', t:'Тендеры', need:'tender', url:'/marketing/tender', d:'Лента закупок, разбор объявления, требования к участнику.', was:'Ещё → Тендеры и закупки' },
+      { id:'passport', t:'Паспорт компании', need:'tender', url:'/marketing/tender/passport', d:'Данные компании для заявок — из ваших документов.', was:'Внутри «Тендеры и закупки»' },
+      { id:'demand', t:'Спрос по рынку', need:'tender', url:'/marketing/demand', d:'Какие проекты брать.', was:'Внутри «Тендеры и закупки»' },
+      { id:'concept', t:'Концепт проекта', need:'architect', url:'/architect', d:'Участок, планы, фасады, генплан и стоимость.', was:'Ещё → Архитектор' } ] },
+    { id:'company', t:'Компания', group:'Компания (видит владелец)', owner:true, tabs:[
+      { id:'team', t:'Сотрудники и доступ', need:'*', url:'/team', d:'Приглашения, должности и разделы людей. Сюда объединены «Список разделов» и «Доступ по должностям».', was:'Ещё → Сотрудники и доступ · Список разделов («Убрать лишние») · Доступ по должностям', access:true },
+      { id:'req', t:'Реквизиты', need:'*', url:'/settings/company', d:'Реквизиты для договоров, актов и тендеров; паспорт компании.', was:'Ещё → Реквизиты компании' },
+      { id:'drive', t:'Google Диск', need:'*', url:'/settings/drive', d:'Папки проектов, ночной поиск новых файлов.', was:'Ещё → Google Диск' },
+      { id:'tariff', t:'Тариф', need:'*', url:'/usage', url2:'/upgrade', d:'Доля предела и срок продления; цена для своей компании и заявка. Одна страница вместо четырёх входов.', was:'«Подключить тариф» · Тарифный пакет · Улучшить план · блок «Расчётов в пакете»' } ] }
+  ];
+
+  var DOCS = [
+    ['Акт приёмки выполненных работ (2В)','С начала строительства и за период','/documents/create-2v'],
+    ['Акт выполненных работ (Р-1) и счёт','Пакет на оплату','/documents/create-payment-package'],
+    ['Пакет для оплаты в Excel','Акт 2В, справка об объёмах и справка о стоимости','/documents/create-avr'],
+    ['Акт скрытых работ','Освидетельствование перед закрытием работ','/documents/create'],
+    ['Пакет актов скрытых работ','Несколько актов по работам проекта сразу','/documents/create-batch'],
+    ['Акт приёмки объекта или этапа','Комиссия, что принято, замечания','/documents/create-acceptance'],
+    ['Схема площадей отделки','Пол, стены, потолки по помещениям — ведомостью','/documents/area-scheme'],
+    ['Дефектный акт','Что не так, где и к какому сроку исправить','/documents/create-defect-act'],
+    ['Акт простоя','Техники или рабочих: защищает деньги и сроки','/documents/create-downtime'],
+    ['Все виды документов','140 видов по этапам строительства и разделам ПСД','/documents']
+  ];
+
+  // Каталог «Создать»: те же 33 действия, что и сейчас; r = вкладка в новой структуре
+  var CREATE = [
+    ['Документы', [
+      ['Акт приёмки выполненных работ (2В)','С начала строительства и за период','documents','docs/new'],
+      ['Акт выполненных работ (Р-1) и счёт','Пакет на оплату','documents','docs/new'],
+      ['Пакет для оплаты в Excel','Акт 2В, справки об объёмах и стоимости','documents','docs/new'],
+      ['Акт скрытых работ','Освидетельствование перед закрытием работ','documents','docs/new'],
+      ['Пакет актов скрытых работ','Несколько актов сразу','documents','docs/new'],
+      ['Акт приёмки объекта или этапа','Комиссия, что принято, замечания','documents','docs/new'],
+      ['Схема площадей отделки','Пол, стены, потолки по помещениям','documents','docs/new'],
+      ['Дефектный акт','Что не так, где и к какому сроку исправить','documents','docs/new'],
+      ['Акт простоя','Техники или рабочих','documents','docs/new'],
+      ['Все виды документов','140 видов по этапам строительства','documents','docs/new'] ]],
+    ['Расчёты и проверки', [
+      ['Расчёт себестоимости','Объёмы и цены по чертежам, книга Excel','estimate','calc/est'],
+      ['Проверить смету','Арифметика, итоги и типовые ошибки','estimate','calc/check'],
+      ['Коммерческое предложение','Из сохранённого расчёта: наценка и версии','estimate','calc/offer'],
+      ['Проверить акт подрядчика','Объёмы против проекта или договора','volume','calc/vol'],
+      ['Сравнить предложение подрядчика с проектом','Что лишнее, чего не хватает','volume','calc/vcmp'] ]],
+    ['Площадка', [
+      ['Внести объём за день','Выполненные работы по проекту','master','site/master'],
+      ['Задание прорабу или мастеру','Кому, что, к какому сроку — придёт в бот','*','tasks/issued'],
+      ['График работ','График проекта из расчёта или вручную','site','site/plan'],
+      ['Выдать работы прорабам и мастерам','Работа из графика — прорабу в Telegram','site','site/plan'],
+      ['Нормы расхода материалов','Сколько материала уходит на объём работ','master','site/norms'],
+      ['Запись по технике','Наработка, обслуживание, доходы и расходы','equipment','site/tech'] ]],
+    ['Договоры и письма', [
+      ['Договор','Договор и приложения из реквизитов компании','legal','legal/contracts'],
+      ['Проверить договор','Риски и спорные пункты присланного договора','legal','legal/review'],
+      ['Письмо или претензия','Официальное письмо по проекту или договору','legal','legal/letter'],
+      ['Вопрос юристу','Ответ со ссылкой на пункт договора и закон','legal','legal/chat'] ]],
+    ['Деньги и снабжение', [
+      ['Узнать цену материала','Все цены по позиции со ссылками','supplier','money/price'],
+      ['Запрос цен поставщикам','Письма поставщикам и ответы в одной таблице','supplier','money/out'],
+      ['Найти подрядчика','Реестр по видам работ и запрос предложений','supplier','money/subs'],
+      ['Бюджет проекта','План, факт, обязательства и остаток','finance','money/budget'],
+      ['Финансовый отчёт','Расходы, поступления и баланс проекта','finance','money/fin'] ]],
+    ['Проектирование и продажи', [
+      ['Концепт проекта','Участок, планы, фасады и стоимость','architect','sales/concept'],
+      ['Разобрать тендер','Требования к участнику против паспорта компании','tender','sales/tender'] ]],
+    ['Проект', [
+      ['Новый проект','Адрес, стороны договора, папка документов','projects','projects/list'] ]]
+  ];
+
+  var ACCESS = [
+    ['Руководитель','Сводка, проекты, документы, файлы, юрист, себестоимость, объёмы, финансы, снабжение, площадка, техника, архитектор, тендеры'],
+    ['Начальник участка','Проекты, документы, файлы, начальник участка, прораб/мастер, техника'],
+    ['Прораб/Мастер','Проекты, прораб/мастер, техника'],
+    ['ПТО / сметчик','Проекты, документы, файлы, себестоимость, проверка объёмов'],
+    ['Сотрудник','Проекты, прораб/мастер, техника'],
+    ['Юрист','Проекты, документы, файлы, юрист'],
+    ['Снабженец','Проекты, снабженец, техника'],
+    ['Архитектор','Проекты, архитектор']
+  ];
+
+  var QUICK = [['Рассчитать себестоимость','Объёмы и цены по чертежам','calc/est','estimate'],['Проверить смету','Арифметика, итоги, ошибки','calc/check','estimate'],['Сверить объёмы','Акт подрядчика против проекта','calc/vol','volume'],['Оформить документ','Акты по формам РК','docs/new','documents'],['Подготовить договор','Договор из реквизитов','legal/contracts','legal'],['Узнать цену материала','Цены со ссылками','money/price','supplier']];
+
+  var role = 'owner';
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); };
+
+  function can(need) {
+    var r = ROLES[role];
+    return need === '*' || r.p === 'ALL' || r.p.indexOf(need) !== -1;
+  }
+  function tabsOf(s) { return s.tabs.filter(function (t) { return can(t.need); }); }
+  function secs() { return SEC.filter(function (s) { return (!s.owner || ROLES[role].company) && tabsOf(s).length; }); }
+  function find(r) {
+    var p = (r || '').split('/');
+    var s = SEC.filter(function (x) { return x.id === p[0]; })[0];
+    if (!s) return null;
+    var t = s.tabs.filter(function (x) { return x.id === p[1]; })[0] || tabsOf(s)[0];
+    return t ? { s: s, t: t } : null;
+  }
+
+  // ----- Меню -----
+  function renderSide(cur) {
+    var h = '', lastG = null;
+    secs().forEach(function (s) {
+      if (s.group !== lastG) { lastG = s.group; if (s.group) h += '<div class="grp">' + esc(s.group) + '</div>'; }
+      var n = tabsOf(s).length;
+      h += '<a class="nav' + (cur && cur.s.id === s.id ? ' on' : '') + '" href="#/' + s.id + '/' + tabsOf(s)[0].id + '"><span>' + esc(s.t) + '</span>' + (n > 1 ? '<small>' + n + '</small>' : '') + '</a>';
+    });
+    if (ROLES[role].company) h += '<div class="tariff"><b>Расчётов в пакете 0/1</b><div class="bar"><i></i></div>Пробный доступ 0 %<br><a class="btn pri" style="margin-top:8px" href="#/company/tariff">Подключить тариф</a></div>';
+    $('side').innerHTML = h;
+  }
+
+  function popCreate() {
+    var h = '';
+    CREATE.forEach(function (g) {
+      var items = g[1].filter(function (i) { return can(i[2]); });
+      if (!items.length) return;
+      h += '<div class="col"><div class="ph">' + esc(g[0]) + '</div>';
+      items.forEach(function (i) { h += '<a href="#/' + i[3] + '" data-close>' + esc(i[0]) + '<small>' + esc(i[1]) + '</small></a>'; });
+      h += '</div>';
+    });
+    $('createPop').innerHTML = h;
+  }
+  function popOthers() {
+    $('bellPop').innerHTML = '<div class="ph">Уведомления</div><div class="empty" style="padding:14px">Новых уведомлений нет</div><a href="' + BASE + '/settings?tab=notifications" target="_blank" rel="noopener">Настроить уведомления ↗</a>';
+    $('helpPop').innerHTML = '<div class="ph">Помощь</div><a href="' + BASE + '/handbook" target="_blank" rel="noopener">Как пользоваться AIQurylys<small>Статьи, словарь, чек-листы и курсы по ролям</small></a><a href="' + BASE + '/handbook" target="_blank" rel="noopener">Мне нужен АОСР</a><a href="' + BASE + '/handbook" target="_blank" rel="noopener">Что нужно для тендера?</a><div class="ph">Один вход вместо трёх: FAQ был в верхней панели и дважды в «Ещё»</div>';
+    $('profPop').innerHTML = '<div class="ph">' + esc(ROLES[role].n) + ' · Yessenaliev</div>' +
+      '<a href="' + BASE + '/settings" target="_blank" rel="noopener">Профиль и вход<small>Имя, почта, пароль</small></a>' +
+      '<a href="' + BASE + '/settings?tab=notifications" target="_blank" rel="noopener">Уведомления</a>' +
+      '<a href="' + BASE + '/support" target="_blank" rel="noopener">Поддержка<small>Новое обращение и мои обращения — одна страница</small></a>' +
+      '<a href="https://t.me/AIQurylys_Bot" target="_blank" rel="noopener">Telegram-бот<small>Задачи и отчёты с телефона</small></a>' +
+      '<button class="it" id="themeBtn">Тема: ' + (document.documentElement.dataset.theme === 'dark' ? 'ночь' : 'день') + '</button>' +
+      '<button class="it" data-toast="Язык: в образце переключение не работает">Язык: Рус / Қаз</button>' +
+      '<button class="it" data-toast="Выход в образце отключён">Выйти</button>';
+    $('themeBtn').onclick = function () { document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? '' : 'dark'; popOthers(); };
+  }
+
+  // ----- Экраны -----
+  function view(r) {
+    var cur = find(r) || find('home/today');
+    if (!cur) cur = find('home/today');
+    var s = cur.s, t = cur.t;
+    renderSide(cur);
+    document.title = t.t + (s.id === 'home' ? '' : ' — ' + s.t) + ' — AIQurylys';
+    var h = '<div class="crumbs">' + (s.id === 'home' ? 'Кабинет' : esc(s.t)) + ' / ' + esc(t.t) + '</div><h1>' + esc(s.id === 'home' ? 'Главная' : t.t) + '</h1>';
+    var ts = tabsOf(s);
+    if (ts.length > 1) {
+      h += '<div class="tabs">' + ts.map(function (x) { return '<a class="tab' + (x.id === t.id ? ' on' : '') + '" href="#/' + s.id + '/' + x.id + '">' + esc(x.t) + '</a>'; }).join('') + '</div>';
+    }
+    if (t.home) h += home();
+    else {
+      h += '<p class="lead">' + esc(t.d) + '</p>';
+      h += '<div class="grid g2"><div class="card">';
+      if (t.docs) {
+        h += '<h2>Выберите вид документа</h2><div class="docs">' + DOCS.map(function (d) { return '<a href="' + BASE + d[2] + '" target="_blank" rel="noopener"><b>' + esc(d[0]) + '</b><span>' + esc(d[1]) + '</span></a>'; }).join('') + '</div>';
+      } else if (t.access) {
+        h += '<h2>Доступ по должностям</h2><p class="lead" style="margin-bottom:8px">Раньше этот список был внизу страницы «Ещё». Деньги компании и сотрудники видит только владелец.</p><table><tr><th>Должность</th><th>Видит</th></tr>' + ACCESS.map(function (a) { return '<tr><td><b>' + esc(a[0]) + '</b></td><td>' + esc(a[1]) + '</td></tr>'; }).join('') + '</table>' +
+          '<p style="margin-top:12px"><a class="btn" href="' + BASE + '/team" target="_blank" rel="noopener">Приглашения и должности ↗</a> <a class="btn" href="' + BASE + '/settings?tab=menu" target="_blank" rel="noopener">Список разделов ↗</a></p>';
+      } else {
+        h += '<h2>Рабочий экран</h2><p>Здесь открывается рабочая страница «' + esc(t.t) + '» действующего кабинета: те же поля, кнопки и результаты. Образец показывает, где она теперь находится в навигации.</p>' +
+          '<p><a class="btn pri" href="' + BASE + t.url + '" target="_blank" rel="noopener">Открыть в рабочей версии ↗</a>' + (t.url2 ? ' <a class="btn" href="' + BASE + t.url2 + '" target="_blank" rel="noopener">Улучшить план ↗</a>' : '') + '</p>';
+      }
+      h += '</div><div><div class="card"><h2>Где это было раньше</h2><p style="margin:0">' + esc(t.was) + '</p></div>';
+      var sib = ts.filter(function (x) { return x.id !== t.id; });
+      if (sib.length) h += '<div class="card" style="margin-top:14px"><h2>В этом же разделе</h2><ul class="list">' + sib.map(function (x) { return '<li><a href="#/' + s.id + '/' + x.id + '">' + esc(x.t) + '</a></li>'; }).join('') + '</ul></div>';
+      h += '</div></div>';
+    }
+    $('main').innerHTML = h;
+    $('main').scrollTop = 0;
+  }
+
+  function home() {
+    var q = QUICK.filter(function (x) { return can(x[3]); }).slice(0, 6);
+    var h = '<p class="lead">Пятница, 13 ноября · ' + esc(ROLES[role].n) + '</p>' +
+      '<div class="grid g4"><div class="card kpi"><b>0</b><span>Проектов в работе</span></div><div class="card kpi"><b>0</b><span>Задач в работе</span></div><div class="card kpi"><b>0</b><span>Документов за 30 дней</span></div><div class="card kpi"><b>0</b><span>Требует решений</span></div></div>' +
+      '<div class="grid g2" style="margin-top:14px"><div><div class="card"><h2>Требует решения</h2><span class="chip g">Срочных вопросов нет</span></div>' +
+      '<div class="card" style="margin-top:14px"><h2>Проекты</h2><div class="empty">Проектов пока нет<br><a class="btn pri" style="margin-top:10px" href="#/projects/list">Новый проект</a></div></div></div>' +
+      '<div class="card"><h2>Быстрые действия</h2><div class="quick">' + q.map(function (x) { return '<a href="#/' + x[2] + '"><span><b>' + esc(x[0]) + '</b><small>' + esc(x[1]) + '</small></span></a>'; }).join('') + '</div><p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Остальное — кнопка «＋ Создать» или поиск. Раньше это были те же шесть кнопок дважды на одном экране.</p></div></div>';
+    return h;
+  }
+
+  // ----- Всплывающие окна и поиск -----
+  function closePops() { ['createPop','bellPop','helpPop','profPop'].forEach(function (i) { $(i).classList.remove('open'); }); }
+  function toggle(id) { var o = $(id).classList.contains('open'); closePops(); if (!o) { if (id === 'createPop') popCreate(); popOthers(); $(id).classList.add('open'); } }
+  function toast(m) { var t = $('toast'); t.textContent = m; t.classList.add('on'); setTimeout(function () { t.classList.remove('on'); }, 2200); }
+
+  var palSel = 0, palItems = [];
+  function palIndex() {
+    var out = [];
+    CREATE.forEach(function (g) { g[1].forEach(function (i) { if (can(i[2])) out.push({ t: i[0], s: g[0] + ' · ' + i[1], r: i[3] }); }); });
+    secs().forEach(function (s) { tabsOf(s).forEach(function (t) { out.push({ t: s.t + ' → ' + t.t, s: t.d || 'Главная страница', r: s.id + '/' + t.id }); }); });
+    return out;
+  }
+  function palRender() {
+    var q = $('palIn').value.trim().toLowerCase();
+    var all = palIndex();
+    palItems = (q ? all.filter(function (x) { return (x.t + ' ' + x.s).toLowerCase().indexOf(q) !== -1; }) : all.slice(0, 8)).slice(0, 9);
+    var h = palItems.map(function (x, i) { return '<a href="#/' + x.r + '" data-close class="' + (i === palSel ? 'sel' : '') + '"><span>' + esc(x.t) + '</span><small>' + esc(x.s).slice(0, 58) + '</small></a>'; }).join('');
+    if (q) h += '<a href="#" data-ask class="' + (palSel === palItems.length ? 'sel' : '') + '"><span>🤖 Спросить AIQurylys: «' + esc($('palIn').value.trim()) + '»</span><small>один вход вместо трёх</small></a>';
+    $('palRes').innerHTML = h || '<div class="empty">Ничего не найдено</div>';
+  }
+  function palOpen() { $('pal').classList.add('open'); $('palIn').value = ''; palSel = 0; palRender(); setTimeout(function () { $('palIn').focus(); }, 30); }
+  function palClose() { $('pal').classList.remove('open'); }
+
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-close]'); if (a) { closePops(); palClose(); $('side').classList.remove('open'); }
+    if (e.target.closest('[data-ask]')) { e.preventDefault(); palClose(); toast('В рабочей версии здесь отвечает помощник AIQurylys'); }
+    var tt = e.target.closest('[data-toast]'); if (tt) toast(tt.getAttribute('data-toast'));
+    if (!e.target.closest('.pop') && !e.target.closest('.top .btn')) closePops();
+    if (e.target === $('pal')) palClose();
+  });
+  $('side').addEventListener('click', function () { $('side').classList.remove('open'); });
+  $('burger').onclick = function (e) { e.stopPropagation(); $('side').classList.toggle('open'); };
+  $('askBtn').onclick = palOpen;
+  $('createBtn').onclick = function (e) { e.stopPropagation(); toggle('createPop'); };
+  $('bellBtn').onclick = function (e) { e.stopPropagation(); toggle('bellPop'); };
+  $('helpBtn').onclick = function (e) { e.stopPropagation(); toggle('helpPop'); };
+  $('profBtn').onclick = function (e) { e.stopPropagation(); toggle('profPop'); };
+  $('palIn').addEventListener('input', function () { palSel = 0; palRender(); });
+  document.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); palOpen(); return; }
+    if (!$('pal').classList.contains('open')) { if (e.key === 'Escape') closePops(); return; }
+    var n = $('palRes').querySelectorAll('a').length;
+    if (e.key === 'Escape') palClose();
+    if (e.key === 'ArrowDown') { e.preventDefault(); palSel = Math.min(n - 1, palSel + 1); palRender(); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); palSel = Math.max(0, palSel - 1); palRender(); }
+    if (e.key === 'Enter') { var a = $('palRes').querySelectorAll('a')[palSel]; if (a) a.click(); }
+  });
+
+  // ----- Роль и маршрут -----
+  var rs = $('role');
+  Object.keys(ROLES).forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = ROLES[k].n; rs.appendChild(o); });
+  rs.onchange = function () { role = rs.value; $('avatar').textContent = role === 'owner' ? 'Y' : ROLES[role].n[0]; popCreate(); popOthers(); route(); };
+  function route() { view(location.hash.replace(/^#\//, '')); }
+  window.addEventListener('hashchange', route);
+  popCreate(); popOthers(); route();
+})();
+</script>
+</body>
+</html>
