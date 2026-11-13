@@ -657,3 +657,5 @@ body { background: var(--ink); }
   .sticky-cta.on { transform: none; }
   .foot { padding-bottom: 96px; }
 }
+
+[hidden] { display: none !important; }
