@@ -712,3 +712,7 @@ body.pricing .btn--line { background: transparent; color: #fff; border-color: rg
 .scenes .scene > .wrap { transition: opacity .7s ease; }
 .scenes.text-out .scene > .wrap { opacity: 0; }
 .scenes .scenes__trans video { transition: opacity .3s; }
+
+/* Ползунок сцены: заполняется ровно за время показа сцены, полный — начало перехода */
+.dot[aria-selected="true"] i b { animation: none !important; transform: scaleX(var(--p, 0)); background: var(--orange); }
+.dot.done i b { transform: scaleX(1); }

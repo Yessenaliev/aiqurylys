@@ -185,7 +185,7 @@ var selectRole = (function () {
   var phase = 'hold';
   var userPaused = false;
   var offscreen = false;
-  var holdTimer = null, holdLeft = HOLD_MS, holdStart = 0, raf = 0;
+  var holdTimer = null, holdLeft = HOLD_MS, holdTotal = HOLD_MS, holdStart = 0, raf = 0, progRaf = 0;
   var activeTrans = null, textSwitched = false;
   var trans = [];
   var transBox = null;
@@ -304,6 +304,23 @@ var selectRole = (function () {
   function clearTimers() {
     clearTimeout(holdTimer);
     cancelAnimationFrame(raf);
+    cancelAnimationFrame(progRaf);
+  }
+
+  // Ползунок текущей сцены заполняется ровно за время её показа; полный ползунок = начало перехода
+  function setProgress(p) {
+    dots.forEach(function (d, i) {
+      if (i === current) d.style.setProperty('--p', p); else d.style.removeProperty('--p');
+    });
+  }
+  function progLoop() {
+    cancelAnimationFrame(progRaf);
+    (function tick() {
+      if (phase !== 'hold' || suspended()) return;
+      var left = Math.max(0, holdLeft - (Date.now() - holdStart));
+      dots[current].style.setProperty('--p', (1 - left / holdTotal).toFixed(3));
+      progRaf = requestAnimationFrame(tick);
+    })();
   }
 
   function stopTrans() {
@@ -324,11 +341,14 @@ var selectRole = (function () {
     show(i);
     ensureTrans(i);
     warm(i + 1);
-    holdLeft = (i === N - 1) ? LAST_HOLD_MS : HOLD_MS;
+    holdTotal = (i === N - 1) ? LAST_HOLD_MS : HOLD_MS;
+    holdLeft = holdTotal;
     holdStart = Date.now();
+    setProgress(0);
     if (!suspended()) {
       playScene(i);
       holdTimer = setTimeout(afterHold, holdLeft);
+      progLoop();
     }
   }
 
@@ -344,6 +364,7 @@ var selectRole = (function () {
     phase = 'trans';
     activeTrans = t;
     textSwitched = false;
+    dots[current].style.setProperty('--p', 1);
     var v = bgVideo(i);
     if (v) v.pause();
     try { t.el.currentTime = 0; } catch (err) {}
@@ -375,6 +396,7 @@ var selectRole = (function () {
   function suspend() {
     clearTimeout(holdTimer);
     cancelAnimationFrame(raf);
+    cancelAnimationFrame(progRaf);
     if (phase === 'hold') holdLeft = Math.max(0, holdLeft - (Date.now() - holdStart));
     pauseAll();
     if (activeTrans) activeTrans.el.pause();
@@ -387,6 +409,7 @@ var selectRole = (function () {
       var v = bgVideo(current);
       if (v && v.getAttribute('src')) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else playScene(current);
       holdTimer = setTimeout(afterHold, holdLeft);
+      progLoop();
     } else if (phase === 'trans') {
       runTrans();
     }
