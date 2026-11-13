@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Каркас кабинета AIQurylys</title>
+<style>
+  :root { --ink:#16202e; --muted:#5d6878; --line:#d9dde4; --bg:#f6f7f9; --card:#fff; --blue:#1f4e96; --blue-soft:#e8eefa; --orange:#d9560d; --orange-soft:#fdeadf; --ok:#0f7a4d; --ok-soft:#e3f4ec; --red:#b3261e; --red-soft:#fbe9e7; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.5 "Segoe UI", system-ui, sans-serif; color:var(--ink); background:var(--bg); }
+  .wrap { max-width:1180px; margin:0 auto; padding:0 20px 60px; }
+  header { padding:36px 0 8px; }
+  h1 { font-size:28px; margin:0 0 6px; letter-spacing:-.01em; }
+  h2 { font-size:21px; margin:44px 0 6px; }
+  h3 { font-size:16px; margin:0 0 8px; }
+  p { margin:0 0 10px; }
+  .sub { color:var(--muted); max-width:760px; }
+  .principle { background:var(--ok-soft); border:1px solid #bfe3d0; border-radius:12px; padding:14px 16px; margin:18px 0 0; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:860px) { .grid2 { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .tag { display:inline-block; font-size:12px; font-weight:600; padding:2px 8px; border-radius:6px; background:var(--blue-soft); color:var(--blue); }
+  .tag.r { background:var(--red-soft); color:var(--red); } .tag.o { background:var(--orange-soft); color:var(--orange); } .tag.g { background:var(--ok-soft); color:var(--ok); }
+
+  /* таблицы */
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { text-align:left; font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); padding:8px 10px; border-bottom:2px solid var(--ink); }
+  td { padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  td code, .u { font:12px/1.3 Consolas, monospace; color:var(--muted); background:#eef0f4; padding:1px 5px; border-radius:4px; white-space:nowrap; }
+  .tw { overflow-x:auto; }
+
+  /* схема: сейчас */
+  .now { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:14px 0; }
+  @media (max-width:860px) { .now { grid-template-columns:1fr 1fr; } }
+  .entry { background:var(--card); border:2px solid var(--line); border-radius:12px; padding:12px; text-align:center; }
+  .entry b { display:block; font-size:22px; color:var(--orange); }
+  .entry span { font-size:13px; color:var(--muted); }
+  .arrow { text-align:center; color:var(--muted); font-size:13px; margin:2px 0; }
+  .sections { background:var(--blue-soft); border:2px solid #bccdea; border-radius:12px; padding:12px 14px; text-align:center; color:var(--blue); font-weight:600; }
+
+  /* каркас: после */
+  .shell { border:2px solid var(--ink); border-radius:14px; background:#fff; overflow:hidden; display:grid; grid-template-columns:230px 1fr; grid-template-rows:auto 1fr; min-height:560px; }
+  .shell .top { grid-column:1 / 3; display:flex; gap:10px; align-items:center; padding:10px 14px; border-bottom:2px solid var(--ink); background:#eef0f4; }
+  .box { border:2px dashed #9aa3b2; border-radius:8px; padding:6px 10px; font-size:13px; background:#fff; }
+  .box.fill { background:var(--orange-soft); border-color:var(--orange); border-style:solid; font-weight:600; }
+  .box.grow { flex:1; color:var(--muted); }
+  .side { border-right:2px solid var(--ink); padding:12px; background:#fafbfc; font-size:13px; }
+  .side .it { padding:7px 10px; border-radius:8px; margin-bottom:3px; display:flex; justify-content:space-between; gap:8px; }
+  .side .it.on { background:var(--blue-soft); color:var(--blue); font-weight:700; }
+  .side .grp { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:12px 4px 4px; }
+  .side .it small { color:var(--muted); }
+  .main { padding:16px; }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:10px; }
+  .kpis div { border:2px dashed #9aa3b2; border-radius:8px; padding:8px; font-size:12px; color:var(--muted); text-align:center; }
+  .two { display:grid; grid-template-columns:1.4fr 1fr; gap:10px; margin-top:10px; }
+  .ph { border:2px dashed #9aa3b2; border-radius:8px; padding:10px; font-size:13px; min-height:90px; }
+  .ph b { display:block; margin-bottom:4px; }
+  @media (max-width:760px) { .shell { grid-template-columns:1fr; } .side { border-right:0; border-bottom:2px solid var(--ink); } .kpis { grid-template-columns:1fr 1fr; } .two { grid-template-columns:1fr; } }
+
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; margin:8px 0 10px; }
+  .tabs span { border:2px solid var(--line); border-radius:8px; padding:4px 10px; font-size:13px; background:#fff; }
+  .tabs span.on { border-color:var(--blue); color:var(--blue); font-weight:700; background:var(--blue-soft); }
+  .menu { position:relative; border:2px solid var(--ink); border-radius:12px; background:#fff; padding:12px; font-size:13px; }
+  .menu ul { margin:0; padding-left:18px; }
+  .menu li { margin:2px 0; }
+  details { border:1px solid var(--line); border-radius:10px; background:#fff; margin-bottom:8px; }
+  summary { cursor:pointer; padding:12px 14px; font-weight:700; }
+  details .tw { padding:0 14px 12px; }
+  .legend span { margin-right:14px; font-size:13px; }
+  footer { margin-top:40px; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Каркас кабинета AIQurylys</h1>
+  <p class="sub">Что в кабинете есть сейчас, что дублируется и как собрать навигацию так, чтобы не потерять ни одной функции. Составлено по реальному кабинету под учёткой владельца: меню, страница «Ещё», каталог «Создать», главная и страницы разделов.</p>
+  <div class="principle"><b>Главный принцип.</b> Ни одна страница и ни одно действие не удаляется. Меняется только то, сколько раз и из каких мест на них ведут ссылки. Каждая нынешняя ссылка есть в таблице переноса ниже.</div>
+</header>
+
+<h2>1. Сейчас: пять способов дойти до одного и того же</h2>
+<p class="sub">Одни и те же разделы открываются из пяти мест. Человек не знает, где «правильный» вход, и находит нужное по случайности.</p>
+<div class="now">
+  <div class="entry"><b>4</b><span>пункта бокового меню<br>Главная · Проекты · Задачи · Ещё</span></div>
+  <div class="entry"><b>33</b><span>действия в каталоге «Создать»<br>7 групп</span></div>
+  <div class="entry"><b>20</b><span>разделов на странице «Ещё»<br>6 групп + доступ по должностям</span></div>
+  <div class="entry"><b>12</b><span>быстрых входов на главной<br>6 кнопок под поиском + 6 «Быстрых действий»</span></div>
+  <div class="entry"><b>3</b><span>места «спросить»<br>«Что нужно сделать?» · Поиск Ctrl K · «Спросить AIQurylys»</span></div>
+</div>
+<div class="arrow">▼ ведут на одни и те же ▼</div>
+<div class="sections">≈ 45 страниц и действий: расчёты, документы, площадка, деньги, договоры, тендеры, компания</div>
+
+<h3 style="margin-top:22px">Что именно дублируется</h3>
+<div class="card tw">
+<table>
+  <tr><th>Что</th><th>Сколько входов</th><th>Где</th></tr>
+  <tr><td><b>Проекты</b></td><td><span class="tag r">4</span></td><td>пункт меню · «Ещё → Проекты компании» · «Завести проект» · «Добавить проект» на главной (и «Новый проект» в «Создать»)</td></tr>
+  <tr><td><b>FAQ</b></td><td><span class="tag r">3+</span></td><td>верхняя панель · «Ещё» (в группе «Главное») · «Ещё» (в группе «Помощь»)</td></tr>
+  <tr><td><b>Задачи</b></td><td><span class="tag r">2</span></td><td>пункт меню «Задачи» · «Ещё → Мои задачи» (одна страница)</td></tr>
+  <tr><td><b>Тариф</b></td><td><span class="tag r">4</span></td><td>«Подключить тариф» (два места) · «Тарифный пакет» · «Улучшить план» · блок «Расчётов в пакете / Пробный доступ» в меню</td></tr>
+  <tr><td><b>Список разделов</b></td><td><span class="tag r">2</span></td><td>«Убрать лишние» и «Список разделов» — одна и та же настройка</td></tr>
+  <tr><td><b>Шесть быстрых действий</b></td><td><span class="tag r">2</span></td><td>кнопки под строкой поиска и блок «Быстрые действия» — тот же список дважды на одном экране</td></tr>
+  <tr><td><b>Поддержка</b></td><td><span class="tag r">3</span></td><td>«Поддержка» · «Мои обращения» · Telegram-бот поддержки</td></tr>
+  <tr><td><b>Главная</b></td><td><span class="tag r">2 адреса</span></td><td><code>/</code> и <code>/welcome</code>: логотип и пункт «Главная» ведут на разные адреса</td></tr>
+  <tr><td><b>Название «Себестоимость»</b></td><td><span class="tag o">2 страницы</span></td><td>Это заголовок и расчёта <code>/estimate/generate</code>, и проверки готовой сметы <code>/estimate</code>: разные функции под одним именем</td></tr>
+  <tr><td><b>Доступ по ролям</b></td><td><span class="tag o">3</span></td><td>«Сотрудники и доступ» · «Список разделов» · блок «Доступ по должностям» внизу «Ещё»</td></tr>
+</table>
+</div>
+
+<h3 style="margin-top:22px">Другие замечания по ходу</h3>
+<div class="card">
+  <ul style="margin:0;padding-left:20px">
+    <li>Почти у всех страниц один и тот же заголовок вкладки «AIQurylys — Платформа для строительства» (отличается только «Улучшить план»). В истории браузера и закладках страницы не различить.</li>
+    <li>«Ещё» стала свалкой: 20 разделов, которые раньше были в левом меню («то, что было в левом меню» — написано на самой странице).</li>
+    <li>Некоторые функции есть <b>только</b> в каталоге «Создать» и не вынесены в «Ещё»: коммерческое предложение, сравнение предложения подрядчика, нормы расхода, запрос цен поставщикам, поиск подрядчика, бюджет проекта, проверка договора, письмо и претензия, вопрос юристу.</li>
+    <li>Адрес <code>/marketing</code> («Маркетолог»: посты, кейсы) под учёткой владельца перенаправляет на «Задачи». Раздел описан в справке, но недоступен; стоит проверить, это ошибка или намеренно.</li>
+    <li>Колокольчик со счётчиком «1» в верхней панели без подписи; что за уведомление, видно только при открытии.</li>
+  </ul>
+</div>
+
+<h2>2. Предлагаю: один каркас на все роли</h2>
+<p class="sub">Левое меню остаётся единственным местом для разделов. «Создать» и поиск работают как быстрые команды. «Ещё» перестаёт быть каталогом. Бланк ниже — каркас, а не дизайн.</p>
+
+<div class="shell">
+  <div class="top">
+    <div class="box fill">AIQurylys</div>
+    <div class="box grow">🔍 Спросить или найти… (Ctrl K) — один вход вместо трёх</div>
+    <div class="box fill">＋ Создать</div>
+    <div class="box">🔔</div>
+    <div class="box">? Помощь</div>
+    <div class="box">Y ▾</div>
+  </div>
+  <div class="side">
+    <div class="it on">Главная</div>
+    <div class="it">Проекты</div>
+    <div class="it">Задачи</div>
+    <div class="grp">Работа</div>
+    <div class="it">Расчёты</div>
+    <div class="it">Документы</div>
+    <div class="it">Площадка</div>
+    <div class="it">Деньги и снабжение</div>
+    <div class="it">Договоры</div>
+    <div class="it">Тендеры и проекты</div>
+    <div class="grp">Компания (владелец)</div>
+    <div class="it">Сотрудники и доступ</div>
+    <div class="it">Реквизиты</div>
+    <div class="it">Google Диск</div>
+    <div class="it">Тариф</div>
+    <div class="box" style="margin-top:14px">Расчётов 0/1 · Пробный доступ 0 %<br><b>Подключить тариф</b></div>
+  </div>
+  <div class="main">
+    <b>Главная</b> <span class="tag">один адрес</span>
+    <div class="tabs"><span class="on">Сегодня</span><span>Сводка по компании</span></div>
+    <div class="kpis"><div>Проекты в работе</div><div>Задачи в работе</div><div>Документы за 30 дней</div><div>Требует решений</div></div>
+    <div class="two">
+      <div class="ph"><b>Требует решения</b>Срочные вопросы · проекты · задачи</div>
+      <div class="ph"><b>Быстрые действия (один блок)</b>6 самых частых; остальное через «＋ Создать»</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid2" style="margin-top:16px">
+  <div class="card">
+    <h3>Меню профиля «Y ▾»</h3>
+    <div class="menu"><ul>
+      <li>Профиль и вход (имя, почта, пароль, язык, тема)</li>
+      <li>Уведомления (то же, что колокольчик)</li>
+      <li>Поддержка: новое обращение + мои обращения — <b>одна страница</b></li>
+      <li>Telegram-бот: статус и подключение</li>
+      <li>Выйти</li>
+    </ul></div>
+  </div>
+  <div class="card">
+    <h3>Кнопка «＋ Создать» — те же 33 действия</h3>
+    <div class="menu"><ul>
+      <li>Документы (10) · Расчёты и проверки (5) · Площадка (6)</li>
+      <li>Договоры и письма (4) · Деньги и снабжение (5)</li>
+      <li>Проектирование и продажи (2) · Проект (1)</li>
+      <li>Внизу: история документов, файлы проектов</li>
+    </ul>
+    <p style="margin-top:8px;font-size:12px;color:var(--muted)">Открывается поверх любой страницы. Отдельная страница <code>/create</code> остаётся.</p></div>
+  </div>
+</div>
+
+<h3 style="margin-top:22px">Шаблон страницы раздела: везде одинаковый</h3>
+<div class="card">
+  <div class="shell" style="min-height:0;grid-template-columns:1fr">
+    <div class="top"><div class="box fill">Раздел: Расчёты</div><div class="box grow">Заголовок и одна фраза «что здесь делают»</div><div class="box">Спросить AIQurylys</div></div>
+    <div class="main">
+      <div class="tabs"><span class="on">Расчёт себестоимости</span><span>Проверка сметы</span><span>Коммерческое предложение</span><span>Проверка объёмов</span><span>Сравнить предложение подрядчика</span></div>
+      <div class="two"><div class="ph"><b>Рабочая область</b>Новый расчёт / список расчётов компании</div><div class="ph"><b>Подсказка «Как пользоваться»</b>сворачиваемая, одна на раздел</div></div>
+    </div>
+  </div>
+  <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Действия из каталога «Создать» становятся вкладками своего раздела. Тогда «Проверить смету» не прячется под заголовком «Себестоимость», у каждой функции своё имя.</p>
+</div>
+
+<h2>3. Таблица переноса: что куда делось</h2>
+<p class="sub">Каждая нынешняя ссылка найдена в новой структуре. Раскройте группу, чтобы посмотреть.</p>
+<div class="legend"><span><span class="tag g">остаётся</span> в том же виде</span><span><span class="tag">переносится</span> в другой раздел</span><span><span class="tag o">объединяется</span> с похожим</span></div>
+<div style="margin-top:12px">
+
+<details open><summary>Главная и поиск</summary><div class="tw"><table>
+<tr><th>Было</th><th>Станет</th><th></th></tr>
+<tr><td>Главная <code>/</code> и <code>/welcome</code></td><td>Главная, один адрес</td><td><span class="tag o">объединяется</span></td></tr>
+<tr><td>Сводка по компании <code>/summary</code></td><td>Вкладка «Сводка по компании» на Главной</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Строка «Что нужно сделать?» · Поиск Ctrl K · «Спросить AIQurylys»</td><td>Один вход «Спросить или найти» в верхней панели</td><td><span class="tag o">объединяется</span></td></tr>
+<tr><td>6 кнопок под поиском + блок «Быстрые действия»</td><td>Один блок «Быстрые действия»</td><td><span class="tag o">объединяется</span></td></tr>
+</table></div></details>
+
+<details><summary>Проекты, файлы и задачи</summary><div class="tw"><table>
+<tr><th>Было</th><th>Станет</th><th></th></tr>
+<tr><td>Проекты <code>/projects</code> · «Проекты компании» · «Завести проект» · «Добавить проект» <code>/projects?new=1</code></td><td>Проекты, кнопка «Новый проект» в одном месте</td><td><span class="tag o">объединяется</span></td></tr>
+<tr><td>Файлы проекта <code>/documents/files</code></td><td>Вкладка «Файлы» внутри Проектов (адрес остаётся)</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Задачи <code>/my</code> · «Мои задачи» · «Выдать задание» <code>/my?t=issued&amp;issue=1</code></td><td>Задачи, вкладки «Мои» и «Выданные»</td><td><span class="tag o">объединяется</span></td></tr>
+</table></div></details>
+
+<details><summary>Расчёты</summary><div class="tw"><table>
+<tr><th>Было</th><th>Станет</th><th></th></tr>
+<tr><td>Расчёт себестоимости <code>/estimate/generate</code></td><td>Расчёты → вкладка «Расчёт себестоимости»</td><td><span class="tag g">остаётся</span></td></tr>
+<tr><td>Проверить смету <code>/estimate</code> (заголовок «Себестоимость»)</td><td>Расчёты → вкладка «Проверка сметы» (переименован заголовок)</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Коммерческое предложение <code>/estimate/offers</code></td><td>Расчёты → вкладка «Коммерческое предложение»</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Проверка объёмов <code>/volume-check</code> · Проверить акт подрядчика</td><td>Расчёты → вкладка «Проверка объёмов»</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Сравнить предложение подрядчика <code>/volume-check/offer</code></td><td>Расчёты → вкладка «Проверка объёмов», режим «КП»</td><td><span class="tag">переносится</span></td></tr>
+</table></div></details>
+
+<details><summary>Документы</summary><div class="tw"><table>
+<tr><th>Было</th><th>Станет</th><th></th></tr>
+<tr><td>Документооборот <code>/documents</code>: 9 быстрых видов (2В, Р-1, пакет в Excel, скрытые работы, пакет скрытых, приёмка, схема площадей, дефектный, простой) и «Все виды» (140)</td><td>Документы, без изменений</td><td><span class="tag g">остаётся</span></td></tr>
+<tr><td>История документов <code>/documents?view=made</code></td><td>Документы → вкладка «Сделанные»</td><td><span class="tag g">остаётся</span></td></tr>
+</table></div></details>
+
+<details><summary>Площадка</summary><div class="tw"><table>
+<tr><th>Было</th><th>Станет</th><th></th></tr>
+<tr><td>Начальник участка <code>/site-chief/workspace</code> · График работ и «Выдать работы» <code>/site-chief</code></td><td>Площадка → «Начальник участка» (сегодня, график, выдача работ)</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Прораб/Мастер <code>/master</code> · Внести объём за день · Отчёт · Наряд-задание</td><td>Площадка → «Прораб/Мастер»</td><td><span class="tag g">остаётся</span></td></tr>
+<tr><td>Нормы расхода материалов <code>/master/materials</code></td><td>Площадка → вкладка «Нормы расхода»</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Реестр техники <code>/equipment</code></td><td>Площадка → «Техника»</td><td><span class="tag">переносится</span></td></tr>
+</table></div></details>
+
+<details><summary>Деньги и снабжение</summary><div class="tw"><table>
+<tr><th>Было</th><th>Станет</th><th></th></tr>
+<tr><td>Финансовый отчёт <code>/finance</code></td><td>Деньги → вкладка «Отчёт»</td><td><span class="tag g">остаётся</span></td></tr>
+<tr><td>Бюджет проекта <code>/finance/budget</code></td><td>Деньги → вкладка «Бюджет»</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Снабженец <code>/supplier/panel</code> · Узнать цену <code>/supplier</code> · Запрос цен поставщикам <code>/supplier/outreach</code></td><td>Снабжение → вкладки «Сегодня», «Цена материала», «Запросы поставщикам»</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Найти подрядчика <code>/subcontractors</code></td><td>Снабжение → вкладка «Подрядчики»</td><td><span class="tag">переносится</span></td></tr>
+</table></div></details>
+
+<details><summary>Договоры</summary><div class="tw"><table>
+<tr><th>Было</th><th>Станет</th><th></th></tr>
+<tr><td>Юрист <code>/legal</code> · Проверить договор <code>/legal/review</code> · Письмо или претензия <code>/legal/letter</code> · Вопрос юристу <code>/legal/chat</code></td><td>Договоры → вкладки «Договоры», «Проверка», «Письма и претензии», «Вопрос юристу»</td><td><span class="tag g">остаётся</span></td></tr>
+</table></div></details>
+
+<details><summary>Тендеры и проекты</summary><div class="tw"><table>
+<tr><th>Было</th><th>Станет</th><th></th></tr>
+<tr><td>Тендеры <code>/marketing/tender</code> · Паспорт <code>/marketing/tender/passport</code> · Спрос <code>/marketing/demand</code></td><td>Тендеры → вкладки «Лента», «Паспорт», «Спрос»</td><td><span class="tag g">остаётся</span></td></tr>
+<tr><td>Архитектор <code>/architect</code> · Генплан участка</td><td>Тендеры и проекты → «Концепт проекта»</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Маркетолог <code>/marketing</code></td><td>Проверить доступ: сейчас у владельца перенаправляет на «Задачи»</td><td><span class="tag r">уточнить</span></td></tr>
+</table></div></details>
+
+<details><summary>Компания (видит владелец)</summary><div class="tw"><table>
+<tr><th>Было</th><th>Станет</th><th></th></tr>
+<tr><td>Реквизиты <code>/settings/company</code> · паспорт компании · договоры</td><td>Компания → Реквизиты</td><td><span class="tag g">остаётся</span></td></tr>
+<tr><td>Сотрудники и доступ <code>/team</code> · Список разделов <code>/settings?tab=menu</code> («Убрать лишние») · блок «Доступ по должностям» со страницы «Ещё»</td><td>Компания → Сотрудники и доступ, одна страница с тремя вкладками</td><td><span class="tag o">объединяется</span></td></tr>
+<tr><td>Google Диск <code>/settings/drive</code></td><td>Компания → Google Диск</td><td><span class="tag g">остаётся</span></td></tr>
+<tr><td>Тарифный пакет <code>/usage</code> · Улучшить план <code>/upgrade</code> · «Подключить тариф» · блок «Расчётов в пакете»</td><td>Компания → Тариф: вкладки «Мой пакет» и «Улучшить», один блок-ссылка в меню</td><td><span class="tag o">объединяется</span></td></tr>
+</table></div></details>
+
+<details><summary>Профиль, помощь, уведомления</summary><div class="tw"><table>
+<tr><th>Было</th><th>Станет</th><th></th></tr>
+<tr><td>Профиль и вход <code>/settings</code> (пароль, язык, тема, «Показать инструкции заново», «Подключить другой Telegram»)</td><td>Меню профиля → Профиль и вход</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>Уведомления <code>/settings?tab=notifications</code> + колокольчик</td><td>Колокольчик и «Уведомления» в меню профиля</td><td><span class="tag o">объединяется</span></td></tr>
+<tr><td>Поддержка <code>/support</code> · Мои обращения <code>/settings?tab=requests</code></td><td>Меню профиля → Поддержка, одна страница</td><td><span class="tag o">объединяется</span></td></tr>
+<tr><td>Telegram-бот</td><td>Меню профиля → Telegram-бот</td><td><span class="tag">переносится</span></td></tr>
+<tr><td>FAQ <code>/handbook</code>, 3 входа</td><td>Кнопка «? Помощь» в верхней панели, один вход</td><td><span class="tag o">объединяется</span></td></tr>
+<tr><td>Страница «Ещё» <code>/more</code></td><td>Сворачивается в меню; её список «Доступ по должностям» переезжает в «Сотрудники и доступ»</td><td><span class="tag o">объединяется</span></td></tr>
+<tr><td>Каталог «Создать» <code>/create</code> (33 действия)</td><td>Кнопка «＋ Создать» в верхней панели; страница остаётся</td><td><span class="tag g">остаётся</span></td></tr>
+</table></div></details>
+
+</div>
+
+<footer>
+  <p><b>Что проверено и что нет.</b> Я прошёл кабинет под учёткой владельца только на чтение: открывал страницы, смотрел заголовки, вкладки и кнопки, ничего не запускал, не нажимал «Отправить» и не расходовал бесплатную пробу. Для сотрудников с другими ролями картина может отличаться (список видимых разделов зависит от должности). Внутренние элементы каждой страницы (поля форм, таблицы результатов) я не перечислял: каркас построен на уровне страниц и действий.</p>
+</footer>
+</div>
+</body>
+</html>
