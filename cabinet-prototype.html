@@ -320,7 +320,7 @@
     if (!cur) cur = find('home/today');
     var s = cur.s, t = cur.t;
     renderSide(cur);
-    document.title = t.t + (s.id === 'home' ? '' : ' — ' + s.t) + ' — AIQurylys';
+    document.title = (s.id === 'home' && t.id === 'today' ? 'Главная' : t.t + (s.id === 'home' ? '' : ' — ' + s.t)) + ' — AIQurylys';
     var h = '<div class="crumbs">' + (s.id === 'home' ? 'Кабинет' : esc(s.t)) + ' / ' + esc(t.t) + '</div><h1>' + esc(s.id === 'home' ? 'Главная' : t.t) + '</h1>';
     var ts = tabsOf(s);
     if (ts.length > 1) {
