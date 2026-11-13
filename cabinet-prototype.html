@@ -13,10 +13,13 @@
   body { margin:0; font:15px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif; color:var(--ink); background:var(--bg); }
   button { font:inherit; color:inherit; cursor:pointer; }
   a { color:inherit; }
-  .banner { background:var(--ink); color:var(--bg); font-size:13px; padding:7px 14px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .banner { background:var(--ink); color:var(--bg); font-size:13px; padding:8px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   .banner b { color:#ffb48a; }
-  .banner select { font:inherit; padding:3px 8px; border-radius:6px; border:0; }
-  .app { display:grid; grid-template-columns:248px 1fr; grid-template-rows:56px 1fr; height:calc(100% - 38px); }
+  .roles { display:flex; gap:5px; flex-wrap:wrap; }
+  .roles button { border:1px solid rgba(255,255,255,.3); background:transparent; color:var(--bg); border-radius:14px; padding:2px 11px; font-size:13px; }
+  .roles button.on { background:#ffb48a; border-color:#ffb48a; color:#15181e; font-weight:700; }
+  .shell { height:calc(100% - var(--bh, 70px)); }
+  .app { display:grid; grid-template-columns:248px 1fr; grid-template-rows:56px 1fr; height:100%; }
   .top { grid-column:1/3; display:flex; align-items:center; gap:10px; padding:0 16px; background:var(--card); border-bottom:1px solid var(--line); position:relative; z-index:20; }
   .logo { font-weight:800; font-size:17px; letter-spacing:-.02em; margin-right:6px; text-decoration:none; }
   .logo i { font-style:normal; color:var(--mark); }
@@ -24,6 +27,7 @@
   .ask kbd { margin-left:auto; font:12px Consolas,monospace; border:1px solid var(--line); border-radius:5px; padding:1px 6px; background:var(--card); }
   .btn { display:inline-flex; align-items:center; gap:8px; min-height:38px; padding:8px 14px; border-radius:10px; border:1px solid var(--line); background:var(--card); font-weight:600; text-decoration:none; }
   .btn.pri { background:var(--acc); color:var(--accInk); border-color:var(--acc); }
+  .btn.mark { background:var(--mark); color:#fff; border-color:var(--mark); }
   .icon { width:38px; height:38px; justify-content:center; padding:0; position:relative; }
   .dot { position:absolute; top:5px; right:5px; min-width:16px; height:16px; border-radius:8px; background:var(--mark); color:#fff; font-size:11px; line-height:16px; text-align:center; padding:0 4px; }
   .burger { display:none; }
@@ -36,9 +40,9 @@
   .nav.on small { color:inherit; opacity:.7; }
   .tariff { margin-top:auto; border:1px solid var(--line); border-radius:12px; padding:12px; font-size:13px; background:var(--soft); }
   .tariff .bar { height:6px; background:var(--line); border-radius:4px; margin:8px 0; overflow:hidden; }
-  .tariff .bar i { display:block; height:100%; width:0%; background:var(--mark); }
-  main { overflow-y:auto; padding:26px 30px 60px; }
+  main { overflow-y:auto; padding:26px 30px 90px; }
   .crumbs { font-size:13px; color:var(--muted); margin-bottom:8px; }
+  .crumbs a { color:var(--blue); text-decoration:none; } .crumbs a:hover { text-decoration:underline; }
   h1 { font-size:26px; margin:0 0 4px; letter-spacing:-.01em; }
   h2 { font-size:17px; margin:0 0 10px; }
   .lead { color:var(--muted); margin:0 0 16px; max-width:720px; }
@@ -49,15 +53,27 @@
   .grid { display:grid; gap:14px; }
   .g4 { grid-template-columns:repeat(4,1fr); } .g2 { grid-template-columns:1.5fr 1fr; } .g3 { grid-template-columns:repeat(3,1fr); }
   .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  a.card { display:block; text-decoration:none; } a.card:hover { border-color:var(--ink); }
   .kpi b { display:block; font-size:28px; letter-spacing:-.02em; }
   .kpi span { font-size:13px; color:var(--muted); }
-  .empty { text-align:center; padding:26px 10px; color:var(--muted); }
+  .empty { text-align:center; padding:22px 10px; color:var(--muted); }
   .quick { display:grid; gap:6px; }
   .quick a { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; text-decoration:none; background:var(--card); }
   .quick a:hover { border-color:var(--ink); }
   .quick small { display:block; color:var(--muted); font-size:12px; }
   .chip { display:inline-block; font-size:12px; font-weight:600; padding:2px 9px; border-radius:6px; background:var(--blueSoft); color:var(--blue); }
   .chip.o { background:var(--markSoft); color:var(--mark); } .chip.g { background:var(--okSoft); color:var(--ok); }
+  .path { list-style:none; margin:0; padding:0; counter-reset:s; display:grid; gap:8px; }
+  .path li a { display:flex; gap:12px; align-items:center; padding:11px 13px; border:1px solid var(--line); border-radius:11px; text-decoration:none; background:var(--card); }
+  .path li a:hover { border-color:var(--ink); }
+  .path li a::before { counter-increment:s; content:counter(s); width:26px; height:26px; border-radius:50%; background:var(--soft); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex:none; }
+  .path li.done a::before { content:"✓"; background:var(--okSoft); color:var(--ok); }
+  .path small { display:block; color:var(--muted); font-size:12px; }
+  .flow { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:10px; align-items:stretch; }
+  .flow > div { border:1px solid var(--line); border-radius:12px; padding:12px; background:var(--card); }
+  .flow small { display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+  .flow .ar { border:0; padding:0; display:flex; align-items:center; color:var(--muted); font-size:20px; background:none; }
+  .flow .nx a { display:block; color:var(--blue); font-weight:600; text-decoration:none; margin:2px 0; } .flow .nx a:hover { text-decoration:underline; }
   .docs { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
   .docs a { border:1px solid var(--line); border-radius:12px; padding:12px; text-decoration:none; background:var(--card); }
   .docs a:hover { border-color:var(--ink); }
@@ -66,6 +82,8 @@
   th { text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); padding:8px 10px; border-bottom:1px solid var(--line); }
   td { padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
   .list { margin:0; padding-left:18px; } .list li { margin:3px 0; }
+  .nextbar { position:sticky; bottom:-70px; margin-top:20px; background:var(--card); border:1px solid var(--ink); border-radius:14px; padding:12px 16px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; box-shadow:var(--shadow); }
+  .nextbar span { color:var(--muted); font-size:13px; }
   .pop { position:absolute; background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); padding:8px; min-width:250px; z-index:40; display:none; max-height:78vh; overflow:auto; }
   .pop.open { display:block; }
   .pop .ph { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:8px 10px 4px; }
@@ -86,20 +104,20 @@
   .toast.on { display:block; }
   @media (max-width:900px) {
     .app { grid-template-columns:1fr; }
-    .side { position:fixed; left:0; top:94px; bottom:0; width:270px; z-index:30; transform:translateX(-100%); transition:transform .2s; box-shadow:var(--shadow); }
+    .side { position:fixed; left:0; top:130px; bottom:0; width:270px; z-index:30; transform:translateX(-100%); transition:transform .2s; box-shadow:var(--shadow); }
     .side.open { transform:none; }
     .burger { display:inline-flex; }
     .g4 { grid-template-columns:1fr 1fr; } .g2, .g3 { grid-template-columns:1fr; } .docs { grid-template-columns:1fr 1fr; }
-    main { padding:18px 16px 60px; } .ask span.t { display:none; } .create-pop { columns:1; }
+    .flow { grid-template-columns:1fr; } .flow .ar { display:none; }
+    main { padding:18px 16px 90px; } .ask span.t { display:none; } .create-pop { columns:1; }
     .hide-m { display:none; }
   }
 </style>
 </head>
 <body>
-<div class="banner"><span><b>Тестовый образец.</b> Навигация и структура пересобраны; рабочие экраны открываются в действующем кабинете ↗</span><span>Смотреть как:</span>
-  <select id="role" aria-label="Роль"></select></div>
+<div class="banner" id="banner"><span><b>Тестовый образец.</b> Выберите, кем вы работаете:</span><div class="roles" id="roles"></div><span id="rnote" style="font-size:12px;opacity:.8"></span></div>
 
-<div class="app">
+<div class="shell" id="shell"><div class="app">
   <header class="top">
     <button class="btn icon burger" id="burger" aria-label="Меню">☰</button>
     <a class="logo" href="#/home/today"><i>AI</i>Qurylys</a>
@@ -108,8 +126,7 @@
     <button class="btn pri" id="createBtn">＋ <span class="hide-m">Создать</span></button>
     <button class="btn icon" id="bellBtn" aria-label="Уведомления">🔔<span class="dot">1</span></button>
     <button class="btn icon" id="helpBtn" aria-label="Помощь">?</button>
-    <button class="btn" id="profBtn"><b id="avatar">Y</b> <span class="hide-m" id="uname">Yessenaliev</span> ▾</button>
-
+    <button class="btn" id="profBtn"><b id="avatar">Д</b> <span class="hide-m" id="uname">Yessenaliev</span> ▾</button>
     <div class="pop create-pop" id="createPop" style="right:140px;top:54px"></div>
     <div class="pop" id="bellPop" style="right:100px;top:54px"></div>
     <div class="pop" id="helpPop" style="right:60px;top:54px"></div>
@@ -117,7 +134,7 @@
   </header>
   <aside class="side" id="side"></aside>
   <main id="main"></main>
-</div>
+</div></div>
 
 <div class="overlay" id="pal"><div class="palette"><input id="palIn" placeholder="Что нужно сделать? Например: акт, смета, договор" autocomplete="off"><div class="res" id="palRes"></div></div></div>
 <div class="toast" id="toast"></div>
@@ -126,67 +143,83 @@
 (function () {
   var BASE = 'https://ai-qurylys.kz';
 
-  // ----- Роли: что каждая видит (по данным страницы «Ещё → Доступ по должностям») -----
+  // ----- Роли: те же, что на сайте. perms — что видит; path — «с чего начать» -----
   var ROLES = {
-    owner:   { n: 'Владелец',           p: 'ALL', company: true },
-    manager: { n: 'Руководитель',       p: 'ALL' },
-    chief:   { n: 'Начальник участка',  p: ['projects','documents','files','site','master','equipment'] },
-    foreman: { n: 'Прораб/Мастер',      p: ['projects','master','equipment'] },
-    pto:     { n: 'ПТО / сметчик',      p: ['projects','documents','files','estimate','volume'] },
-    staff:   { n: 'Сотрудник',          p: ['projects','master','equipment'] },
-    lawyer:  { n: 'Юрист',              p: ['projects','documents','files','legal'] },
-    supply:  { n: 'Снабженец',          p: ['projects','supplier','equipment'] },
-    arch:    { n: 'Архитектор',         p: ['projects','architect'] }
+    director:{ n:'Директор', p:'ALL', company:true, line:'Видит деньги по каждому проекту, получает утреннюю сводку в Telegram и понимает, в какие тендеры идти.',
+      path:[['home/summary','Посмотрите сводку по компании','Деньги, сроки и отставания по всем проектам'],['sales/tender','Проверьте тендеры','Ответ: участвовать или нет'],['money/fin','Откройте деньги проекта','Расходы, поступления и баланс'],['legal/review','Проверьте договор до подписания','Риски и правки'],['company/team','Пригласите людей и раздайте роли','Кто что видит']] },
+    gip:{ n:'ГИП', p:['projects','files','documents','estimate','volume','site'], note:'ГИП: в действующей платформе отдельной роли нет — образец показывает, что ему нужно', line:'Видит объёмы по каждому альбому, спорные места проекта и расхождения между актами подрядчиков и проектом.',
+      path:[['calc/est','Посчитайте объёмы по альбомам','Загрузите чертежи — получите смету'],['calc/check','Разберите позиции «Оценка»','Спорные места собраны в один список'],['calc/vol','Сверьте акты подрядчиков с проектом','Список расхождений'],['site/plan','Постройте график работ','По тем же объёмам'],['docs/new','Оформите документы','Акты по формам РК']] },
+    pto:{ n:'ПТО и сметчик', p:['projects','documents','files','estimate','volume'], line:'Получает объёмы и смету из чертежей, проверяет акты подрядчика и не заполняет документы вручную.',
+      path:[['calc/est','Загрузите чертежи и получите смету','PDF или DWG → Excel, Word, PDF'],['calc/check','Проверьте смету','Арифметика, двойной счёт, пропуски'],['calc/offer','Сделайте коммерческое предложение','Наценка и версии'],['docs/new','Оформите акты','Реквизиты подставятся сами'],['calc/vol','Сверьте акт подрядчика','Объёмы против проекта']] },
+    supply:{ n:'Снабженец', p:['projects','supplier','equipment'], line:'Получает список материалов из сметы и цены от поставщиков в одной таблице.',
+      path:[['money/price','Узнайте цену материала','Все цены со ссылками'],['money/out','Отправьте запросы поставщикам','Ответы в одной таблице'],['money/subs','Найдите подрядчика','Реестр по видам работ'],['money/sup','Откройте «Сегодня»','Что нужно сделать сейчас']] },
+    chief:{ n:'Начальник участка', p:['projects','documents','files','site','master','equipment'], line:'Получает график работ, раздаёт задачи и каждый день видит факт против плана.',
+      path:[['site/chief','Откройте «Сегодня»','Что сделать, график по прорабам, склад'],['site/plan','Проверьте график работ','План и факт'],['tasks/issued','Выдайте задачи прорабам','Придут в Telegram'],['site/tech','Проверьте технику','Моточасы и ТО'],['docs/new','Оформите акты','Скрытые работы, приёмка']] },
+    foreman:{ n:'Прораб и мастер', p:['projects','master','equipment'], line:'Работает в Telegram: получает задачи и сдаёт объём одним сообщением.',
+      path:[['tasks/mine','Посмотрите свои задачи','Кнопка «Взял в работу» — в боте'],['site/master','Внесите объём за день','Одним сообщением или здесь'],['site/master','Оформите наряд-задание бригаде','Вкладка «Прораб/Мастер»'],['site/tech','Отметьте технику','Часы работы']] },
+    fin:{ n:'Финансист', p:['projects','finance','summary','volume'], note:'Финансист: в действующей платформе отдельной роли нет — образец показывает, что ему нужно', line:'Видит план, факт и остаток денег по проекту и расхождения в актах подрядчика.',
+      path:[['home/summary','Откройте сводку по компании','Деньги и отставания'],['money/fin','Проверьте финансовый отчёт','Расходы, поступления, налоги'],['money/budget','Сверьте бюджет проекта','План, факт, остаток'],['calc/vol','Проверьте акты подрядчика','Завышения видны сразу']] },
+    manager:{ n:'Руководитель', p:'ALL', line:'Ведёт проекты, деньги и отчёты наравне с владельцем, приглашает людей и раздаёт роли.',
+      path:[['home/summary','Откройте сводку','Деньги, сроки, отставания'],['tasks/issued','Выдайте задания','Кому, что, к какому сроку'],['sales/tender','Посмотрите тендеры','Участвовать или нет'],['money/fin','Проверьте деньги проекта','Баланс по проектам']] },
+    lawyer:{ n:'Юрист', p:['projects','documents','files','legal'], line:'Проверяет присланные договоры, готовит свои и составляет претензии.',
+      path:[['legal/review','Проверьте присланный договор','Риски и правки'],['legal/contracts','Подготовьте свой договор','Из реквизитов компании'],['legal/letter','Составьте письмо или претензию','Официальный текст'],['legal/chat','Задайте вопрос юристу','Ссылка на пункт и закон']] },
+    marketer:{ n:'Маркетолог', p:['projects','tender'], line:'Ведёт тендеры и закупки, считает себестоимость по документам тендера.',
+      path:[['sales/passport','Заполните паспорт компании','Один раз — по нему отбираются тендеры'],['sales/tender','Найдите тендеры','Лента и разбор объявления'],['sales/demand','Посмотрите спрос по рынку','Какие проекты брать']] },
+    arch:{ n:'Архитектор', p:['projects','architect'], line:'По описанию дома рисует план, разрез и фасад и считает примерную стоимость.',
+      path:[['sales/concept','Опишите дом','«Дом 10×12 м, 2 этажа»'],['projects/list','Привяжите к проекту','Адрес и папка документов']] },
+    staff:{ n:'Сотрудник', p:['projects','master','equipment'], line:'Задачи, объём за день и техника.',
+      path:[['tasks/mine','Посмотрите задачи','Поручения и сроки'],['site/master','Внесите объём','За день'],['site/tech','Отметьте технику','Наработка']] }
   };
+  var ORDER = ['director','gip','pto','supply','chief','foreman','fin','manager','lawyer','marketer','arch','staff'];
 
-  // ----- Разделы и вкладки: каждая нынешняя страница есть, у каждой указано «где было раньше» -----
+  // ----- Разделы и вкладки -----
   var SEC = [
     { id:'home', t:'Главная', tabs:[
       { id:'today', t:'Сегодня', need:'*', home:true, was:'Главная «/» и «/welcome» — теперь один адрес' },
-      { id:'summary', t:'Сводка по компании', need:'summary', url:'/summary', d:'Деньги, сроки и отставания по всем проектам.', was:'Ещё → Сводка по компании' } ] },
+      { id:'summary', t:'Сводка по компании', need:'summary', url:'/summary', d:'Деньги, сроки и отставания по всем проектам.', was:'Ещё → Сводка по компании', give:'Данные ваших проектов', get:'Одна сводка: деньги, сроки, отставания', next:[['money/fin','Деньги по проекту'],['tasks/issued','Выдать задание']] } ] },
     { id:'projects', t:'Проекты', tabs:[
-      { id:'list', t:'Проекты', need:'projects', url:'/projects', d:'Адреса, стороны договора и папки документов. Кнопка «Новый проект» здесь одна.', was:'Меню «Проекты» · Ещё → Проекты компании · «Завести проект» · «Добавить проект»' },
-      { id:'files', t:'Файлы', need:'files', url:'/documents/files', d:'Альбомы, сметы, договоры и акты по разделам, версии и загрузка.', was:'Ещё → Файлы проекта' } ] },
+      { id:'list', t:'Проекты', need:'projects', url:'/projects', d:'Адреса, стороны договора и папки документов. Кнопка «Новый проект» здесь одна.', was:'Меню «Проекты» · Ещё → Проекты компании · «Завести проект» · «Добавить проект»', give:'Адрес, стороны договора, папка документов', get:'Проект в кабинете: к нему привязываются расчёты, акты, задачи', next:[['projects/files','Загрузить файлы проекта'],['calc/est','Посчитать себестоимость']] },
+      { id:'files', t:'Файлы', need:'files', url:'/documents/files', d:'Альбомы, сметы, договоры и акты по разделам, версии и загрузка.', was:'Ещё → Файлы проекта', give:'Альбомы, сметы, договоры, акты', get:'Всё по разделам, с версиями', next:[['calc/est','Посчитать себестоимость'],['docs/new','Оформить документ']] } ] },
     { id:'tasks', t:'Задачи', tabs:[
-      { id:'mine', t:'Мои', need:'*', url:'/my', d:'Поручения, сроки и отметки о сдаче.', was:'Меню «Задачи» · Ещё → Мои задачи' },
-      { id:'issued', t:'Выданные', need:'*', url:'/my?t=issued&issue=1', d:'Задание прорабу или мастеру: кому, что, к какому сроку — придёт в бот.', was:'Создать → Площадка → Задание прорабу или мастеру' } ] },
+      { id:'mine', t:'Мои', need:'*', url:'/my', d:'Поручения, сроки и отметки о сдаче.', was:'Меню «Задачи» · Ещё → Мои задачи', give:'Ничего: задачи приходят сами', get:'Поручения со сроками; сдаёте с объёмом', next:[['site/master','Внести объём за день']] },
+      { id:'issued', t:'Выданные', need:'*', url:'/my?t=issued&issue=1', d:'Задание прорабу или мастеру: кому, что, к какому сроку — придёт в бот.', was:'Создать → Площадка → Задание прорабу или мастеру', give:'Кому, что и к какому сроку', get:'Задача приходит прорабу в Telegram', next:[['site/chief','Проверить график']] } ] },
     { id:'calc', t:'Расчёты', group:'Работа', tabs:[
-      { id:'est', t:'Расчёт себестоимости', need:'estimate', url:'/estimate/generate', d:'Объёмы и цены по чертежам проекта, книга Excel.', was:'Ещё → Себестоимость (заголовок страницы «Себестоимость»)' },
-      { id:'check', t:'Проверка сметы', need:'estimate', url:'/estimate', d:'Арифметика, итоги и типовые ошибки готовой сметы. Раньше называлась так же, как расчёт — «Себестоимость».', was:'Главная → «Проверить смету» · страница с заголовком «Себестоимость»' },
-      { id:'offer', t:'Коммерческое предложение', need:'estimate', url:'/estimate/offers', d:'Из сохранённого расчёта: наценка и версии.', was:'Только Создать → Расчёты и проверки' },
-      { id:'vol', t:'Проверка объёмов', need:'volume', url:'/volume-check', d:'Акт подрядчика: объёмы против проекта или договора.', was:'Ещё → Проверка объёмов работ' },
-      { id:'vcmp', t:'Предложение подрядчика', need:'volume', url:'/volume-check/offer', d:'Что лишнее и чего не хватает в предложении подрядчика.', was:'Только Создать → Расчёты и проверки' } ] },
+      { id:'est', t:'Расчёт себестоимости', need:'estimate', url:'/estimate/generate', d:'Объёмы и цены по чертежам проекта, книга Excel.', was:'Ещё → Себестоимость (заголовок страницы «Себестоимость»)', give:'Альбомы проекта (PDF, DWG)', get:'Смета и себестоимость в Excel, Word, PDF; спорное помечено «Оценка»', next:[['calc/check','Проверить спорные позиции'],['calc/offer','Сделать КП заказчику']] },
+      { id:'check', t:'Проверка сметы', need:'estimate', url:'/estimate', d:'Арифметика, итоги и типовые ошибки готовой сметы. Раньше называлась так же, как расчёт — «Себестоимость».', was:'Главная → «Проверить смету» · страница с заголовком «Себестоимость»', give:'Готовая смета (файл)', get:'Список ошибок арифметики, двойного счёта и пропущенных работ', next:[['calc/offer','Сделать КП заказчику']] },
+      { id:'offer', t:'Коммерческое предложение', need:'estimate', url:'/estimate/offers', d:'Из сохранённого расчёта: наценка и версии.', was:'Только Создать → Расчёты и проверки', give:'Сохранённый расчёт и наценка', get:'Коммерческое предложение, версии', next:[['legal/contracts','Подготовить договор'],['docs/new','Оформить документы']] },
+      { id:'vol', t:'Проверка объёмов', need:'volume', url:'/volume-check', d:'Акт подрядчика: объёмы против проекта или договора.', was:'Ещё → Проверка объёмов работ', give:'Акт подрядчика', get:'Список расхождений: завышения и лишние работы', next:[['money/fin','Деньги по проекту'],['calc/vcmp','Сравнить предложение подрядчика']] },
+      { id:'vcmp', t:'Предложение подрядчика', need:'volume', url:'/volume-check/offer', d:'Что лишнее и чего не хватает в предложении подрядчика.', was:'Только Создать → Расчёты и проверки', give:'Предложение подрядчика', get:'Что лишнее, чего не хватает', next:[['money/subs','Найти другого подрядчика'],['legal/review','Проверить договор']] } ] },
     { id:'docs', t:'Документы', group:'Работа', tabs:[
-      { id:'new', t:'Новый документ', need:'documents', url:'/documents', docs:true, d:'Акты и пакеты по формам РК. Выберите вид — реквизиты подставятся сами.', was:'Ещё → Документооборот · Создать → Документы' },
-      { id:'made', t:'Сделанные', need:'documents', url:'/documents?view=made', d:'История документов компании.', was:'Создать → Готовые документы' } ] },
+      { id:'new', t:'Новый документ', need:'documents', url:'/documents', docs:true, d:'Акты и пакеты по формам РК. Выберите вид — реквизиты подставятся сами.', was:'Ещё → Документооборот · Создать → Документы', give:'Проект и что сделано', get:'Готовые акты в Word и Excel', next:[['docs/made','Посмотреть сделанные']] },
+      { id:'made', t:'Сделанные', need:'documents', url:'/documents?view=made', d:'История документов компании.', was:'Создать → Готовые документы', give:'—', get:'Все ранее сделанные документы компании', next:[['docs/new','Сделать новый']] } ] },
     { id:'site', t:'Площадка', group:'Работа', tabs:[
-      { id:'chief', t:'Начальник участка', need:'site', url:'/site-chief/workspace', d:'Что сделать сегодня, график работ по прорабам и склад проекта.', was:'Ещё → Начальник участка' },
-      { id:'plan', t:'График и выдача работ', need:'site', url:'/site-chief', d:'График проекта из расчёта или вручную; выдача работ прорабам в Telegram.', was:'Только Создать → Площадка' },
-      { id:'master', t:'Прораб/Мастер', need:'master', url:'/master', d:'Мои работы по графику, объём за день, отчёт и наряд-задание.', was:'Ещё → Прораб/Мастер участка' },
-      { id:'norms', t:'Нормы расхода', need:'master', url:'/master/materials', d:'Сколько материала уходит на объём работ.', was:'Только Создать → Площадка' },
-      { id:'tech', t:'Техника', need:'equipment', url:'/equipment', d:'Парк техники, наработка, обслуживание, доходы и расходы.', was:'Ещё → Реестр техники' } ] },
+      { id:'chief', t:'Начальник участка', need:'site', url:'/site-chief/workspace', d:'Что сделать сегодня, график работ по прорабам и склад проекта.', was:'Ещё → Начальник участка', give:'Проект и срок строительства', get:'План и факт по графику, что сделать сегодня', next:[['tasks/issued','Выдать задачи прорабам'],['site/plan','График работ']] },
+      { id:'plan', t:'График и выдача работ', need:'site', url:'/site-chief', d:'График проекта из расчёта или вручную; выдача работ прорабам в Telegram.', was:'Только Создать → Площадка', give:'Объёмы из расчёта или ручной ввод', get:'График работ; работы уходят прорабам в Telegram', next:[['tasks/issued','Выдать работы']] },
+      { id:'master', t:'Прораб/Мастер', need:'master', url:'/master', d:'Мои работы по графику, объём за день, отчёт и наряд-задание.', was:'Ещё → Прораб/Мастер участка', give:'Выполненный объём за день', get:'Отчёт за сегодня и наряд-задание бригаде; начальник участка видит это сразу', next:[['site/tech','Отметить технику']] },
+      { id:'norms', t:'Нормы расхода', need:'master', url:'/master/materials', d:'Сколько материала уходит на объём работ.', was:'Только Создать → Площадка', give:'Объём работ', get:'Сколько материала потребуется', next:[['money/price','Узнать цену материала']] },
+      { id:'tech', t:'Техника', need:'equipment', url:'/equipment', d:'Парк техники, наработка, обслуживание, доходы и расходы.', was:'Ещё → Реестр техники', give:'Список машин и часы работы', get:'Даты техобслуживания, доходы и расходы по технике', next:[['money/fin','Деньги по проекту']] } ] },
     { id:'money', t:'Деньги и снабжение', group:'Работа', tabs:[
-      { id:'fin', t:'Финансовый отчёт', need:'finance', url:'/finance', d:'Расходы, поступления и баланс по любому проекту, план и налоги.', was:'Ещё → Финансовый отчёт' },
-      { id:'budget', t:'Бюджет проекта', need:'finance', url:'/finance/budget', d:'План, факт, обязательства и остаток.', was:'Только Создать → Деньги и снабжение' },
-      { id:'sup', t:'Снабженец: сегодня', need:'supplier', url:'/supplier/panel', d:'Цены материалов, поставщики, подрядчики и торги.', was:'Ещё → Снабженец' },
-      { id:'price', t:'Цена материала', need:'supplier', url:'/supplier', d:'Все цены по позиции со ссылками.', was:'Главная → «Узнать цену материалов»' },
-      { id:'out', t:'Запросы поставщикам', need:'supplier', url:'/supplier/outreach', d:'Письма поставщикам и ответы в одной таблице.', was:'Только Создать → Деньги и снабжение' },
-      { id:'subs', t:'Подрядчики', need:'supplier', url:'/subcontractors', d:'Реестр по видам работ и запрос предложений.', was:'Только Создать → Деньги и снабжение' } ] },
+      { id:'fin', t:'Финансовый отчёт', need:'finance', url:'/finance', d:'Расходы, поступления и баланс по любому проекту, план и налоги.', was:'Ещё → Финансовый отчёт', give:'Ваша таблица доходов и расходов', get:'План, факт и остаток денег; налоги по ставкам 2026 года', next:[['money/budget','Бюджет проекта']] },
+      { id:'budget', t:'Бюджет проекта', need:'finance', url:'/finance/budget', d:'План, факт, обязательства и остаток.', was:'Только Создать → Деньги и снабжение', give:'Проект', get:'План, факт, обязательства и остаток', next:[['money/fin','Финансовый отчёт']] },
+      { id:'sup', t:'Снабженец: сегодня', need:'supplier', url:'/supplier/panel', d:'Цены материалов, поставщики, подрядчики и торги.', was:'Ещё → Снабженец', give:'Список материалов', get:'Что сделать сейчас; сообщения от поставщиков', next:[['money/price','Узнать цену'],['money/out','Запросить цены']] },
+      { id:'price', t:'Цена материала', need:'supplier', url:'/supplier', d:'Все цены по позиции со ссылками.', was:'Главная → «Узнать цену материалов»', give:'Название материала', get:'Все цены со ссылками: интернет, ответы поставщиков', next:[['money/out','Запросить цены у поставщиков']] },
+      { id:'out', t:'Запросы поставщикам', need:'supplier', url:'/supplier/outreach', d:'Письма поставщикам и ответы в одной таблице.', was:'Только Создать → Деньги и снабжение', give:'Список материалов', get:'Письма поставщикам и их ответы в одной таблице; записать цену решаете вы', next:[['calc/est','Вернуться к расчёту']] },
+      { id:'subs', t:'Подрядчики', need:'supplier', url:'/subcontractors', d:'Реестр по видам работ и запрос предложений.', was:'Только Создать → Деньги и снабжение', give:'Вид работ', get:'Реестр подрядчиков и запрос предложений', next:[['calc/vcmp','Сравнить предложение с проектом']] } ] },
     { id:'legal', t:'Договоры', group:'Работа', tabs:[
-      { id:'contracts', t:'Договоры', need:'legal', url:'/legal', d:'Договор и приложения из реквизитов компании.', was:'Ещё → Юрист' },
-      { id:'review', t:'Проверка договора', need:'legal', url:'/legal/review', d:'Риски и спорные пункты присланного договора.', was:'Только Создать → Договоры и письма' },
-      { id:'letter', t:'Письма и претензии', need:'legal', url:'/legal/letter', d:'Официальное письмо по проекту или договору.', was:'Только Создать → Договоры и письма' },
-      { id:'chat', t:'Вопрос юристу', need:'legal', url:'/legal/chat', d:'Ответ со ссылкой на пункт договора и закон.', was:'Только Создать → Договоры и письма' } ] },
+      { id:'contracts', t:'Договоры', need:'legal', url:'/legal', d:'Договор и приложения из реквизитов компании.', was:'Ещё → Юрист', give:'Стороны, предмет, сроки', get:'Договор и приложения из реквизитов компании', next:[['legal/review','Проверить договор']] },
+      { id:'review', t:'Проверка договора', need:'legal', url:'/legal/review', d:'Риски и спорные пункты присланного договора.', was:'Только Создать → Договоры и письма', give:'Присланный договор', get:'Риски, правки, спорные пункты', next:[['legal/letter','Составить письмо или претензию']] },
+      { id:'letter', t:'Письма и претензии', need:'legal', url:'/legal/letter', d:'Официальное письмо по проекту или договору.', was:'Только Создать → Договоры и письма', give:'Что случилось и по какому договору', get:'Официальное письмо или претензия', next:[['legal/chat','Задать вопрос юристу']] },
+      { id:'chat', t:'Вопрос юристу', need:'legal', url:'/legal/chat', d:'Ответ со ссылкой на пункт договора и закон.', was:'Только Создать → Договоры и письма', give:'Ваш вопрос', get:'Ответ со ссылкой на пункт договора и закон', next:[['legal/review','Проверить договор']] } ] },
     { id:'sales', t:'Тендеры и проекты', group:'Работа', tabs:[
-      { id:'tender', t:'Тендеры', need:'tender', url:'/marketing/tender', d:'Лента закупок, разбор объявления, требования к участнику.', was:'Ещё → Тендеры и закупки' },
-      { id:'passport', t:'Паспорт компании', need:'tender', url:'/marketing/tender/passport', d:'Данные компании для заявок — из ваших документов.', was:'Внутри «Тендеры и закупки»' },
-      { id:'demand', t:'Спрос по рынку', need:'tender', url:'/marketing/demand', d:'Какие проекты брать.', was:'Внутри «Тендеры и закупки»' },
-      { id:'concept', t:'Концепт проекта', need:'architect', url:'/architect', d:'Участок, планы, фасады, генплан и стоимость.', was:'Ещё → Архитектор' } ] },
+      { id:'tender', t:'Тендеры', need:'tender', url:'/marketing/tender', d:'Лента закупок, разбор объявления, требования к участнику.', was:'Ещё → Тендеры и закупки', give:'Документы компании и запрос: работы, город, сумма', get:'Подходящие тендеры и ответ: участвовать или нет, с обоснованием', next:[['sales/passport','Паспорт компании'],['calc/est','Посчитать себестоимость по тендеру']] },
+      { id:'passport', t:'Паспорт компании', need:'tender', url:'/marketing/tender/passport', d:'Данные компании для заявок — из ваших документов.', was:'Внутри «Тендеры и закупки»', give:'Лицензии, опыт, обороты, сертификаты', get:'Сверка требований: чего не хватает, видно до подачи', next:[['sales/tender','К ленте тендеров']] },
+      { id:'demand', t:'Спрос по рынку', need:'tender', url:'/marketing/demand', d:'Какие проекты брать.', was:'Внутри «Тендеры и закупки»', give:'Виды работ компании', get:'Спрос по городам и видам работ', next:[['sales/tender','К ленте тендеров']] },
+      { id:'concept', t:'Концепт проекта', need:'architect', url:'/architect', d:'Участок, планы, фасады, генплан и стоимость.', was:'Ещё → Архитектор', give:'«Дом 10×12 м, 2 этажа»', get:'Чертежи и примерная стоимость', next:[['calc/est','Посчитать себестоимость']] } ] },
     { id:'company', t:'Компания', group:'Компания (видит владелец)', owner:true, tabs:[
-      { id:'team', t:'Сотрудники и доступ', need:'*', url:'/team', d:'Приглашения, должности и разделы людей. Сюда объединены «Список разделов» и «Доступ по должностям».', was:'Ещё → Сотрудники и доступ · Список разделов («Убрать лишние») · Доступ по должностям', access:true },
-      { id:'req', t:'Реквизиты', need:'*', url:'/settings/company', d:'Реквизиты для договоров, актов и тендеров; паспорт компании.', was:'Ещё → Реквизиты компании' },
-      { id:'drive', t:'Google Диск', need:'*', url:'/settings/drive', d:'Папки проектов, ночной поиск новых файлов.', was:'Ещё → Google Диск' },
-      { id:'tariff', t:'Тариф', need:'*', url:'/usage', url2:'/upgrade', d:'Доля предела и срок продления; цена для своей компании и заявка. Одна страница вместо четырёх входов.', was:'«Подключить тариф» · Тарифный пакет · Улучшить план · блок «Расчётов в пакете»' } ] }
+      { id:'team', t:'Сотрудники и доступ', need:'*', url:'/team', d:'Приглашения, должности и разделы людей. Сюда объединены «Список разделов» и «Доступ по должностям».', was:'Ещё → Сотрудники и доступ · Список разделов («Убрать лишние») · Доступ по должностям', access:true, give:'Почта сотрудника и должность', get:'Вход в бот и на сайт по коду; человек видит только свои разделы', next:[['company/req','Реквизиты компании']] },
+      { id:'req', t:'Реквизиты', need:'*', url:'/settings/company', d:'Реквизиты для договоров, актов и тендеров; паспорт компании.', was:'Ещё → Реквизиты компании', give:'Реквизиты и документы компании', get:'Подставляются в акты, договоры и тендерные заявки', next:[['sales/passport','Паспорт для тендеров']] },
+      { id:'drive', t:'Google Диск', need:'*', url:'/settings/drive', d:'Папки проектов, ночной поиск новых файлов.', was:'Ещё → Google Диск', give:'Доступ к папке проекта', get:'Новые файлы находятся сами, ночью', next:[['projects/files','Файлы проекта']] },
+      { id:'tariff', t:'Тариф', need:'*', url:'/usage', url2:'/upgrade', d:'Доля предела и срок продления; цена для своей компании и заявка. Одна страница вместо четырёх входов.', was:'«Подключить тариф» · Тарифный пакет · Улучшить план · блок «Расчётов в пакете»', give:'Набор: проекты, расчёты, тендеры, хранилище', get:'Цена в месяц и заявка; счёт приходит после звонка', next:[['company/team','Пригласить людей']] } ] }
   ];
 
   var DOCS = [
@@ -202,7 +235,6 @@
     ['Все виды документов','140 видов по этапам строительства и разделам ПСД','/documents']
   ];
 
-  // Каталог «Создать»: те же 33 действия, что и сейчас; r = вкладка в новой структуре
   var CREATE = [
     ['Документы', [
       ['Акт приёмки выполненных работ (2В)','С начала строительства и за период','documents','docs/new'],
@@ -259,25 +291,27 @@
 
   var QUICK = [['Рассчитать себестоимость','Объёмы и цены по чертежам','calc/est','estimate'],['Проверить смету','Арифметика, итоги, ошибки','calc/check','estimate'],['Сверить объёмы','Акт подрядчика против проекта','calc/vol','volume'],['Оформить документ','Акты по формам РК','docs/new','documents'],['Подготовить договор','Договор из реквизитов','legal/contracts','legal'],['Узнать цену материала','Цены со ссылками','money/price','supplier']];
 
-  var role = 'owner';
+  var role = 'director';
+  var visited = {};
+  try { visited = JSON.parse(localStorage.getItem('aq_visited') || '{}'); } catch (e) {}
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); };
 
-  function can(need) {
-    var r = ROLES[role];
-    return need === '*' || r.p === 'ALL' || r.p.indexOf(need) !== -1;
-  }
+  function can(need) { var r = ROLES[role]; return need === '*' || r.p === 'ALL' || r.p.indexOf(need) !== -1; }
   function tabsOf(s) { return s.tabs.filter(function (t) { return can(t.need); }); }
   function secs() { return SEC.filter(function (s) { return (!s.owner || ROLES[role].company) && tabsOf(s).length; }); }
   function find(r) {
     var p = (r || '').split('/');
     var s = SEC.filter(function (x) { return x.id === p[0]; })[0];
-    if (!s) return null;
-    var t = s.tabs.filter(function (x) { return x.id === p[1]; })[0] || tabsOf(s)[0];
+    if (!s || (s.owner && !ROLES[role].company)) return null;
+    var t = s.tabs.filter(function (x) { return x.id === p[1] && can(x.need); })[0] || (p[1] ? null : tabsOf(s)[0]);
     return t ? { s: s, t: t } : null;
   }
+  function vk(r) { return role + ':' + r; }
+  function seen(r) { return !!visited[vk(r)]; }
+  function mark(r) { visited[vk(r)] = 1; try { localStorage.setItem('aq_visited', JSON.stringify(visited)); } catch (e) {} }
 
-  // ----- Меню -----
+  // ----- Боковое меню -----
   function renderSide(cur) {
     var h = '', lastG = null;
     secs().forEach(function (s) {
@@ -285,10 +319,11 @@
       var n = tabsOf(s).length;
       h += '<a class="nav' + (cur && cur.s.id === s.id ? ' on' : '') + '" href="#/' + s.id + '/' + tabsOf(s)[0].id + '"><span>' + esc(s.t) + '</span>' + (n > 1 ? '<small>' + n + '</small>' : '') + '</a>';
     });
-    if (ROLES[role].company) h += '<div class="tariff"><b>Расчётов в пакете 0/1</b><div class="bar"><i></i></div>Пробный доступ 0 %<br><a class="btn pri" style="margin-top:8px" href="#/company/tariff">Подключить тариф</a></div>';
+    if (ROLES[role].company) h += '<div class="tariff"><b>Расчётов в пакете 0/1</b><div class="bar"></div>Пробный доступ 0 %<br><a class="btn pri" style="margin-top:8px" href="#/company/tariff">Подключить тариф</a></div>';
     $('side').innerHTML = h;
   }
 
+  // ----- Меню «Создать», профиль, помощь -----
   function popCreate() {
     var h = '';
     CREATE.forEach(function (g) {
@@ -302,12 +337,12 @@
   }
   function popOthers() {
     $('bellPop').innerHTML = '<div class="ph">Уведомления</div><div class="empty" style="padding:14px">Новых уведомлений нет</div><a href="' + BASE + '/settings?tab=notifications" target="_blank" rel="noopener">Настроить уведомления ↗</a>';
-    $('helpPop').innerHTML = '<div class="ph">Помощь</div><a href="' + BASE + '/handbook" target="_blank" rel="noopener">Как пользоваться AIQurylys<small>Статьи, словарь, чек-листы и курсы по ролям</small></a><a href="' + BASE + '/handbook" target="_blank" rel="noopener">Мне нужен АОСР</a><a href="' + BASE + '/handbook" target="_blank" rel="noopener">Что нужно для тендера?</a><div class="ph">Один вход вместо трёх: FAQ был в верхней панели и дважды в «Ещё»</div>';
+    $('helpPop').innerHTML = '<div class="ph">Помощь</div><a href="#/home/today" data-close>С чего начать<small>Ваш путь по шагам — на главной</small></a><a href="' + BASE + '/handbook" target="_blank" rel="noopener">Как пользоваться AIQurylys ↗<small>Статьи, словарь, чек-листы и курсы по ролям</small></a><a href="' + BASE + '/handbook" target="_blank" rel="noopener">Мне нужен АОСР ↗</a><a href="' + BASE + '/handbook" target="_blank" rel="noopener">Что нужно для тендера? ↗</a>';
     $('profPop').innerHTML = '<div class="ph">' + esc(ROLES[role].n) + ' · Yessenaliev</div>' +
-      '<a href="' + BASE + '/settings" target="_blank" rel="noopener">Профиль и вход<small>Имя, почта, пароль</small></a>' +
-      '<a href="' + BASE + '/settings?tab=notifications" target="_blank" rel="noopener">Уведомления</a>' +
-      '<a href="' + BASE + '/support" target="_blank" rel="noopener">Поддержка<small>Новое обращение и мои обращения — одна страница</small></a>' +
-      '<a href="https://t.me/AIQurylys_Bot" target="_blank" rel="noopener">Telegram-бот<small>Задачи и отчёты с телефона</small></a>' +
+      '<a href="' + BASE + '/settings" target="_blank" rel="noopener">Профиль и вход ↗<small>Имя, почта, пароль</small></a>' +
+      '<a href="' + BASE + '/settings?tab=notifications" target="_blank" rel="noopener">Уведомления ↗</a>' +
+      '<a href="' + BASE + '/support" target="_blank" rel="noopener">Поддержка ↗<small>Новое обращение и мои обращения — одна страница</small></a>' +
+      '<a href="https://t.me/AIQurylys_Bot" target="_blank" rel="noopener">Telegram-бот ↗<small>Задачи и отчёты с телефона</small></a>' +
       '<button class="it" id="themeBtn">Тема: ' + (document.documentElement.dataset.theme === 'dark' ? 'ночь' : 'день') + '</button>' +
       '<button class="it" data-toast="Язык: в образце переключение не работает">Язык: Рус / Қаз</button>' +
       '<button class="it" data-toast="Выход в образце отключён">Выйти</button>';
@@ -315,46 +350,61 @@
   }
 
   // ----- Экраны -----
+  function rl(r) { var f = find(r); return f ? f : null; }
+  function nextLinks(t) {
+    return (t.next || []).filter(function (n) { return rl(n[0]); });
+  }
+
   function view(r) {
     var cur = find(r) || find('home/today');
-    if (!cur) cur = find('home/today');
-    var s = cur.s, t = cur.t;
+    var s = cur.s, t = cur.t, route = s.id + '/' + t.id;
+    mark(route);
     renderSide(cur);
     document.title = (s.id === 'home' && t.id === 'today' ? 'Главная' : t.t + (s.id === 'home' ? '' : ' — ' + s.t)) + ' — AIQurylys';
-    var h = '<div class="crumbs">' + (s.id === 'home' ? 'Кабинет' : esc(s.t)) + ' / ' + esc(t.t) + '</div><h1>' + esc(s.id === 'home' ? 'Главная' : t.t) + '</h1>';
+    var first = tabsOf(s)[0];
+    var h = '<div class="crumbs"><a href="#/home/today">Кабинет</a>' + (s.id === 'home' ? '' : ' / <a href="#/' + s.id + '/' + first.id + '">' + esc(s.t) + '</a>') + ' / ' + esc(t.t) + '</div><h1>' + esc(s.id === 'home' ? 'Главная' : t.t) + '</h1>';
     var ts = tabsOf(s);
-    if (ts.length > 1) {
-      h += '<div class="tabs">' + ts.map(function (x) { return '<a class="tab' + (x.id === t.id ? ' on' : '') + '" href="#/' + s.id + '/' + x.id + '">' + esc(x.t) + '</a>'; }).join('') + '</div>';
-    }
+    if (ts.length > 1) h += '<div class="tabs">' + ts.map(function (x) { return '<a class="tab' + (x.id === t.id ? ' on' : '') + '" href="#/' + s.id + '/' + x.id + '">' + esc(x.t) + '</a>'; }).join('') + '</div>';
     if (t.home) h += home();
     else {
       h += '<p class="lead">' + esc(t.d) + '</p>';
-      h += '<div class="grid g2"><div class="card">';
-      if (t.docs) {
-        h += '<h2>Выберите вид документа</h2><div class="docs">' + DOCS.map(function (d) { return '<a href="' + BASE + d[2] + '" target="_blank" rel="noopener"><b>' + esc(d[0]) + '</b><span>' + esc(d[1]) + '</span></a>'; }).join('') + '</div>';
-      } else if (t.access) {
-        h += '<h2>Доступ по должностям</h2><p class="lead" style="margin-bottom:8px">Раньше этот список был внизу страницы «Ещё». Деньги компании и сотрудники видит только владелец.</p><table><tr><th>Должность</th><th>Видит</th></tr>' + ACCESS.map(function (a) { return '<tr><td><b>' + esc(a[0]) + '</b></td><td>' + esc(a[1]) + '</td></tr>'; }).join('') + '</table>' +
-          '<p style="margin-top:12px"><a class="btn" href="' + BASE + '/team" target="_blank" rel="noopener">Приглашения и должности ↗</a> <a class="btn" href="' + BASE + '/settings?tab=menu" target="_blank" rel="noopener">Список разделов ↗</a></p>';
-      } else {
-        h += '<h2>Рабочий экран</h2><p>Здесь открывается рабочая страница «' + esc(t.t) + '» действующего кабинета: те же поля, кнопки и результаты. Образец показывает, где она теперь находится в навигации.</p>' +
-          '<p><a class="btn pri" href="' + BASE + t.url + '" target="_blank" rel="noopener">Открыть в рабочей версии ↗</a>' + (t.url2 ? ' <a class="btn" href="' + BASE + t.url2 + '" target="_blank" rel="noopener">Улучшить план ↗</a>' : '') + '</p>';
-      }
+      var nx = nextLinks(t);
+      h += '<div class="flow"><div><small>Вы даёте</small>' + esc(t.give) + '</div><div class="ar">→</div><div><small>Получаете</small>' + esc(t.get) + '</div><div class="ar">→</div><div class="nx"><small>Дальше</small>' + (nx.length ? nx.map(function (n) { return '<a href="#/' + n[0] + '">' + esc(n[1]) + ' →</a>'; }).join('') : '—') + '</div></div>';
+      h += '<div class="grid g2" style="margin-top:14px"><div class="card">';
+      if (t.docs) h += '<h2>Выберите вид документа</h2><div class="docs">' + DOCS.map(function (d) { return '<a href="' + BASE + d[2] + '" target="_blank" rel="noopener"><b>' + esc(d[0]) + ' ↗</b><span>' + esc(d[1]) + '</span></a>'; }).join('') + '</div>';
+      else if (t.access) h += '<h2>Доступ по должностям</h2><p class="lead" style="margin-bottom:8px">Раньше этот список был внизу страницы «Ещё». Деньги компании и сотрудников видит только владелец.</p><table><tr><th>Должность</th><th>Видит</th></tr>' + ACCESS.map(function (a) { return '<tr><td><b>' + esc(a[0]) + '</b></td><td>' + esc(a[1]) + '</td></tr>'; }).join('') + '</table><p style="margin-top:12px"><a class="btn" href="' + BASE + '/team" target="_blank" rel="noopener">Приглашения и должности ↗</a> <a class="btn" href="' + BASE + '/settings?tab=menu" target="_blank" rel="noopener">Список разделов ↗</a></p>';
+      else h += '<h2>Рабочий экран</h2><p>Здесь открывается рабочая страница «' + esc(t.t) + '» действующего кабинета: те же поля, кнопки и результаты. В образце показано, где она теперь находится и куда ведёт дальше.</p><p><a class="btn mark" href="' + BASE + t.url + '" target="_blank" rel="noopener">Открыть в рабочей версии ↗</a>' + (t.url2 ? ' <a class="btn" href="' + BASE + t.url2 + '" target="_blank" rel="noopener">Улучшить план ↗</a>' : '') + '</p>';
       h += '</div><div><div class="card"><h2>Где это было раньше</h2><p style="margin:0">' + esc(t.was) + '</p></div>';
       var sib = ts.filter(function (x) { return x.id !== t.id; });
       if (sib.length) h += '<div class="card" style="margin-top:14px"><h2>В этом же разделе</h2><ul class="list">' + sib.map(function (x) { return '<li><a href="#/' + s.id + '/' + x.id + '">' + esc(x.t) + '</a></li>'; }).join('') + '</ul></div>';
       h += '</div></div>';
+      // Нить: шаг в «пути» роли и следующий шаг
+      var path = ROLES[role].path, idx = -1;
+      path.forEach(function (p, i) { if (p[0] === route && idx < 0) idx = i; });
+      var target = null, label = '';
+      if (idx >= 0 && idx < path.length - 1) { target = path[idx + 1]; label = 'Шаг ' + (idx + 2) + ' вашего пути: ' + target[1]; }
+      else if (nx.length) { target = [nx[0][0]]; label = nx[0][1]; }
+      if (target && rl(target[0])) h += '<div class="nextbar"><span>' + (idx >= 0 ? 'Вы на шаге ' + (idx + 1) + ' из ' + path.length + ' вашего пути' : 'Следующий шаг') + '</span><a class="btn pri" href="#/' + target[0] + '">' + esc(label) + ' →</a><a class="btn" href="#/home/today">К началу пути</a></div>';
+      else h += '<div class="nextbar"><span>Путь пройден</span><a class="btn pri" href="#/home/today">На главную</a></div>';
     }
     $('main').innerHTML = h;
     $('main').scrollTop = 0;
   }
 
   function home() {
+    var R = ROLES[role];
     var q = QUICK.filter(function (x) { return can(x[3]); }).slice(0, 6);
-    var h = '<p class="lead">Пятница, 13 ноября · ' + esc(ROLES[role].n) + '</p>' +
-      '<div class="grid g4"><div class="card kpi"><b>0</b><span>Проектов в работе</span></div><div class="card kpi"><b>0</b><span>Задач в работе</span></div><div class="card kpi"><b>0</b><span>Документов за 30 дней</span></div><div class="card kpi"><b>0</b><span>Требует решений</span></div></div>' +
-      '<div class="grid g2" style="margin-top:14px"><div><div class="card"><h2>Требует решения</h2><span class="chip g">Срочных вопросов нет</span></div>' +
-      '<div class="card" style="margin-top:14px"><h2>Проекты</h2><div class="empty">Проектов пока нет<br><a class="btn pri" style="margin-top:10px" href="#/projects/list">Новый проект</a></div></div></div>' +
-      '<div class="card"><h2>Быстрые действия</h2><div class="quick">' + q.map(function (x) { return '<a href="#/' + x[2] + '"><span><b>' + esc(x[0]) + '</b><small>' + esc(x[1]) + '</small></span></a>'; }).join('') + '</div><p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Остальное — кнопка «＋ Создать» или поиск. Раньше это были те же шесть кнопок дважды на одном экране.</p></div></div>';
+    var h = '<p class="lead"><b>' + esc(R.n) + '.</b> ' + esc(R.line) + '</p>';
+    h += '<div class="grid g4"><a class="card kpi" href="#/projects/list"><b>0</b><span>Проектов в работе</span></a><a class="card kpi" href="#/tasks/mine"><b>0</b><span>Задач в работе</span></a>' +
+      (can('documents') ? '<a class="card kpi" href="#/docs/made"><b>0</b><span>Документов за 30 дней</span></a>' : '<a class="card kpi" href="#/tasks/mine"><b>0</b><span>Моих отчётов</span></a>') +
+      '<a class="card kpi" href="#/' + (can('summary') ? 'home/summary' : 'tasks/mine') + '"><b>0</b><span>Требует решений</span></a></div>';
+    h += '<div class="grid g2" style="margin-top:14px"><div><div class="card"><h2>С чего начать: ваш путь</h2><ol class="path">' +
+      R.path.map(function (p) { var ok = rl(p[0]); return ok ? '<li class="' + (seen(p[0]) ? 'done' : '') + '"><a href="#/' + p[0] + '"><span>' + esc(p[1]) + '<small>' + esc(p[2]) + '</small></span></a></li>' : ''; }).join('') + '</ol>';
+    if (role === 'foreman') h += '<p style="margin:12px 0 0;font-size:13px;color:var(--muted)">Основная работа идёт в Telegram: <a href="https://t.me/AIQurylys_Bot" target="_blank" rel="noopener">@AIQurylys_Bot ↗</a>, вход по коду от руководителя.</p>';
+    h += '</div>' +
+      '<div class="card" style="margin-top:14px"><h2>Требует решения</h2><span class="chip g">Срочных вопросов нет</span></div></div>' +
+      '<div><div class="card"><h2>Быстрые действия</h2><div class="quick">' + q.map(function (x) { return '<a href="#/' + x[2] + '"><span><b>' + esc(x[0]) + '</b><small>' + esc(x[1]) + '</small></span></a>'; }).join('') + '</div><p style="margin:10px 0 0;font-size:13px;color:var(--muted)">Остальное — «＋ Создать» или поиск.</p></div>' +
+      '<div class="card" style="margin-top:14px"><h2>Проекты</h2><div class="empty">Проектов пока нет<br><a class="btn pri" style="margin-top:10px" href="#/projects/list">Новый проект</a></div></div></div></div>';
     return h;
   }
 
@@ -363,7 +413,7 @@
   function toggle(id) { var o = $(id).classList.contains('open'); closePops(); if (!o) { if (id === 'createPop') popCreate(); popOthers(); $(id).classList.add('open'); } }
   function toast(m) { var t = $('toast'); t.textContent = m; t.classList.add('on'); setTimeout(function () { t.classList.remove('on'); }, 2200); }
 
-  var palSel = 0, palItems = [];
+  var palSel = 0;
   function palIndex() {
     var out = [];
     CREATE.forEach(function (g) { g[1].forEach(function (i) { if (can(i[2])) out.push({ t: i[0], s: g[0] + ' · ' + i[1], r: i[3] }); }); });
@@ -373,16 +423,16 @@
   function palRender() {
     var q = $('palIn').value.trim().toLowerCase();
     var all = palIndex();
-    palItems = (q ? all.filter(function (x) { return (x.t + ' ' + x.s).toLowerCase().indexOf(q) !== -1; }) : all.slice(0, 8)).slice(0, 9);
-    var h = palItems.map(function (x, i) { return '<a href="#/' + x.r + '" data-close class="' + (i === palSel ? 'sel' : '') + '"><span>' + esc(x.t) + '</span><small>' + esc(x.s).slice(0, 58) + '</small></a>'; }).join('');
-    if (q) h += '<a href="#" data-ask class="' + (palSel === palItems.length ? 'sel' : '') + '"><span>🤖 Спросить AIQurylys: «' + esc($('palIn').value.trim()) + '»</span><small>один вход вместо трёх</small></a>';
+    var items = (q ? all.filter(function (x) { return (x.t + ' ' + x.s).toLowerCase().indexOf(q) !== -1; }) : all.slice(0, 8)).slice(0, 9);
+    var h = items.map(function (x, i) { return '<a href="#/' + x.r + '" data-close class="' + (i === palSel ? 'sel' : '') + '"><span>' + esc(x.t) + '</span><small>' + esc(x.s).slice(0, 58) + '</small></a>'; }).join('');
+    if (q) h += '<a href="#" data-ask class="' + (palSel === items.length ? 'sel' : '') + '"><span>🤖 Спросить AIQurylys: «' + esc($('palIn').value.trim()) + '»</span><small>один вход вместо трёх</small></a>';
     $('palRes').innerHTML = h || '<div class="empty">Ничего не найдено</div>';
   }
   function palOpen() { $('pal').classList.add('open'); $('palIn').value = ''; palSel = 0; palRender(); setTimeout(function () { $('palIn').focus(); }, 30); }
   function palClose() { $('pal').classList.remove('open'); }
 
   document.addEventListener('click', function (e) {
-    var a = e.target.closest('[data-close]'); if (a) { closePops(); palClose(); $('side').classList.remove('open'); }
+    if (e.target.closest('[data-close]')) { closePops(); palClose(); $('side').classList.remove('open'); }
     if (e.target.closest('[data-ask]')) { e.preventDefault(); palClose(); toast('В рабочей версии здесь отвечает помощник AIQurylys'); }
     var tt = e.target.closest('[data-toast]'); if (tt) toast(tt.getAttribute('data-toast'));
     if (!e.target.closest('.pop') && !e.target.closest('.top .btn')) closePops();
@@ -407,12 +457,23 @@
   });
 
   // ----- Роль и маршрут -----
-  var rs = $('role');
-  Object.keys(ROLES).forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = ROLES[k].n; rs.appendChild(o); });
-  rs.onchange = function () { role = rs.value; $('avatar').textContent = role === 'owner' ? 'Y' : ROLES[role].n[0]; popCreate(); popOthers(); route(); };
+  function setRole(k) {
+    role = k;
+    [].forEach.call($('roles').children, function (b) { b.classList.toggle('on', b.dataset.k === k); });
+    $('avatar').textContent = ROLES[k].n[0];
+    $('rnote').textContent = ROLES[k].note || '';
+    popCreate(); popOthers();
+    var r = location.hash.replace(/^#\//, '');
+    if (r === 'home/today' || !find(r)) { if (location.hash !== '#/home/today') location.hash = '#/home/today'; else route(); } else route();
+  }
+  ORDER.forEach(function (k) { var b = document.createElement('button'); b.textContent = ROLES[k].n; b.dataset.k = k; b.onclick = function () { setRole(k); }; $('roles').appendChild(b); });
   function route() { view(location.hash.replace(/^#\//, '')); }
+  function fit() { $('shell').style.setProperty('--bh', $('banner').offsetHeight + 'px'); }
+  window.addEventListener('resize', fit);
   window.addEventListener('hashchange', route);
-  popCreate(); popOthers(); route();
+  // для проверки ссылок
+  window.__aq = { roles: ORDER, setRole: setRole, find: function (r, k) { var o = role; role = k; var f = !!find(r); role = o; return f; }, hrefs: function () { return [].map.call(document.querySelectorAll('a[href^="#/"]'), function (a) { return a.getAttribute('href').slice(2); }); } };
+  fit(); setRole('director');
 })();
 </script>
 </body>
