@@ -171,8 +171,8 @@ var selectRole = (function () {
   if (!root) return;
 
   var DURATION = 8;   // секунд на сцену в автопоказе
-  var UNIT = 0.75;    // сколько экранов прокрутки занимает одна сцена
-  var HOLD = 0.6;     // доля сцены, когда она стоит на месте; остальное — переход к следующей
+  var UNIT = 1.3;     // сколько экранов прокрутки занимает одна сцена вместе с переходом
+  var HOLD = 0.4;     // доля сцены, когда она стоит на месте; остальное — переход к следующей
   var NAV_H = 64;
 
   var stage = root.querySelector('.scenes__stage');
@@ -342,9 +342,15 @@ var selectRole = (function () {
       var p = i < act ? 1 : (i === act && act === a ? Math.min(1, t / HOLD) : 0);
       d.style.setProperty('--p', p);
     });
+    // Текст уходит в начале перехода и возвращается в его конце: посередине виден только фильм
     scenes.forEach(function (s, i) {
-      s.style.setProperty('--k', i === a ? k : (i === a + 1 ? k - 1 : 0));
+      var cur = i === a;
+      var nxt = i === a + 1;
+      s.style.setProperty('--k', cur ? k : (nxt ? k - 1 : 0));
+      s.style.setProperty('--o', cur ? Math.max(0, 1 - k * 4) : (nxt ? Math.max(0, Math.min(1, (k - 0.75) * 4)) : 0));
+      s.classList.toggle('is-near', cur || nxt);
     });
+    if (transBox) transBox.style.setProperty('--ov', (0.2 + 0.8 * Math.abs(2 * k - 1)).toFixed(3));
 
     scrub(bgVideo(a), t / HOLD);
     if (a + 1 < N && k > 0) scrub(bgVideo(a + 1), 0);
