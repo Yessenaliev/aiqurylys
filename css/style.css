@@ -718,3 +718,6 @@ body.pricing .btn--line { background: transparent; color: #fff; border-color: rg
 .dot.done i b { transform: scaleX(1); }
 
 .dot i b { transition: transform .12s linear; }
+
+/* Раздел заканчивается: текст плавно уходит перед сменой */
+.scenes .scene.ending > .wrap { opacity: 0; }
