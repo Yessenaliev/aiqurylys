@@ -303,8 +303,8 @@ var selectRole = (function () {
 
   function clearTimers() {
     clearTimeout(holdTimer);
-    cancelAnimationFrame(raf);
-    cancelAnimationFrame(progRaf);
+    clearInterval(raf);
+    clearInterval(progRaf);
   }
 
   // Ползунок текущей сцены заполняется ровно за время её показа; полный ползунок = начало перехода
@@ -314,17 +314,18 @@ var selectRole = (function () {
     });
   }
   function progLoop() {
-    cancelAnimationFrame(progRaf);
-    (function tick() {
+    clearInterval(progRaf);
+    function step() {
       if (phase !== 'hold' || suspended()) return;
       var left = Math.max(0, holdLeft - (Date.now() - holdStart));
       dots[current].style.setProperty('--p', (1 - left / holdTotal).toFixed(3));
-      progRaf = requestAnimationFrame(tick);
-    })();
+    }
+    step();
+    progRaf = setInterval(step, 60);
   }
 
   function stopTrans() {
-    cancelAnimationFrame(raf);
+    clearInterval(raf);
     if (activeTrans) {
       activeTrans.el.pause();
       activeTrans.el.classList.remove('on');
@@ -379,7 +380,7 @@ var selectRole = (function () {
     if (!t) return;
     var p = t.el.play();
     if (p && p.catch) p.catch(function () {});
-    (function tick() {
+    function step() {
       if (phase !== 'trans' || !activeTrans) return;
       var d = t.el.duration || 5;
       var k = Math.min(1, t.el.currentTime / d);
@@ -389,14 +390,16 @@ var selectRole = (function () {
         show(current + 1);
         root.classList.remove('text-out');
       }
-      raf = requestAnimationFrame(tick);
-    })();
+    }
+    clearInterval(raf);
+    step();
+    raf = setInterval(step, 60);
   }
 
   function suspend() {
     clearTimeout(holdTimer);
-    cancelAnimationFrame(raf);
-    cancelAnimationFrame(progRaf);
+    clearInterval(raf);
+    clearInterval(progRaf);
     if (phase === 'hold') holdLeft = Math.max(0, holdLeft - (Date.now() - holdStart));
     pauseAll();
     if (activeTrans) activeTrans.el.pause();
