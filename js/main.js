@@ -239,6 +239,8 @@ var selectRole = (function () {
         v.addEventListener('loadeddata', function () { v.classList.add('on'); });
         bg.appendChild(v);
         s.insertBefore(bg, s.firstChild);
+        // Если это текущая сцена и она уже ждёт видео (первый экран), запускаем его
+        if (s === scenes[current] && phase === 'hold' && !suspended()) playScene(current);
       };
       img.src = base + exts[e];
     }
