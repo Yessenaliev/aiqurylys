@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3">
+<link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
 
@@ -22,9 +22,8 @@
   <div class="wrap nav__in">
     <a class="logo" href="#top"><b>AI</b>Qurylys</a>
     <div class="nav__links" id="menu">
-      <a href="#roles">Кому что даёт</a>
-      <a href="#example">Пример</a>
-      <a href="#how">Как работает</a>
+      <a href="#roles">Кто вы</a>
+      <a href="#how">Как начать</a>
       <a href="#projects">Проекты</a>
       <a href="#price">Цены</a>
       <a class="nav__login" href="https://ai-qurylys.kz/login">Войти</a>
@@ -214,46 +213,52 @@
 
 <main>
 
-<section class="sec sec--sand" id="roles">
+<section class="sec sec--dark" id="roles">
   <div class="wrap">
-    <p class="eyebrow">Кому что даёт</p>
-    <h2 class="h2">От тендера до сдачи проекта</h2>
-    <p class="lead">Каждый раздел делает свою часть и отдаёт готовый документ, а не совет.</p>
+    <p class="eyebrow">Шаг 1 из 4</p>
+    <h2 class="h2">Кто вы?</h2>
+    <p class="lead">Нажмите на свою роль — покажем, что получите именно вы.</p>
 
-    <div class="pipe">
-      <div class="pipe__row">
-        <b>До начала строительства</b>
-        <div class="pipe__items"><span>Тендеры</span><span>Маркетолог</span><span>Себестоимость</span><span>Проверка сметы</span><span>Снабженец</span><span>Юрист</span><span>Архитектор</span></div>
+    <div class="who" role="tablist" aria-label="Роль в компании" id="rolebar">
+      <button class="who__tile" role="tab" type="button" data-role="director" aria-selected="true" style="background-image:url(media/scenes/director.webp)"><span>Директор</span></button>
+      <button class="who__tile" role="tab" type="button" data-role="gip" aria-selected="false" style="background-image:url(media/scenes/gip.webp)"><span>ГИП</span></button>
+      <button class="who__tile" role="tab" type="button" data-role="pto" aria-selected="false" style="background-image:url(media/scenes/estimator.webp)"><span>ПТО и сметчик</span></button>
+      <button class="who__tile" role="tab" type="button" data-role="supply" aria-selected="false" style="background-image:url(media/scenes/supply.webp)"><span>Снабженец</span></button>
+      <button class="who__tile" role="tab" type="button" data-role="site" aria-selected="false" style="background-image:url(media/scenes/site.webp)"><span>Начальник участка</span></button>
+      <button class="who__tile" role="tab" type="button" data-role="foreman" aria-selected="false" style="background-image:url(media/scenes/foreman.webp)"><span>Прораб и мастер</span></button>
+      <button class="who__tile" role="tab" type="button" data-role="fin" aria-selected="false" style="background-image:url(media/scenes/finance.webp)"><span>Финансист</span></button>
+    </div>
+    <div class="who__more">
+      <span>Другие роли:</span>
+      <button class="who__chip" role="tab" type="button" data-role="manager" aria-selected="false">Руководитель</button>
+      <button class="who__chip" role="tab" type="button" data-role="lawyer" aria-selected="false">Юрист</button>
+      <button class="who__chip" role="tab" type="button" data-role="marketer" aria-selected="false">Маркетолог</button>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--dark sec--tight" id="result">
+  <div class="wrap">
+    <p class="eyebrow">Шаг 2 из 4</p>
+    <h2 class="h2">Что вы получите</h2>
+
+    <div class="rolepanel" id="role-panel" aria-live="polite">
+      <div class="rolepanel__mock" id="role-mock" aria-hidden="true"></div>
+      <div>
+        <h3 id="role-title">Директор и владелец</h3>
+        <p id="role-text"></p>
+        <ul class="list" id="role-list"></ul>
+        <div class="cta-row">
+          <a class="btn btn--primary" href="https://ai-qurylys.kz/register">Проверить на своём проекте бесплатно</a>
+          <button class="btn btn--ghost" type="button" id="show-example" hidden>Смотреть смету целиком</button>
+        </div>
       </div>
-      <div class="pipe__row">
-        <b>В процессе строительства</b>
-        <div class="pipe__items"><span>Начальник участка</span><span>Прораб и мастер</span><span>Проверка объёмов</span><span>Документооборот</span><span>Финансист</span><span>Техника</span></div>
-      </div>
     </div>
 
-    <h3 class="h3">Выберите свою роль</h3>
-    <p class="lead" style="margin-top:6px">Покажем только те разделы, которые нужны именно вам. Все роли входят в один пакет компании — людей без ограничения.</p>
-
-    <div class="rolebar" role="tablist" aria-label="Роль в компании" id="rolebar">
-      <button class="tab" role="tab" type="button" data-role="director" aria-selected="true">Директор</button>
-      <button class="tab" role="tab" type="button" data-role="manager" aria-selected="false">Руководитель</button>
-      <button class="tab" role="tab" type="button" data-role="gip" aria-selected="false">ГИП</button>
-      <button class="tab" role="tab" type="button" data-role="pto" aria-selected="false">ПТО и сметчик</button>
-      <button class="tab" role="tab" type="button" data-role="supply" aria-selected="false">Снабженец</button>
-      <button class="tab" role="tab" type="button" data-role="site" aria-selected="false">Начальник участка</button>
-      <button class="tab" role="tab" type="button" data-role="foreman" aria-selected="false">Прораб и мастер</button>
-      <button class="tab" role="tab" type="button" data-role="fin" aria-selected="false">Финансист</button>
-      <button class="tab" role="tab" type="button" data-role="lawyer" aria-selected="false">Юрист</button>
-      <button class="tab" role="tab" type="button" data-role="marketer" aria-selected="false">Маркетолог</button>
-      <button class="tab" role="tab" type="button" data-role="all" aria-selected="false">Все разделы</button>
-    </div>
-
-    <div class="rolehead" aria-live="polite">
-      <h3 id="role-title">Директор и владелец</h3>
-      <p id="role-text">Видит деньги по каждому проекту, получает утреннюю сводку в Telegram и понимает, в какие тендеры идти.</p>
-    </div>
-
-    <div class="cards" id="role-cards">
+    <p class="allrow"><button class="linkbtn" type="button" id="show-all" aria-expanded="false">Показать все разделы системы</button></p>
+    <div id="all-wrap" hidden>
+      <h3 class="h3" style="margin-top:8px">От тендера до сдачи проекта</h3>
+      <div class="cards" id="role-cards">
       <article class="card" data-roles="manager gip pto supply marketer">
         <h3>Себестоимость</h3>
         <p>Считает объёмы по чертежам, подставляет цены и собирает ведомость материалов.</p>
@@ -320,39 +325,31 @@
         <div class="io"><div><span>Вы даёте</span><b>«дом 10×12 м, 2 этажа»</b></div><div><span>Получаете</span><b>чертежи и стоимость</b></div></div>
       </article>
     </div>
+    </div>
 
-    <div class="bot" id="tenders">
-      <div>
-        <h3>Тендеры: система сама находит, проверяет и считает прибыль</h3>
-        <p>Одна лента из государственных закупок и площадок застройщиков. Напишите, что ищете: вид работ, город и сумму. Система отберёт то, что подходит под лицензии и обороты вашей компании.</p>
-        <ul class="roles">
-          <li><b>1. Отбор</b><span>«Сегодня для вас»: подходящие тендеры и ближайшие сроки подачи</span></li>
-          <li><b>2. Раньше других</b><span>закупки из годовых планов заказчиков — ещё до объявления</span></li>
-          <li><b>3. Проверка</b><span>требования сверяются с документами компании: чего не хватает, видно до подачи</span></li>
-          <li><b>4. Расчёт</b><span>себестоимость по документам закупки, прибыль, риски и рекомендуемая цена участия</span></li>
-          <li><b>5. Заявка</b><span>пакет документов для подачи собирается в Word</span></li>
-        </ul>
+    <template id="mock-lawyer">
+      <div class="mock">
+        <div class="mock__head"><b>Договор подряда</b><span>проверка</span></div>
+        <div class="row"><span>Присланный договор</span><b><i class="chip chip--ok">прочитан</i></b></div>
+        <div class="row"><span>Рискованные пункты</span><b><i class="chip chip--warn">отмечены</i></b></div>
+        <div class="row"><span>Правки</span><b><i class="chip chip--ok">предложены</i></b></div>
+        <div class="mock__foot">Претензионное письмо — готовым документом в Word</div>
       </div>
-      <div class="mock" aria-hidden="true">
+    </template>
+    <template id="mock-tender">
+      <div class="mock">
         <div class="mock__head"><b>Закупка · анализ</b><span>расчёт до подачи</span></div>
         <div class="row"><span>Требования к участнику</span><b><i class="chip chip--ok">сверены</i></b></div>
         <div class="row"><span>Себестоимость по документам</span><b><i class="chip chip--ok">посчитана</i></b></div>
         <div class="row"><span>Позиции без цены</span><b><i class="chip chip--warn">перечислены</i></b></div>
         <div class="row"><span>Конкуренция и цена участия</span><b><i class="chip chip--ok">есть</i></b></div>
-        <div class="mock__foot">Ответ: «Участвовать» или «Не участвовать» — с обоснованием. Решение за вами.</div>
+        <div class="mock__foot">Ответ: «Участвовать» или «Не участвовать» — с обоснованием</div>
       </div>
-    </div>
-
-    <div class="cta-row">
-      <a class="btn btn--primary" href="https://ai-qurylys.kz/register">Проверить на своём проекте бесплатно</a>
-      <a class="btn btn--line" href="#price">Сколько стоит</a>
-    </div>
+    </template>
   </div>
 </section>
 
-
-
-<section class="sec" id="example">
+<section class="sec sec--dark" id="example" hidden>
   <div class="wrap">
     <p class="eyebrow">Пример</p>
     <h2 class="h2">Вот что вы получите</h2>
@@ -407,7 +404,7 @@
 
 <section class="sec sec--blue" id="how">
   <div class="wrap">
-    <p class="eyebrow">Как работает</p>
+    <p class="eyebrow">Шаг 3 из 4 · Как начать</p>
     <h2 class="h2">Четыре шага от чертежа до сметы</h2>
     <ol class="steps">
       <li class="step"><h3>Загрузите альбомы проекта</h3><p>PDF или AutoCAD (DWG, DXF).</p></li>
@@ -419,7 +416,7 @@
   </div>
 </section>
 
-<section class="sec" id="projects">
+<section class="sec sec--dark" id="projects">
   <div class="wrap">
     <p class="eyebrow">Проекты</p>
     <h2 class="h2">Проверено на своих стройках</h2>
@@ -433,9 +430,9 @@
   </div>
 </section>
 
-<section class="sec sec--sand" id="price">
+<section class="sec sec--dark sec--dark2" id="price">
   <div class="wrap">
-    <p class="eyebrow">Цены</p>
+    <p class="eyebrow">Шаг 4 из 4 · Сколько стоит</p>
     <h2 class="h2">Сначала посчитайте свой проект. Платить — потом.</h2>
     <div class="plans">
       <div class="plan plan--free">
@@ -468,6 +465,14 @@
 
 </main>
 
+<nav class="steps-nav" id="steps-nav" aria-label="Шаги страницы">
+  <a href="#roles"><span>Кто вы</span></a>
+  <a href="#result"><span>Что получите</span></a>
+  <a href="#how"><span>Как начать</span></a>
+  <a href="#price"><span>Сколько стоит</span></a>
+</nav>
+<a class="sticky-cta" id="sticky-cta" href="https://ai-qurylys.kz/register">Посчитать мой проект бесплатно</a>
+
 <footer class="foot">
   <div class="wrap">
     <div class="foot__grid">
@@ -496,6 +501,6 @@
   </div>
 </footer>
 
-<script src="js/main.js?v=3"></script>
+<script src="js/main.js?v=4"></script>
 </body>
 </html>

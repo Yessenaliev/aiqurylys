@@ -19,46 +19,85 @@
   });
 })();
 
-// Роли: показываем только разделы выбранной роли
+// Роли: плитка роли открывает личный экран — что получит именно этот человек
 var selectRole = (function () {
-  var bar = document.getElementById('rolebar');
-  if (!bar) return function () {};
+  var bar = document.getElementById('roles');
+  var panel = document.getElementById('role-panel');
+  if (!bar || !panel) return function () {};
 
+  // [заголовок, описание, три результата, откуда взять экран продукта]
   var INFO = {
-    director: ['Директор и владелец', 'Видит деньги по каждому проекту, получает утреннюю сводку в Telegram и понимает, в какие тендеры идти.'],
-    manager: ['Руководитель', 'Ведёт проекты, деньги и отчёты наравне с владельцем, приглашает людей и раздаёт роли. Работает на сайте и в Telegram-боте.'],
-    lawyer: ['Юрист', 'Проверяет присланные договоры, готовит свои и составляет претензии. Документы по проекту заполняются сами.'],
-    marketer: ['Маркетолог', 'Ведёт тендеры и закупки, считает себестоимость по документам тендера, готовит посты, кейсы проектов и коммерческие предложения.'],
-    gip: ['ГИП — главный инженер проекта', 'Видит объёмы по каждому альбому, спорные места проекта и расхождения между актами подрядчиков и проектом. График работ строится по тем же объёмам.'],
-    pto: ['ПТО и сметчик', 'Получает объёмы и смету из чертежей, проверяет акты подрядчика и не заполняет документы вручную.'],
-    supply: ['Снабженец', 'Получает список материалов из сметы и цены от поставщиков в одной таблице.'],
-    site: ['Начальник участка', 'Получает график работ, раздаёт задачи и каждый день видит факт против плана.'],
-    foreman: ['Прораб и мастер', 'Работает в Telegram: получает задачи и сдаёт объём одним сообщением.'],
-    fin: ['Финансист', 'Видит план, факт и остаток денег по проекту и расхождения в актах подрядчика.'],
-    all: ['Все разделы', 'Все разделы — от тендера до сдачи проекта. Каждый отдаёт готовый документ.']
+    director: ['Директор и владелец', 'Вся картина по каждому проекту — без звонков и сводных таблиц.',
+      ['Себестоимость, смета заказчику и прибыль по каждому проекту', 'Утренняя сводка в Telegram', 'По каждому тендеру ответ: участвовать или нет'], 'scene:director'],
+    manager: ['Руководитель', 'Ведёт работу наравне с владельцем.',
+      ['Проекты, деньги и отчёты — как у владельца', 'Приглашает людей и раздаёт роли', 'Работает на сайте и в Telegram-боте'], 'scene:director'],
+    gip: ['ГИП — главный инженер проекта', 'Видит, где проект расходится с фактом.',
+      ['Объёмы по каждому альбому проекта', 'Спорные места помечены статусом «Оценка»', 'Акты подрядчиков сверяются с проектом'], 'scene:gip'],
+    pto: ['ПТО и сметчик', 'Объёмы и смета — прямо из чертежей.',
+      ['Объёмы и смета из чертежей PDF и DWG', 'Проверка готовой сметы: арифметика, двойной счёт, пропуски', 'АОСР, акты 2В и дефектные акты заполняются сами'], 'scene:estimator'],
+    supply: ['Снабженец', 'Цены поставщиков — без обзвона.',
+      ['Список материалов прямо из сметы', 'Запросы поставщикам уходят сами', 'Цены в одной таблице — записать в базу решаете вы'], 'scene:supply'],
+    site: ['Начальник участка', 'План и факт — в одной таблице.',
+      ['График работ по объёмам проекта', 'Задачи прорабам и мастерам', 'Факт против плана каждый день, моточасы техники'], 'scene:site'],
+    foreman: ['Прораб и мастер', 'Вся работа — в Telegram, с телефона.',
+      ['Задачи приходят в Telegram', 'Объём сдаётся одним сообщением', 'Вход в бот — по коду от руководителя'], 'scene:foreman'],
+    fin: ['Финансист', 'Деньги проекта: пришло, потрачено, осталось.',
+      ['План, факт и остаток по каждому проекту', 'Налоги Казахстана по ставкам 2026 года', 'Расхождения в актах подрядчика'], 'scene:finance'],
+    lawyer: ['Юрист', 'Договоры и претензии — быстрее и без пропущенных рисков.',
+      ['Проверка присланных договоров', 'Рискованные пункты и готовые правки', 'Претензионные письма'], 'tpl:mock-lawyer'],
+    marketer: ['Маркетолог', 'Тендеры и продвижение компании.',
+      ['Одна лента госзакупок и площадок застройщиков', 'Расчёт прибыли до подачи заявки', 'Посты, кейсы проектов и коммерческие предложения'], 'tpl:mock-tender']
   };
-  var tabs = Array.prototype.slice.call(bar.querySelectorAll('[role="tab"]'));
-  var cards = Array.prototype.slice.call(document.querySelectorAll('#role-cards .card'));
+
+  var tabs = Array.prototype.slice.call(bar.querySelectorAll('[data-role]'));
+  var mockBox = document.getElementById('role-mock');
+  var list = document.getElementById('role-list');
+  var exBtn = document.getElementById('show-example');
+  var example = document.getElementById('example');
+
+  function mockFor(src) {
+    var parts = src.split(':');
+    var node = null;
+    if (parts[0] === 'scene') {
+      var m = document.querySelector('.scene[data-bg="' + parts[1] + '"] .mock');
+      if (m) node = m.cloneNode(true);
+    } else {
+      var t = document.getElementById(parts[1]);
+      if (t && t.content) node = t.content.firstElementChild.cloneNode(true);
+    }
+    return node;
+  }
 
   function select(role) {
-    if (!INFO[role]) return;
+    var info = INFO[role];
+    if (!info) return;
     tabs.forEach(function (t) {
       var on = t.dataset.role === role;
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
-      if (on && bar.scrollWidth > bar.clientWidth) {
-        bar.scrollLeft = t.offsetLeft - 20;
-      }
     });
-    cards.forEach(function (c) {
-      c.hidden = role !== 'all' && c.dataset.roles.split(' ').indexOf(role) === -1;
+    document.getElementById('role-title').textContent = info[0];
+    document.getElementById('role-text').textContent = info[1];
+    list.textContent = '';
+    info[2].forEach(function (line) {
+      var li = document.createElement('li');
+      li.textContent = line;
+      list.appendChild(li);
     });
-    document.getElementById('role-title').textContent = INFO[role][0];
-    document.getElementById('role-text').textContent = INFO[role][1];
+    mockBox.textContent = '';
+    var node = mockFor(info[3]);
+    if (node) mockBox.appendChild(node);
+    if (exBtn) exBtn.hidden = role !== 'pto';
+    if (example && role !== 'pto') example.hidden = true;
+  }
+
+  function reveal() {
+    var target = document.getElementById('result');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   tabs.forEach(function (t, i) {
-    t.addEventListener('click', function () { select(t.dataset.role); });
+    t.addEventListener('click', function () { select(t.dataset.role); reveal(); });
     t.addEventListener('keydown', function (e) {
       if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
       var next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
@@ -66,13 +105,62 @@ var selectRole = (function () {
       next.focus();
     });
   });
+
   // Кнопки в сценах: «Что получит сметчик» и т. п.
-  document.querySelectorAll('a[data-role]').forEach(function (a) {
-    a.addEventListener('click', function () { select(a.dataset.role); });
+  document.querySelectorAll('.scene a[data-role]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      select(a.dataset.role);
+      reveal();
+    });
   });
+
+  // Полная смета — только по кнопке у сметчика
+  if (exBtn && example) {
+    exBtn.addEventListener('click', function () {
+      example.hidden = false;
+      example.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  // Полный список разделов
+  var allBtn = document.getElementById('show-all');
+  var allWrap = document.getElementById('all-wrap');
+  if (allBtn && allWrap) {
+    allBtn.addEventListener('click', function () {
+      var open = allWrap.hidden;
+      allWrap.hidden = !open;
+      allBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      allBtn.textContent = open ? 'Скрыть все разделы' : 'Показать все разделы системы';
+    });
+  }
 
   select('director');
   return select;
+})();
+
+// Путь по странице: четыре шага справа и кнопка внизу на телефоне
+(function () {
+  var nav = document.getElementById('steps-nav');
+  var cta = document.getElementById('sticky-cta');
+  var scenes = document.querySelector('.scenes');
+  if (!scenes) return;
+  var links = nav ? Array.prototype.slice.call(nav.querySelectorAll('a')) : [];
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+
+  function update() {
+    var past = scenes.getBoundingClientRect().bottom < window.innerHeight * 0.5;
+    if (nav) nav.classList.toggle('on', past);
+    if (cta) cta.classList.toggle('on', past);
+    var active = -1;
+    targets.forEach(function (t, i) {
+      if (t && !t.hidden && t.getBoundingClientRect().top < window.innerHeight * 0.5) active = i;
+    });
+    links.forEach(function (a, i) { a.classList.toggle('is-on', i === active); });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
 })();
 
 // Презентация на первом экране.
