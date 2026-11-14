@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIQurylys · прототип v0.2 · направление A «Чертёж»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#070B12; --panel:rgba(255,255,255,.045); --panelb:rgba(140,172,255,.17); --ink:#EAF0FA; --mute:#8E9BB0; --grid:rgba(120,160,255,.065); --gridM:rgba(120,160,255,.12);
+    --acc:#F26B1D; --glow:rgba(242,107,29,.38); --ok:#35C47A; --bad:#FF6262; --warn:#F2B134; --blue:#6FA3FF; --r:14px;
+    --mono:"JetBrains Mono", ui-monospace, Consolas, monospace; --side:#0A0F18;
+  }
+  [data-theme="light"] {
+    --bg:#EFF2F7; --panel:rgba(255,255,255,.82); --panelb:rgba(25,50,100,.14); --ink:#11151C; --mute:#5A6579; --grid:rgba(30,60,120,.07); --gridM:rgba(30,60,120,.13);
+    --glow:rgba(242,107,29,.22); --ok:#1B9A55; --bad:#D63A3A; --warn:#B27A00; --blue:#2D63D6; --side:#FFFFFF;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { min-height:100%; }
+  body { font:14px/1.45 Manrope, system-ui, sans-serif; color:var(--ink); background:var(--bg); overflow-x:hidden;
+    background-image:
+      radial-gradient(900px 500px at 88% -8%, var(--glow), transparent 65%),
+      radial-gradient(700px 500px at -5% 25%, rgba(70,110,255,.13), transparent 60%),
+      linear-gradient(var(--gridM) 1px, transparent 1px) 0 0/200px 200px,
+      linear-gradient(90deg, var(--gridM) 1px, transparent 1px) 0 0/200px 200px,
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/40px 40px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/40px 40px;
+    background-attachment:fixed; }
+  button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; }
+  a { color:inherit; text-decoration:none; }
+  .mono { font-family:var(--mono); }
+  .proto { background:#000; color:#fff; text-align:center; font-size:12px; padding:6px 12px; letter-spacing:.02em; }
+  .proto b { color:var(--acc); }
+  .app { display:grid; grid-template-columns:248px 1fr; min-height:calc(100vh - 29px); }
+  .side { position:sticky; top:0; height:calc(100vh - 29px); background:var(--side); border-right:1px solid var(--panelb); padding:18px 14px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; }
+  .logo { font-weight:800; font-size:19px; letter-spacing:-.02em; padding:2px 8px 12px; }
+  .logo i { font-style:normal; color:var(--acc); }
+  .logo small { display:block; font:500 10px var(--mono); color:var(--mute); letter-spacing:.14em; text-transform:uppercase; margin-top:2px; }
+  .create { background:var(--acc); color:#fff; font-weight:700; border-radius:11px; padding:11px 14px; text-align:left; box-shadow:0 8px 26px var(--glow); margin-bottom:8px; display:flex; justify-content:space-between; }
+  .create kbd { font:500 11px var(--mono); opacity:.8; }
+  .grp { font:500 10px var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--mute); margin:14px 8px 4px; }
+  .nav { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:9px; color:var(--mute); font-weight:600; }
+  .nav svg { flex:none; opacity:.8; }
+  .nav:hover { background:var(--panel); color:var(--ink); }
+  .nav.on { background:var(--panel); color:var(--ink); box-shadow:inset 2px 0 0 var(--acc); }
+  .nav .badge { margin-left:auto; font:700 10px var(--mono); background:var(--acc); color:#fff; border-radius:8px; padding:1px 6px; }
+  .foot { margin-top:auto; padding:12px; border:1px solid var(--panelb); border-radius:12px; font-size:12px; color:var(--mute); background:var(--panel); }
+  .foot .bar { height:5px; border-radius:3px; background:var(--panelb); margin:8px 0; overflow:hidden; } .foot .bar i { display:block; height:100%; width:30%; background:var(--acc); }
+  .top { display:flex; align-items:center; gap:10px; padding:12px 24px; position:sticky; top:0; z-index:10; backdrop-filter:blur(14px); background:color-mix(in srgb, var(--bg) 72%, transparent); border-bottom:1px solid var(--panelb); }
+  .search { flex:1; max-width:520px; display:flex; align-items:center; gap:10px; background:var(--panel); border:1px solid var(--panelb); border-radius:11px; padding:9px 13px; color:var(--mute); text-align:left; }
+  .kbd { margin-left:auto; font:500 11px var(--mono); border:1px solid var(--panelb); border-radius:5px; padding:1px 6px; }
+  .pill { border:1px solid var(--panelb); background:var(--panel); border-radius:11px; padding:8px 12px; font-weight:600; display:inline-flex; gap:8px; align-items:center; }
+  select.pill { appearance:none; color:inherit; font:inherit; font-weight:600; }
+  .ask { background:linear-gradient(135deg, rgba(242,107,29,.22), rgba(111,163,255,.16)); border-color:rgba(242,107,29,.5); }
+  .ava { width:36px; height:36px; border-radius:50%; background:var(--acc); color:#fff; display:grid; place-items:center; font-weight:800; }
+  .page { padding:22px 24px 60px; max-width:1320px; }
+  .bento { display:grid; grid-template-columns:repeat(12, 1fr); gap:14px; }
+  .tile { background:var(--panel); border:1px solid var(--panelb); border-radius:var(--r); padding:18px; position:relative; backdrop-filter:blur(12px); min-width:0; }
+  .tile::before, .tile::after { content:""; position:absolute; width:9px; height:9px; border:1px solid var(--blue); opacity:.55; }
+  .tile::before { top:-1px; left:-1px; border-right:0; border-bottom:0; } .tile::after { right:-1px; bottom:-1px; border-left:0; border-top:0; }
+  .s12{grid-column:span 12} .s8{grid-column:span 8} .s6{grid-column:span 6} .s4{grid-column:span 4} .s3{grid-column:span 3}
+  .lbl { font:500 10px var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--mute); margin-bottom:10px; display:flex; justify-content:space-between; gap:8px; }
+  h2 { font-size:15px; font-weight:700; margin-bottom:10px; }
+  .hero { min-height:230px; overflow:hidden; display:flex; align-items:center; padding:28px 30px; }
+  .hero h1 { font-size:clamp(28px, 3.6vw, 44px); line-height:1.05; font-weight:800; letter-spacing:-.03em; max-width:560px; }
+  .hero h1 em { font-style:normal; color:var(--acc); }
+  .hero p { color:var(--mute); max-width:520px; margin:10px 0 16px; }
+  .hero .eyebrow { font:500 11px var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--blue); margin-bottom:10px; }
+  .hero-l { position:relative; z-index:2; }
+  .sky { position:absolute; right:0; bottom:0; width:62%; height:100%; opacity:.95; pointer-events:none; }
+  .sky path { fill:none; stroke:var(--blue); stroke-width:1.2; stroke-dasharray:1400; stroke-dashoffset:1400; animation:draw 3.2s ease-out forwards; }
+  .sky path.o { stroke:var(--acc); stroke-width:1.6; animation-delay:.5s; }
+  .sky .win { fill:var(--blue); opacity:0; animation:fadein .8s 2.4s forwards; }
+  .sky text { font:500 9px var(--mono); fill:var(--mute); }
+  @keyframes draw { to { stroke-dashoffset:0; } } @keyframes fadein { to { opacity:.5; } }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:10px; font-weight:700; border:1px solid var(--panelb); background:var(--panel); }
+  .btn.pri { background:var(--acc); color:#fff; border-color:var(--acc); box-shadow:0 8px 28px var(--glow); }
+  .save b { display:block; font:700 clamp(34px,4.2vw,52px)/1 var(--mono); color:var(--acc); letter-spacing:-.03em; margin:6px 0 4px; }
+  .save .h { font:600 18px var(--mono); }
+  .save p { color:var(--mute); font-size:13px; margin-top:8px; }
+  .src { cursor:help; border-bottom:1px dashed var(--mute); }
+  .kpis { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .kpi { border:1px solid var(--panelb); border-radius:12px; padding:14px; background:var(--panel); }
+  .kpi .v { font:700 26px/1.1 var(--mono); letter-spacing:-.02em; margin:4px 0; }
+  .kpi .d { font-size:12px; color:var(--mute); } .kpi .d.up { color:var(--ok); } .kpi .d.down { color:var(--bad); }
+  .row { display:flex; gap:12px; align-items:center; padding:10px 0; border-top:1px solid var(--panelb); }
+  .row:first-of-type { border-top:0; }
+  .row > div { flex:1; min-width:0; } .row small { display:block; color:var(--mute); font-size:12px; }
+  .tag { font:700 10px var(--mono); letter-spacing:.06em; text-transform:uppercase; border-radius:6px; padding:3px 7px; flex:none; }
+  .t-bad { background:rgba(255,98,98,.15); color:var(--bad); } .t-warn { background:rgba(242,177,52,.15); color:var(--warn); } .t-ok { background:rgba(53,196,122,.15); color:var(--ok); } .t-blue { background:rgba(111,163,255,.15); color:var(--blue); }
+  .feed .ln { display:grid; grid-template-columns:44px 1fr; gap:10px; padding:8px 0; border-top:1px solid var(--panelb); opacity:0; transform:translateY(8px); transition:opacity .5s, transform .5s; }
+  .feed .ln.on { opacity:1; transform:none; } .feed .ln:first-child { border-top:0; }
+  .feed time { font:500 12px var(--mono); color:var(--mute); }
+  .feed b { color:var(--acc); font-weight:700; }
+  .agents { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+  .ag { border:1px solid var(--panelb); border-radius:12px; padding:12px; background:var(--panel); }
+  .ag .n { font-weight:700; display:flex; align-items:center; gap:8px; }
+  .ag .pulse { width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 0 0 var(--ok); animation:pulse 2s infinite; }
+  .ag .pulse.w { background:var(--warn); box-shadow:0 0 0 0 var(--warn); }
+  @keyframes pulse { 70% { box-shadow:0 0 0 8px transparent; } 100% { box-shadow:0 0 0 0 transparent; } }
+  .ag p { font-size:12px; color:var(--mute); margin-top:6px; }
+  .tn { display:grid; gap:8px; margin-top:8px; }
+  .tn .t { border:1px solid var(--panelb); border-radius:11px; padding:10px 12px; background:var(--panel); }
+  .tn .t div { display:flex; justify-content:space-between; gap:8px; font-size:13px; }
+  .tn .t .tm { font:600 12px var(--mono); color:var(--acc); } .tn .t .pf { font:700 13px var(--mono); color:var(--ok); }
+  .big { font:700 30px/1 var(--mono); color:var(--ok); letter-spacing:-.02em; }
+  .prj { display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; }
+  .pj { border:1px solid var(--panelb); border-radius:12px; padding:12px; background:var(--panel); }
+  .pj .bar { height:5px; border-radius:3px; background:var(--panelb); margin:8px 0 4px; overflow:hidden; } .pj .bar i { display:block; height:100%; background:var(--blue); width:0; transition:width 1.4s ease; }
+  .pj.late .bar i { background:var(--bad); }
+  .pj small { color:var(--mute); font-size:12px; display:flex; justify-content:space-between; }
+  .quick { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .quick a { border:1px solid var(--panelb); border-radius:11px; padding:12px; background:var(--panel); font-weight:700; }
+  .quick a:hover, .ag:hover, .pj:hover, .tn .t:hover, .nav:hover { border-color:var(--acc); }
+  .guide .bar { height:7px; background:var(--panelb); border-radius:4px; overflow:hidden; margin:8px 0; } .guide .bar i { display:block; height:100%; width:30%; background:linear-gradient(90deg, var(--acc), #ffb27a); }
+  .trust { color:var(--mute); font-size:12px; text-align:center; margin-top:18px; }
+  .trust b { color:var(--ink); }
+  .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:11px 16px; border-radius:11px; display:none; z-index:50; max-width:92vw; font-weight:600; }
+  .toast.on { display:block; }
+  @media (max-width:1100px) { .s8, .s6, .s4 { grid-column:span 12; } .sky { width:90%; opacity:.5; } }
+  @media (max-width:860px) { .app { grid-template-columns:1fr; } .side { display:none; } .top { padding:10px 14px; flex-wrap:wrap; } .page { padding:16px 14px 60px; } .agents { grid-template-columns:1fr 1fr; } .prj, .kpis { grid-template-columns:1fr; } .hide-m { display:none; } }
+  @media (prefers-reduced-motion: reduce) { .sky path { animation:none; stroke-dashoffset:0; } .sky .win { animation:none; opacity:.5; } .feed .ln { opacity:1; transform:none; transition:none; } .ag .pulse { animation:none; } }
+</style>
+</head>
+<body data-theme="dark">
+<div class="proto"><b>ПРОТОТИП v0.2</b> · направление A «Чертёж» · демо-данные, расчёты не выполняются</div>
+<div class="app">
+  <aside class="side">
+    <div class="logo">AI<i>Qurylys</i><small>цифровой отдел</small></div>
+    <button class="create" data-toast="В рабочей версии откроется «Создать»: все действия платформы с поиском (Ctrl K)">＋ Создать <kbd>Ctrl K</kbd></button>
+    <div class="grp">Сегодня</div>
+    <a class="nav on" href="#">▣ Главная</a>
+    <a class="nav" href="#" data-toast="Здесь будут ваши поручения, сроки и отметки о сдаче">☑ Мои задачи <span class="badge">3</span></a>
+    <a class="nav" href="#" data-toast="Здесь будет карточка каждого ИИ-сотрудника: что сделал и что ждёт решения">◎ Цифровой отдел</a>
+    <div class="grp">Посчитать</div>
+    <a class="nav" href="#" data-toast="Расчёт себестоимости: загрузка альбома, чтение чертежа, смета">▤ Себестоимость</a>
+    <a class="nav" href="#" data-toast="Проверка КП подрядчика и сверка акта с проектом">⇄ Проверка КП и актов</a>
+    <div class="grp">Вести стройку</div>
+    <a class="nav" href="#" data-toast="Проекты: обзор, график, площадка, документы, деньги, снабжение, техника">⌂ Проекты</a>
+    <a class="nav" href="#" data-toast="Деньги: БДР, БДДС, план-факт">₸ Деньги</a>
+    <a class="nav" href="#" data-toast="Снабжение: цены, запросы, подрядчики, склад">▦ Снабжение</a>
+    <a class="nav" href="#" data-toast="Техника: реестр, карта, ТО, моточасы">⛟ Техника</a>
+    <div class="grp">Документы и договоры</div>
+    <a class="nav" href="#" data-toast="140 видов документов по формам РК">▭ Документы</a>
+    <a class="nav" href="#" data-toast="Юрист: договор возвращается в Word с правками">⚖ Юрист</a>
+    <div class="grp">Заработать</div>
+    <a class="nav" href="#" data-toast="Лента тендеров, разбор объявления, оценка прибыли">◈ Тендеры <span class="badge">3</span></a>
+    <div class="foot">Пробный доступ · осталось расчётов <b>1 из 1</b><div class="bar"><i></i></div><a class="btn" href="#" style="width:100%;justify-content:center" data-toast="Тариф и цена для вашей компании — в кабинете">Подключить тариф</a></div>
+  </aside>
+
+  <div>
+    <header class="top">
+      <button class="search" data-toast="Командная строка Ctrl K с ИИ: поиск по проектам, документам и действиям — в следующем шаге">⌕ <span class="hide-m">Найти проект, документ, материал…</span> <span class="kbd">Ctrl K</span></button>
+      <select class="pill hide-m" id="role" aria-label="Смотреть как"><option value="owner">Смотреть как: Владелец</option><option value="pto">ПТО / сметчик</option><option value="chief">Начальник участка</option><option value="foreman">Прораб</option><option value="supply">Снабженец</option><option value="fin">Финансист</option></select>
+      <button class="pill ask" data-toast="«Спросить AIQurylys»: ассистент знает контекст экрана — откроется панелью справа">✦ Спросить</button>
+      <button class="pill" data-toast="3 новых: акт подрядчика ждёт проверки, ТО экскаватора через 2 дня, задача №12 сдана">🔔</button>
+      <button class="pill" id="theme" aria-label="Тема">☾</button>
+      <span class="ava">Д</span>
+    </header>
+
+    <main class="page">
+      <div class="bento">
+
+        <section class="tile s12 hero">
+          <div class="hero-l">
+            <div class="eyebrow" id="eyebrow">Суббота, 14 ноября · Владелец</div>
+            <h1>Ваш цифровой отдел <em>на смене</em></h1>
+            <p id="greet">За ночь шесть ИИ-сотрудников выполнили 14 задач. Деньги, сроки и то, что ждёт вашего решения, — ниже.</p>
+            <a class="btn pri" href="#" data-toast="Откроется шаг 1 расчёта: загрузка альбома (PDF или DWG)">Загрузить альбом проекта</a>
+            <a class="btn" href="#feed">Что сделали за ночь</a>
+          </div>
+          <svg class="sky" id="sky" viewBox="0 0 640 230" preserveAspectRatio="xMaxYMax meet" aria-hidden="true"></svg>
+        </section>
+
+        <section class="tile s4 save">
+          <div class="lbl"><span>Сэкономлено в ноябре</span><span>источник ▸</span></div>
+          <b class="src" data-src="Источник: 7 КП подрядчиков против прайсов поставщиков и ССЦ РК 2026; 3 акта против листов проекта (демо-данные)"><span data-count="6.6" data-dec="1">0</span> млн ₸</b>
+          <div class="h"><span data-count="41">0</span> часа работы ПТО</div>
+          <p>На завышенных КП и актах. Суммы считают формулы, а не ИИ: нажмите на цифру, чтобы увидеть источник.</p>
+        </section>
+
+        <section class="tile s8">
+          <div class="lbl"><span>Цифры дня</span><span>ноябрь 2026</span></div>
+          <div class="kpis">
+            <div class="kpi"><div class="lbl">Проектов в работе</div><div class="v" data-count="2">0</div><div class="d down">1 с отставанием</div></div>
+            <div class="kpi"><div class="lbl">Освоено за ноябрь</div><div class="v"><span data-count="48.6" data-dec="1">0</span> млн ₸</div><div class="d up">+12 % к плану</div></div>
+            <div class="kpi"><div class="lbl">Остаток денег</div><div class="v"><span data-count="31.2" data-dec="1">0</span> млн ₸</div><div class="d">хватит на 5 недель</div></div>
+            <div class="kpi"><div class="lbl">Ждут решения</div><div class="v" data-count="4">0</div><div class="d down">2 срочных</div></div>
+          </div>
+        </section>
+
+        <section class="tile s6">
+          <div class="lbl"><span>Требует решения</span><span class="mono">4</span></div>
+          <div class="row"><span class="tag t-bad">Срочно</span><div><b>Акт подрядчика завышен на 1,8 млн ₸</b><small>Мебельный цех · вернуть до подписания</small></div><a class="btn" href="#" data-toast="Откроется сверка акта: расхождения по позициям">Посмотреть</a></div>
+          <div class="row"><span class="tag t-warn">Важно</span><div><b>КП «СтройБетон» дороже рынка на 9 %</b><small>Снабжение · бетон С20/25</small></div><a class="btn" href="#" data-toast="Откроется сравнение предложений поставщиков">Сравнить</a></div>
+          <div class="row"><span class="tag t-bad">Срочно</span><div><b>Отставание 11 дней по кладке</b><small>Мебельный цех · график</small></div><a class="btn" href="#" data-toast="Откроется график проекта (Гант)">График</a></div>
+          <div class="row"><span class="tag t-warn">Важно</span><div><b>Договор с субподрядчиком: 3 риска</b><small>Коттедж в BI Village · юрист</small></div><a class="btn" href="#" data-toast="Откроется договор с правками в режиме рецензирования">Открыть</a></div>
+        </section>
+
+        <section class="tile s6 feed" id="feed">
+          <div class="lbl"><span>Что сделали ИИ-сотрудники за ночь</span><button class="mono" id="replay" style="font-size:10px;color:var(--blue)">повторить ↺</button></div>
+          <div id="lines"></div>
+        </section>
+
+        <section class="tile s8">
+          <div class="lbl"><span>Ваш цифровой отдел</span><a href="#" data-toast="Откроется экран «Цифровой отдел»" style="color:var(--blue)">все ▸</a></div>
+          <div class="agents">
+            <a class="ag" href="#" data-toast="Сметчик: 2 альбома посчитано, 7 позиций «Оценка» ждут проверки"><div class="n"><i class="pulse"></i>Сметчик</div><p>Посчитал 2 альбома · 7 позиций «Оценка»</p></a>
+            <a class="ag" href="#" data-toast="Инженер ТД: акты по формам РК, 140 видов"><div class="n"><i class="pulse"></i>Инженер ТД</div><p>Собрал 3 акта скрытых работ</p></a>
+            <a class="ag" href="#" data-toast="Снабженец: ждёт ответы поставщиков"><div class="n"><i class="pulse w"></i>Снабженец</div><p>Ждёт 2 ответа поставщиков</p></a>
+            <a class="ag" href="#" data-toast="Юрист: договор в Word с правками"><div class="n"><i class="pulse w"></i>Юрист</div><p>3 риска ждут вашего решения</p></a>
+            <a class="ag" href="#" data-toast="Финансист: БДР, БДДС, прогноз"><div class="n"><i class="pulse"></i>Финансист</div><p>Обновил прогноз: денег на 5 недель</p></a>
+            <a class="ag" href="#" data-toast="Инспектор техники: ТО и моточасы"><div class="n"><i class="pulse"></i>Инспектор техники</div><p>ТО экскаватора через 2 дня</p></a>
+          </div>
+        </section>
+
+        <section class="tile s4">
+          <div class="lbl"><span>Тендеры</span><span class="t-warn tag">3 закрываются на этой неделе</span></div>
+          <div class="big"><span data-count="47" data-dec="0">0</span> млн ₸</div>
+          <div class="mono" style="font-size:11px;color:var(--mute);margin-top:4px">потенциальная прибыль по подходящим тендерам</div>
+          <div class="tn" id="tn"></div>
+        </section>
+
+        <section class="tile s8">
+          <div class="lbl"><span>Проекты</span><a href="#" data-toast="Откроется список проектов с фильтрами" style="color:var(--blue)">все ▸</a></div>
+          <div class="prj" id="prj"></div>
+        </section>
+
+        <section class="tile s4 guide">
+          <div class="lbl"><span>Путеводитель</span><span class="mono">3 из 10</span></div>
+          <h2>Загрузите первый альбом</h2>
+          <div class="bar"><i></i></div>
+          <p style="color:var(--mute);font-size:13px">Один альбом проекта — смета в Excel. Первый расчёт бесплатно.</p>
+          <p style="margin-top:12px"><a class="btn pri" href="#" data-toast="Откроется шаг 4 путеводителя">Следующий шаг</a></p>
+        </section>
+
+        <section class="tile s12">
+          <div class="lbl"><span>Быстрые действия</span></div>
+          <div class="quick" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+            <a href="#" data-toast="Новый расчёт себестоимости">▤ Новый расчёт</a><a href="#" data-toast="Проверка КП подрядчика">⇄ Проверить КП</a><a href="#" data-toast="Акт Р-1 и счёт: реквизиты подставятся сами">▭ Акт Р-1 и счёт</a><a href="#" data-toast="Задание прорабу: придёт в Telegram">✉ Задание прорабу</a><a href="#" data-toast="Проверка договора">⚖ Проверить договор</a><a href="#" data-toast="Разбор тендера">◈ Разобрать тендер</a>
+          </div>
+        </section>
+      </div>
+      <p class="trust"><b>Суммы считают формулы, а не ИИ.</b> У каждой цифры есть источник: лист чертежа, прайс поставщика, ССЦ РК 2026. Все данные на экране демонстрационные.</p>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var fmt = function (n, d) { return n.toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d }); };
+  function toast(t) { var e = $('#toast'); e.textContent = t; e.classList.add('on'); clearTimeout(e._t); e._t = setTimeout(function () { e.classList.remove('on'); }, 3000); }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-toast]'); if (t) { e.preventDefault(); toast(t.getAttribute('data-toast')); return; }
+    var s = e.target.closest('[data-src]'); if (s) toast(s.getAttribute('data-src'));
+    var a = e.target.closest('a[href="#"]'); if (a) e.preventDefault();
+  });
+  document.addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); toast('Командная строка Ctrl K с ИИ — в следующем шаге'); } });
+  $('#theme').onclick = function () { var d = document.body.dataset.theme === 'dark'; document.body.dataset.theme = d ? 'light' : 'dark'; this.textContent = d ? '☀' : '☾'; };
+
+  var GREET = { owner: 'За ночь шесть ИИ-сотрудников выполнили 14 задач. Деньги, сроки и то, что ждёт вашего решения, — ниже.', pto: 'Расчёты и проверки, которые ждут вас: 7 позиций «Оценка», 2 КП на проверку.', chief: 'Что сделать сегодня на площадке: 3 задачи прорабам, ТО экскаватора через 2 дня.', foreman: 'Ваши работы на сегодня: №12 ростверк Пр1, №14 армирование, №15 кладка цоколя.', supply: 'Заявки и цены на сегодня: 2 ответа поставщиков, бетон С20/25 дороже рынка на 9 %.', fin: 'Деньги по проектам на сегодня: остаток 31,2 млн ₸, хватит на 5 недель.' };
+  var NAMES = { owner: 'Владелец', pto: 'ПТО / сметчик', chief: 'Начальник участка', foreman: 'Прораб', supply: 'Снабженец', fin: 'Финансист' };
+  $('#role').onchange = function () { $('#greet').textContent = GREET[this.value]; $('#eyebrow').textContent = 'Суббота, 14 ноября · ' + NAMES[this.value]; toast('Главная показана так, как её видит: ' + NAMES[this.value] + '. Меню по ролям — в следующем шаге'); };
+
+  // счётчики набирают значение
+  function count() {
+    [].forEach.call(document.querySelectorAll('[data-count]'), function (el) {
+      var to = parseFloat(el.getAttribute('data-count')), d = parseInt(el.getAttribute('data-dec') || '0', 10), n = 0, steps = 40;
+      var iv = setInterval(function () { n++; var k = 1 - Math.pow(1 - n / steps, 3); el.textContent = fmt(to * k, d); if (n >= steps) { el.textContent = fmt(to, d); clearInterval(iv); } }, 28);
+    });
+  }
+  count();
+
+  // чертёж → здание → город
+  (function sky() {
+    var svg = $('#sky'), H = [70, 110, 90, 150, 120, 175, 100, 135, 85, 120, 60], x = 40, w = 46, d = 'M0 210 ', o = '', win = '', i, b;
+    for (i = 0; i < H.length; i++) { b = H[i]; d += 'L' + x + ' 210 L' + x + ' ' + (210 - b) + ' L' + (x + w) + ' ' + (210 - b) + ' L' + (x + w) + ' 210 '; x += w + 8; }
+    d += 'L640 210';
+    var bx = 300, bw = 84;
+    o = 'M' + bx + ' 210 L' + bx + ' 40 L' + (bx + bw) + ' 40 L' + (bx + bw) + ' 210 M' + bx + ' 40 L' + (bx + 24) + ' 24 L' + (bx + bw + 24) + ' 24 L' + (bx + bw) + ' 40 M' + (bx + bw) + ' 210 L' + (bx + bw + 24) + ' 194 L' + (bx + bw + 24) + ' 24';
+    for (i = 1; i < 6; i++) o += ' M' + bx + ' ' + (40 + i * 28) + ' L' + (bx + bw) + ' ' + (40 + i * 28);
+    for (i = 0; i < 30; i++) win += '<rect class="win" x="' + (50 + (i * 53) % 560) + '" y="' + (120 + (i * 37) % 80) + '" width="4" height="6"/>';
+    svg.innerHTML = '<path d="' + d + '"/><path class="o" d="' + o + '"/>' + win +
+      '<text x="6" y="206">±0.000</text><text x="6" y="150">+3.600</text><text x="6" y="94">+7.200</text><text x="6" y="38">+10.800</text>';
+  })();
+
+  // лента «что сделали за ночь»
+  var FEED = [
+    ['02:14', 'Инженер ТД', 'собрал 3 акта скрытых работ по ростверку Пр1 · Мебельный цех'],
+    ['03:40', 'Снабженец', 'получил 3 ответа на бетон С20/25: лучшая цена 35 000 ₸/м³'],
+    ['04:05', 'Юрист', 'нашёл 3 риска в договоре с субподрядчиком · BI Village'],
+    ['05:30', 'Сметчик', 'проверил КП «СтройБетон»: дороже рынка на 9 %'],
+    ['06:10', 'Финансист', 'обновил прогноз: денег хватит на 5 недель'],
+    ['07:00', 'Инспектор техники', 'напомнил: ТО экскаватора через 2 дня']
+  ];
+  function lines() {
+    var box = $('#lines'); box.innerHTML = '';
+    FEED.forEach(function (f, i) {
+      var l = document.createElement('div'); l.className = 'ln'; l.innerHTML = '<time>' + f[0] + '</time><div><b>' + f[1] + '</b> ' + f[2] + '</div>'; box.appendChild(l);
+      setTimeout(function () { l.classList.add('on'); }, 500 + i * 650);
+    });
+  }
+  lines(); $('#replay').onclick = lines;
+
+  // тендеры с таймерами
+  var TN = [['Склад, Караганда', 18.4, (2 * 24 + 4) * 3600 + 12 * 60 + 33], ['Реконструкция цеха, Петропавловск', 21.9, (4 * 24 + 11) * 3600 + 2 * 60 + 10], ['Благоустройство, Астана', 6.7, (6 * 24 + 19) * 3600 + 40 * 60 + 5]];
+  var t0 = Date.now();
+  function tn() {
+    var s = Math.floor((Date.now() - t0) / 1000);
+    $('#tn').innerHTML = TN.map(function (t) {
+      var r = Math.max(0, t[2] - s), dd = Math.floor(r / 86400), hh = ('0' + Math.floor(r % 86400 / 3600)).slice(-2), mm = ('0' + Math.floor(r % 3600 / 60)).slice(-2), ss = ('0' + r % 60).slice(-2);
+      return '<a class="t" href="#" data-toast="Откроется разбор тендера: требования, документы, прибыль"><div><span>' + t[0] + '</span><span class="pf">+' + fmt(t[1], 1) + ' млн ₸</span></div><div><span style="color:var(--mute);font-size:12px">до конца подачи</span><span class="tm">' + dd + ' дн ' + hh + ':' + mm + ':' + ss + '</span></div></a>';
+    }).join('');
+  }
+  tn(); setInterval(tn, 1000);
+
+  // проекты
+  var P = [['Коттедж в BI Village', 'Астана · жильё', 52, 184.6, 97.2, 0], ['Мебельный цех', 'Астана · производство', 48, 412.0, 236.8, 1], ['Мебельный склад', 'Астана · сдан 2025', 100, 296.4, 288.1, 0], ['Дамба «Биопруд»', 'Петропавловск · сдан 2025', 100, 138.9, 141.3, 0]];
+  $('#prj').innerHTML = P.map(function (p) { return '<a class="pj' + (p[5] ? ' late' : '') + '" href="#" data-toast="Откроется проект: обзор, график, площадка, документы, деньги"><b>' + p[0] + '</b><small><span>' + p[1] + '</span><span class="mono">' + p[2] + ' %</span></small><div class="bar"><i data-w="' + p[2] + '"></i></div><small><span>Бюджет ' + fmt(p[3], 1) + ' млн ₸</span><span>Освоено ' + fmt(p[4], 1) + '</span></small></a>'; }).join('');
+  setTimeout(function () { [].forEach.call(document.querySelectorAll('.pj .bar i'), function (i) { i.style.width = i.getAttribute('data-w') + '%'; }); }, 300);
+})();
+</script>
+</body>
+</html>

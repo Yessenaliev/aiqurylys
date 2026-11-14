@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIQurylys · прототип v0.2 · два направления стиля</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font:15px/1.5 Manrope, system-ui, sans-serif; background:#0C0D11; color:#F2EFE9; padding:34px 22px 60px; }
+  .w { max-width:1180px; margin:0 auto; }
+  h1 { font-size:clamp(26px,3.4vw,38px); letter-spacing:-.03em; font-weight:800; }
+  h1 em { font-style:normal; color:#F26B1D; }
+  .lead { color:#A8A59C; max-width:760px; margin:10px 0 28px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .card { background:#16171C; border:1px solid rgba(255,255,255,.1); border-radius:20px; padding:18px; display:flex; flex-direction:column; gap:12px; }
+  .shot { position:relative; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.1); aspect-ratio:16/10; background:#000; }
+  .shot iframe { position:absolute; left:0; top:0; width:1440px; height:900px; border:0; transform-origin:0 0; pointer-events:none; }
+  .shot a { position:absolute; inset:0; }
+  h2 { font-size:20px; letter-spacing:-.02em; }
+  .tag { font:700 11px/1 ui-monospace, Consolas, monospace; letter-spacing:.12em; text-transform:uppercase; color:#F26B1D; }
+  ul { padding-left:18px; color:#C9C6BC; } li { margin:3px 0; }
+  .for { background:#1E2026; border-radius:12px; padding:10px 12px; color:#C9C6BC; font-size:14px; }
+  .for b { color:#F2EFE9; }
+  .btn { display:inline-flex; justify-content:center; padding:12px 18px; border-radius:12px; background:#F26B1D; color:#140A03; font-weight:800; text-decoration:none; margin-top:auto; }
+  .btn.o { background:transparent; color:#F2EFE9; border:1px solid rgba(255,255,255,.25); }
+  .same { margin-top:26px; background:#16171C; border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:18px 20px; }
+  .same h2 { font-size:17px; margin-bottom:8px; } .same li { color:#C9C6BC; }
+  @media (max-width:900px) { .grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="w">
+  <h1>AIQurylys · прототип v0.2 · <em>выберите направление</em></h1>
+  <p class="lead">Шаг 1 из задания: две подачи одного и того же экрана «Главная». Данные одинаковые (демо), различаются стиль, композиция и ощущение продукта. Откройте оба, поменяйте тему (☾) и роль, нажмите на цифры.</p>
+
+  <div class="grid">
+    <div class="card">
+      <span class="tag">Направление A</span>
+      <h2>«Чертёж» — технология и точность</h2>
+      <div class="shot"><iframe src="a.html" title="Направление A" loading="lazy" style="transform:scale(.41)"></iframe><a href="a.html" aria-label="Открыть направление A"></a></div>
+      <ul>
+        <li>Тёмная калька с сеткой, моноширинные отметки (±0.000, +3.600), угловые метки на панелях.</li>
+        <li>Силуэт города рисуется линиями поверх сетки, стеклянные панели, оранжевое свечение.</li>
+        <li>Bento из виджетов: цифровой отдел, лента ночной смены, тендеры с таймерами, проекты.</li>
+        <li>Левое меню по задачам, всегда видно.</li>
+      </ul>
+      <div class="for"><b>Подходит, если</b> важнее всего «серьёзная инженерная технология» и ДНК лендинга.</div>
+      <a class="btn" href="a.html">Открыть направление A</a>
+    </div>
+    <div class="card">
+      <span class="tag">Направление B</span>
+      <h2>«Командный центр» — результат и деньги</h2>
+      <div class="shot"><iframe src="b.html" title="Направление B" loading="lazy" style="transform:scale(.41)"></iframe><a href="b.html" aria-label="Открыть направление B"></a></div>
+      <ul>
+        <li>Фотография стройки в полный экран и три гигантских числа: сэкономлено, часы, прибыль тендеров.</li>
+        <li>Крупный дисплейный шрифт, оранжевый как большой блок, ничего лишнего на экране.</li>
+        <li>Ночная смена как вертикальная лента, карточки проектов с фото, аватары ИИ-сотрудников со статусом.</li>
+        <li>Узкая рельса слева, раскрывается при наведении: больше места под контент.</li>
+      </ul>
+      <div class="for"><b>Подходит, если</b> главное — чтобы директор за 5 секунд увидел деньги и ценность.</div>
+      <a class="btn" href="b.html">Открыть направление B</a>
+    </div>
+  </div>
+
+  <div class="same">
+    <h2>Что одинаково в обоих</h2>
+    <ul>
+      <li>Меню по задачам: Сегодня · Посчитать · Вести стройку · Документы и договоры · Заработать, плюс «Цифровой отдел». «Создать» и Ctrl K в одном месте.</li>
+      <li>Переключатели «Смотреть как» (роль) и тема (тёмная по умолчанию, светлая по кнопке).</li>
+      <li>Психология из задания: сэкономлено в деньгах и часах, «3 тендера закрываются», «акт завышен на 1,8 млн ₸», путеводитель 3 из 10, у каждой цифры источник (нажмите на цифру).</li>
+      <li>Анимации только на витрине: счётчики, лента ночной смены, таймеры. Все кнопки отвечают («в рабочей версии здесь будет…»).</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
