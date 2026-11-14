@@ -7,7 +7,7 @@
 <title>AIQurylys · прототип v0.2 · направление A «Чертёж»</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Unbounded:wght@600;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg:#070B12; --panel:rgba(255,255,255,.045); --panelb:rgba(140,172,255,.17); --ink:#EAF0FA; --mute:#8E9BB0; --grid:rgba(120,160,255,.065); --gridM:rgba(120,160,255,.12);
@@ -20,7 +20,7 @@
   }
   * { box-sizing:border-box; margin:0; padding:0; }
   html, body { min-height:100%; }
-  body { font:14px/1.45 Manrope, system-ui, sans-serif; color:var(--ink); background:var(--bg); overflow-x:hidden;
+  body { font:14px/1.45 Onest, system-ui, sans-serif; color:var(--ink); background:var(--bg); overflow-x:hidden;
     background-image:
       radial-gradient(900px 500px at 88% -8%, var(--glow), transparent 65%),
       radial-gradient(700px 500px at -5% 25%, rgba(70,110,255,.13), transparent 60%),
@@ -36,7 +36,7 @@
   .proto b { color:var(--acc); }
   .app { display:grid; grid-template-columns:248px 1fr; min-height:calc(100vh - 29px); }
   .side { position:sticky; top:0; height:calc(100vh - 29px); background:var(--side); border-right:1px solid var(--panelb); padding:18px 14px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; }
-  .logo { font-weight:800; font-size:19px; letter-spacing:-.02em; padding:2px 8px 12px; }
+  .logo { font-family:Unbounded, Onest, sans-serif; font-weight:800; font-size:17px; letter-spacing:-.02em; padding:2px 8px 12px; }
   .logo i { font-style:normal; color:var(--acc); }
   .logo small { display:block; font:500 10px var(--mono); color:var(--mute); letter-spacing:.14em; text-transform:uppercase; margin-top:2px; }
   .create { background:var(--acc); color:#fff; font-weight:700; border-radius:11px; padding:11px 14px; text-align:left; box-shadow:0 8px 26px var(--glow); margin-bottom:8px; display:flex; justify-content:space-between; }
@@ -55,6 +55,7 @@
   .pill { border:1px solid var(--panelb); background:var(--panel); border-radius:11px; padding:8px 12px; font-weight:600; display:inline-flex; gap:8px; align-items:center; }
   select.pill { appearance:none; color:inherit; font:inherit; font-weight:600; }
   .ask { background:linear-gradient(135deg, rgba(242,107,29,.22), rgba(111,163,255,.16)); border-color:rgba(242,107,29,.5); }
+  .pill.cr { background:var(--acc); color:#fff; border-color:var(--acc); }
   .ava { width:36px; height:36px; border-radius:50%; background:var(--acc); color:#fff; display:grid; place-items:center; font-weight:800; }
   .page { padding:22px 24px 60px; max-width:1320px; }
   .bento { display:grid; grid-template-columns:repeat(12, 1fr); gap:14px; }
@@ -65,11 +66,12 @@
   .lbl { font:500 10px var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--mute); margin-bottom:10px; display:flex; justify-content:space-between; gap:8px; }
   h2 { font-size:15px; font-weight:700; margin-bottom:10px; }
   .hero { min-height:230px; overflow:hidden; display:flex; align-items:center; padding:28px 30px; }
-  .hero h1 { font-size:clamp(28px, 3.6vw, 44px); line-height:1.05; font-weight:800; letter-spacing:-.03em; max-width:560px; }
+  .hero h1 { font:800 clamp(26px, 3.2vw, 40px)/1.08 Unbounded, Onest, sans-serif; letter-spacing:-.03em; max-width:600px; }
   .hero h1 em { font-style:normal; color:var(--acc); }
   .hero p { color:var(--mute); max-width:520px; margin:10px 0 16px; }
   .hero .eyebrow { font:500 11px var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--blue); margin-bottom:10px; }
   .hero-l { position:relative; z-index:2; }
+  .heroimg { position:absolute; inset:0; background:center/cover no-repeat; opacity:.34; filter:saturate(.75); -webkit-mask-image:linear-gradient(270deg,#000 0%,transparent 75%); mask-image:linear-gradient(270deg,#000 0%,transparent 75%); transition:opacity .4s; pointer-events:none; }
   .sky { position:absolute; right:0; bottom:0; width:62%; height:100%; opacity:.95; pointer-events:none; }
   .sky path { fill:none; stroke:var(--blue); stroke-width:1.2; stroke-dasharray:1400; stroke-dashoffset:1400; animation:draw 3.2s ease-out forwards; }
   .sky path.o { stroke:var(--acc); stroke-width:1.6; animation-delay:.5s; }
@@ -130,41 +132,25 @@
 <div class="app">
   <aside class="side">
     <div class="logo">AI<i>Qurylys</i><small>цифровой отдел</small></div>
-    <button class="create" data-toast="В рабочей версии откроется «Создать»: все действия платформы с поиском (Ctrl K)">＋ Создать <kbd>Ctrl K</kbd></button>
-    <div class="grp">Сегодня</div>
-    <a class="nav on" href="#">▣ Главная</a>
-    <a class="nav" href="#" data-toast="Здесь будут ваши поручения, сроки и отметки о сдаче">☑ Мои задачи <span class="badge">3</span></a>
-    <a class="nav" href="#" data-toast="Здесь будет карточка каждого ИИ-сотрудника: что сделал и что ждёт решения">◎ Цифровой отдел</a>
-    <div class="grp">Посчитать</div>
-    <a class="nav" href="#" data-toast="Расчёт себестоимости: загрузка альбома, чтение чертежа, смета">▤ Себестоимость</a>
-    <a class="nav" href="#" data-toast="Проверка КП подрядчика и сверка акта с проектом">⇄ Проверка КП и актов</a>
-    <div class="grp">Вести стройку</div>
-    <a class="nav" href="#" data-toast="Проекты: обзор, график, площадка, документы, деньги, снабжение, техника">⌂ Проекты</a>
-    <a class="nav" href="#" data-toast="Деньги: БДР, БДДС, план-факт">₸ Деньги</a>
-    <a class="nav" href="#" data-toast="Снабжение: цены, запросы, подрядчики, склад">▦ Снабжение</a>
-    <a class="nav" href="#" data-toast="Техника: реестр, карта, ТО, моточасы">⛟ Техника</a>
-    <div class="grp">Документы и договоры</div>
-    <a class="nav" href="#" data-toast="140 видов документов по формам РК">▭ Документы</a>
-    <a class="nav" href="#" data-toast="Юрист: договор возвращается в Word с правками">⚖ Юрист</a>
-    <div class="grp">Заработать</div>
-    <a class="nav" href="#" data-toast="Лента тендеров, разбор объявления, оценка прибыли">◈ Тендеры <span class="badge">3</span></a>
+    <nav id="nav"></nav>
     <div class="foot">Пробный доступ · осталось расчётов <b>1 из 1</b><div class="bar"><i></i></div><a class="btn" href="#" style="width:100%;justify-content:center" data-toast="Тариф и цена для вашей компании — в кабинете">Подключить тариф</a></div>
   </aside>
 
   <div>
     <header class="top">
-      <button class="search" data-toast="Командная строка Ctrl K с ИИ: поиск по проектам, документам и действиям — в следующем шаге">⌕ <span class="hide-m">Найти проект, документ, материал…</span> <span class="kbd">Ctrl K</span></button>
+      <button class="search" data-toast="Один вход вместо трёх: поиск по всем действиям и страницам и вопрос помощнику AIQurylys (Ctrl K) — в следующем шаге">✦ <span class="hide-m">Спросить или найти…</span> <span class="kbd">Ctrl K</span></button>
       <select class="pill hide-m" id="role" aria-label="Смотреть как"><option value="owner">Смотреть как: Владелец</option><option value="pto">ПТО / сметчик</option><option value="chief">Начальник участка</option><option value="foreman">Прораб</option><option value="supply">Снабженец</option><option value="fin">Финансист</option></select>
-      <button class="pill ask" data-toast="«Спросить AIQurylys»: ассистент знает контекст экрана — откроется панелью справа">✦ Спросить</button>
-      <button class="pill" data-toast="3 новых: акт подрядчика ждёт проверки, ТО экскаватора через 2 дня, задача №12 сдана">🔔</button>
-      <button class="pill" id="theme" aria-label="Тема">☾</button>
+      <button class="pill cr" data-toast="В рабочей версии откроется «Создать»: все 33 действия платформы по группам, с поиском (Ctrl K)">＋ Создать</button>
+    <button class="pill" data-toast="3 новых: акт подрядчика ждёт проверки, ТО экскаватора через 2 дня, задача №12 сдана">🔔</button>
+      <button class="pill" data-toast="Помощь: путеводитель из 10 шагов, словарь, статьи">?</button>
+    <button class="pill" id="theme" aria-label="Тема">☾</button>
       <span class="ava">Д</span>
     </header>
 
     <main class="page">
       <div class="bento">
 
-        <section class="tile s12 hero">
+        <section class="tile s12 hero"><div class="heroimg" id="heroimg"></div>
           <div class="hero-l">
             <div class="eyebrow" id="eyebrow">Суббота, 14 ноября · Владелец</div>
             <h1>Ваш цифровой отдел <em>на смене</em></h1>
@@ -265,7 +251,7 @@
 
   var GREET = { owner: 'За ночь шесть ИИ-сотрудников выполнили 14 задач. Деньги, сроки и то, что ждёт вашего решения, — ниже.', pto: 'Расчёты и проверки, которые ждут вас: 7 позиций «Оценка», 2 КП на проверку.', chief: 'Что сделать сегодня на площадке: 3 задачи прорабам, ТО экскаватора через 2 дня.', foreman: 'Ваши работы на сегодня: №12 ростверк Пр1, №14 армирование, №15 кладка цоколя.', supply: 'Заявки и цены на сегодня: 2 ответа поставщиков, бетон С20/25 дороже рынка на 9 %.', fin: 'Деньги по проектам на сегодня: остаток 31,2 млн ₸, хватит на 5 недель.' };
   var NAMES = { owner: 'Владелец', pto: 'ПТО / сметчик', chief: 'Начальник участка', foreman: 'Прораб', supply: 'Снабженец', fin: 'Финансист' };
-  $('#role').onchange = function () { $('#greet').textContent = GREET[this.value]; $('#eyebrow').textContent = 'Суббота, 14 ноября · ' + NAMES[this.value]; toast('Главная показана так, как её видит: ' + NAMES[this.value] + '. Меню по ролям — в следующем шаге'); };
+  $('#role').onchange = function () { $('#greet').textContent = GREET[this.value]; $('#eyebrow').textContent = 'Суббота, 14 ноября · ' + NAMES[this.value]; toast('Главная показана так, как её видит: ' + NAMES[this.value] + '. Меню и фон показаны для этой роли'); };
 
   // счётчики набирают значение
   function count() {
@@ -325,5 +311,57 @@
   setTimeout(function () { [].forEach.call(document.querySelectorAll('.pj .bar i'), function (i) { i.style.width = i.getAttribute('data-w') + '%'; }); }, 300);
 })();
 </script>
-</body>
+<script>
+/* Меню и роли — по утверждённой структуре от 13.11 (Задание_разработчику_навигация_кабинета.md, cabinet-prototype.html) */
+(function () {
+  var MENU = [
+    { id: 'home', t: 'Главная', ic: '▣', need: '*' },
+    { id: 'projects', t: 'Проекты', ic: '⌂', need: ['projects'], toast: 'Проекты и файлы: карточки, фильтры, внутри проекта график, площадка, документы, деньги, склад, техника' },
+    { id: 'tasks', t: 'Задачи', ic: '☑', need: '*', badge: 3, toast: 'Мои и выданные задачи: поручения, сроки, отметки о сдаче' },
+    { g: 'Работа' },
+    { id: 'calc', t: 'Расчёты', ic: '▤', need: ['estimate', 'volume'], toast: 'Расчёт себестоимости, проверка сметы, коммерческое предложение, проверка объёмов' },
+    { id: 'docs', t: 'Документы', ic: '▭', need: ['documents'], toast: 'Новый документ (140 видов по формам РК) и сделанные' },
+    { id: 'site', t: 'Площадка', ic: '⛟', need: ['site', 'master', 'equipment'], toast: 'Начальник участка, график и выдача работ, прораб/мастер, нормы расхода, техника' },
+    { id: 'money', t: 'Деньги и снабжение', ic: '₸', need: ['finance', 'supplier'], toast: 'Финансовый отчёт, бюджет, снабженец, цена материала, запросы поставщикам, подрядчики' },
+    { id: 'legal', t: 'Договоры', ic: '⚖', need: ['legal'], toast: 'Договоры, проверка договора (правки в Word), письма и претензии, вопрос юристу' },
+    { id: 'sales', t: 'Тендеры и проекты', ic: '◈', need: ['tender', 'architect'], badge: 3, toast: 'Тендеры, паспорт компании, спрос по рынку, концепт проекта' },
+    { g: 'Компания (видит владелец)', owner: true },
+    { id: 'company', t: 'Компания', ic: '⚙', need: '*', owner: true, toast: 'Сотрудники и доступ, реквизиты, Google Диск, тариф' }
+  ];
+  var PERMS = { owner: 'ALL', pto: ['projects', 'documents', 'files', 'estimate', 'volume'], chief: ['projects', 'documents', 'files', 'site', 'master', 'equipment'], foreman: ['projects', 'master', 'equipment'], supply: ['projects', 'supplier', 'equipment'], fin: ['projects', 'finance', 'summary', 'volume'] };
+  var SCENE = { owner: 'director', pto: 'estimator', chief: 'site', foreman: 'foreman', supply: 'supply', fin: 'finance' };
+  function see(it, role) { var p = PERMS[role]; if (it.owner && role !== 'owner') return false; return it.need === '*' || p === 'ALL' || it.need.some(function (n) { return p.indexOf(n) > -1; }); }
+  function list(role) {
+    var out = [], pend = null;
+    MENU.forEach(function (it) {
+      if (it.g) { pend = it; return; }
+      if (!see(it, role)) return;
+      if (pend) { if (!pend.owner || role === 'owner') out.push(pend); pend = null; }
+      out.push(it);
+    });
+    return out;
+  }
+  var KIND = document.getElementById('navb') ? 'b' : 'a';
+  function render(role) {
+    var h = '';
+    list(role).forEach(function (it) {
+      if (it.g) { h += KIND === 'a' ? '<div class="grp">' + it.g + '</div>' : '<div class="g">' + it.g + '</div>'; return; }
+      var on = it.id === 'home' ? ' on' : '';
+      var t = it.id === 'home' ? '' : ' data-toast="' + it.toast + '"';
+      h += KIND === 'a'
+        ? '<a class="nav' + on + '" href="#"' + t + '><span>' + it.ic + '</span> ' + it.t + (it.badge ? '<span class="badge">' + it.badge + '</span>' : '') + '</a>'
+        : '<a class="' + on.trim() + '" href="#"' + t + '><i>' + it.ic + '</i>' + it.t + '</a>';
+    });
+    (document.getElementById('nav') || document.getElementById('navb')).innerHTML = h;
+    var img = '../media/scenes/' + SCENE[role] + '.webp';
+    var hi = document.getElementById('heroimg');
+    if (hi) hi.style.backgroundImage = 'url(' + img + ')';
+    var hero = document.querySelector('.hero.bgphoto');
+    if (hero) hero.style.backgroundImage = 'url(' + img + ')';
+  }
+  var sel = document.getElementById('role');
+  sel.addEventListener('change', function () { render(sel.value); });
+  render('owner');
+})();
+</script></body>
 </html>

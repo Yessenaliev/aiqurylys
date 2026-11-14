@@ -7,16 +7,16 @@
 <title>AIQurylys · прототип v0.2 · направление B «Командный центр»</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Unbounded:wght@600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg:#0C0C0E; --card:#161619; --card2:#1D1D21; --line:rgba(255,255,255,.09); --ink:#F5F2EC; --mute:#9A978F;
     --acc:#F26B1D; --accInk:#140A03; --ok:#4BD08B; --bad:#FF5A55; --warn:#F5B53D; --blue:#7FB0FF;
-    --disp:"Unbounded", "Manrope", sans-serif; --mono:"JetBrains Mono", ui-monospace, Consolas, monospace; --rail:64px;
+    --disp:"Unbounded", "Onest", sans-serif; --mono:"JetBrains Mono", ui-monospace, Consolas, monospace; --rail:64px;
   }
   [data-theme="light"] { --bg:#F2EFE9; --card:#FFFFFF; --card2:#F6F3EE; --line:rgba(20,16,10,.12); --ink:#17140F; --mute:#6C675D; --ok:#1B9A55; --bad:#D6392F; --warn:#B27A00; --blue:#2B5FD0; }
   * { box-sizing:border-box; margin:0; padding:0; }
-  body { font:14px/1.45 Manrope, system-ui, sans-serif; color:var(--ink); background:var(--bg); overflow-x:hidden; }
+  body { font:14px/1.45 Onest, system-ui, sans-serif; color:var(--ink); background:var(--bg); overflow-x:hidden; }
   button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; }
   a { color:inherit; text-decoration:none; }
   .proto { background:var(--acc); color:var(--accInk); text-align:center; font-size:12px; font-weight:700; padding:6px 12px; }
@@ -40,6 +40,7 @@
   .pill { border:1px solid var(--line); background:var(--card); border-radius:999px; padding:9px 15px; font-weight:700; display:inline-flex; gap:8px; align-items:center; }
   select.pill { appearance:none; font:inherit; font-weight:700; color:inherit; }
   .ask { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+  .pill.cr { background:var(--acc); color:var(--accInk); border-color:var(--acc); }
   .ava { width:38px; height:38px; border-radius:50%; background:var(--acc); color:var(--accInk); display:grid; place-items:center; font-weight:800; }
   .page { padding:0 26px 70px; max-width:1360px; }
   /* герой с фотографией */
@@ -90,7 +91,7 @@
   .kp .v { font:800 clamp(24px, 2.6vw, 34px)/1.1 var(--disp); letter-spacing:-.03em; margin:8px 0 4px; }
   .kp .s { font-size:12px; color:var(--mute); } .kp .s.up { color:var(--ok); } .kp .s.down { color:var(--bad); }
   .sec { font:800 18px var(--disp); letter-spacing:-.02em; margin:30px 0 14px; display:flex; justify-content:space-between; align-items:baseline; }
-  .sec a { font:600 13px Manrope; color:var(--blue); }
+  .sec a { font:600 13px Onest; color:var(--blue); }
   .prj { display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; }
   .pj { background:var(--card); border:1px solid var(--line); border-radius:22px; overflow:hidden; transition:transform .2s; }
   .pj:hover { transform:translateY(-4px); border-color:var(--acc); }
@@ -112,7 +113,7 @@
   .ag b { display:block; font-size:13px; } .ag small { color:var(--mute); font-size:12px; }
   .cta { margin-top:30px; background:var(--acc); color:var(--accInk); border-radius:26px; padding:28px 32px; display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
   .cta h2 { font:800 clamp(20px,2.4vw,30px)/1.1 var(--disp); letter-spacing:-.03em; flex:1; min-width:240px; }
-  .cta p { font-weight:600; opacity:.8; margin-top:6px; font-family:Manrope; letter-spacing:0; }
+  .cta p { font-weight:600; opacity:.8; margin-top:6px; font-family:Onest; letter-spacing:0; }
   .cta .btn { background:var(--accInk); color:#fff; border-color:var(--accInk); }
   .trust { color:var(--mute); font-size:12px; text-align:center; margin-top:22px; } .trust b { color:var(--ink); }
   .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:12px 18px; border-radius:999px; display:none; z-index:60; max-width:92vw; font-weight:700; }
@@ -127,38 +128,22 @@
 
 <nav class="rail" aria-label="Разделы">
   <div class="logo"><b>AQ</b><span>AIQurylys</span></div>
-  <a class="plus" href="#" data-toast="В рабочей версии откроется «Создать»: все действия платформы с поиском (Ctrl K)"><i>＋</i>Создать</a>
-  <div class="g">Сегодня</div>
-  <a class="on" href="#"><i>▣</i>Главная</a>
-  <a href="#" data-toast="Здесь будут ваши поручения, сроки и отметки о сдаче"><i>☑</i>Мои задачи</a>
-  <a href="#" data-toast="Карточка каждого ИИ-сотрудника: что сделал и что ждёт решения"><i>◎</i>Цифровой отдел</a>
-  <div class="g">Посчитать</div>
-  <a href="#" data-toast="Расчёт себестоимости: загрузка альбома, чтение чертежа, смета"><i>▤</i>Себестоимость</a>
-  <a href="#" data-toast="Проверка КП подрядчика и сверка акта с проектом"><i>⇄</i>Проверка КП и актов</a>
-  <div class="g">Вести стройку</div>
-  <a href="#" data-toast="Проекты: обзор, график, площадка, документы, деньги, снабжение, техника"><i>⌂</i>Проекты</a>
-  <a href="#" data-toast="Деньги: БДР, БДДС, план-факт"><i>₸</i>Деньги</a>
-  <a href="#" data-toast="Снабжение: цены, запросы, подрядчики, склад"><i>▦</i>Снабжение</a>
-  <a href="#" data-toast="Техника: реестр, карта, ТО, моточасы"><i>⛟</i>Техника</a>
-  <div class="g">Документы и договоры</div>
-  <a href="#" data-toast="140 видов документов по формам РК"><i>▭</i>Документы</a>
-  <a href="#" data-toast="Юрист: договор возвращается в Word с правками"><i>⚖</i>Юрист</a>
-  <div class="g">Заработать</div>
-  <a href="#" data-toast="Лента тендеров, разбор объявления, оценка прибыли"><i>◈</i>Тендеры</a>
+  <div id="navb"></div>
 </nav>
 
 <div class="wrap">
   <header class="top">
-    <button class="search" data-toast="Командная строка Ctrl K с ИИ: поиск по проектам, документам и действиям — в следующем шаге">⌕ <span class="hide-m">Найти проект, документ, материал…</span><span class="kbd">Ctrl K</span></button>
+    <button class="search" data-toast="Один вход вместо трёх: поиск по всем действиям и страницам и вопрос помощнику AIQurylys (Ctrl K) — в следующем шаге">✦ <span class="hide-m">Спросить или найти…</span><span class="kbd">Ctrl K</span></button>
     <select class="pill hide-m" id="role" aria-label="Смотреть как"><option value="owner">Смотреть как: Владелец</option><option value="pto">ПТО / сметчик</option><option value="chief">Начальник участка</option><option value="foreman">Прораб</option><option value="supply">Снабженец</option><option value="fin">Финансист</option></select>
-    <button class="pill ask" data-toast="«Спросить AIQurylys»: ассистент знает контекст экрана — откроется панелью справа">✦ Спросить</button>
+    <button class="pill cr" data-toast="В рабочей версии откроется «Создать»: все 33 действия платформы по группам, с поиском (Ctrl K)">＋ Создать</button>
     <button class="pill" data-toast="3 новых: акт подрядчика ждёт проверки, ТО экскаватора через 2 дня, задача №12 сдана">🔔</button>
+    <button class="pill" data-toast="Помощь: путеводитель из 10 шагов, словарь, статьи">?</button>
     <button class="pill" id="theme" aria-label="Тема">☾</button>
     <span class="ava">Д</span>
   </header>
 
   <main class="page">
-    <section class="hero">
+    <section class="hero bgphoto">
       <div>
         <div class="eyebrow" id="eyebrow">Суббота, 14 ноября · Владелец</div>
         <h1>Ваш цифровой отдел готов к работе</h1>
@@ -239,7 +224,7 @@
 
   var GREET = { owner: 'За ночь шесть ИИ-сотрудников выполнили 14 задач. Ждут вашего решения: 4, из них 2 срочных.', pto: 'Расчёты и проверки, которые ждут вас: 7 позиций «Оценка», 2 КП на проверку.', chief: 'Что сделать сегодня на площадке: 3 задачи прорабам, ТО экскаватора через 2 дня.', foreman: 'Ваши работы на сегодня: №12 ростверк Пр1, №14 армирование, №15 кладка цоколя.', supply: 'Заявки и цены на сегодня: 2 ответа поставщиков, бетон С20/25 дороже рынка на 9 %.', fin: 'Деньги по проектам на сегодня: остаток 31,2 млн ₸, хватит на 5 недель.' };
   var NAMES = { owner: 'Владелец', pto: 'ПТО / сметчик', chief: 'Начальник участка', foreman: 'Прораб', supply: 'Снабженец', fin: 'Финансист' };
-  $('#role').onchange = function () { $('#greet').textContent = GREET[this.value]; $('#eyebrow').textContent = 'Суббота, 14 ноября · ' + NAMES[this.value]; toast('Главная показана так, как её видит: ' + NAMES[this.value] + '. Меню по ролям — в следующем шаге'); };
+  $('#role').onchange = function () { $('#greet').textContent = GREET[this.value]; $('#eyebrow').textContent = 'Суббота, 14 ноября · ' + NAMES[this.value]; toast('Главная показана так, как её видит: ' + NAMES[this.value] + '. Меню и фон показаны для этой роли'); };
 
   [].forEach.call(document.querySelectorAll('[data-count]'), function (el) {
     var to = parseFloat(el.getAttribute('data-count')), d = parseInt(el.getAttribute('data-dec') || '0', 10), n = 0, steps = 40;
@@ -273,5 +258,57 @@
   $('#prj').innerHTML = P.map(function (p) { return '<a class="pj" href="#" data-toast="Откроется проект: обзор, график, площадка, документы, деньги"><div class="ph" style="background-image:url(' + p[6] + ')"><span>' + p[7] + '</span></div><div class="in"><b>' + p[0] + '</b><small>' + p[1] + '</small><div class="r"><div class="ring" style="--p:' + p[2] + ';--c:' + (p[5] ? 'var(--bad)' : 'var(--blue)') + '"><span>' + p[2] + '%</span></div><small>Бюджет ' + fmt(p[3], 1) + ' млн ₸<br>Освоено ' + fmt(p[4], 1) + ' млн ₸</small></div></div></a>'; }).join('');
 })();
 </script>
-</body>
+<script>
+/* Меню и роли — по утверждённой структуре от 13.11 (Задание_разработчику_навигация_кабинета.md, cabinet-prototype.html) */
+(function () {
+  var MENU = [
+    { id: 'home', t: 'Главная', ic: '▣', need: '*' },
+    { id: 'projects', t: 'Проекты', ic: '⌂', need: ['projects'], toast: 'Проекты и файлы: карточки, фильтры, внутри проекта график, площадка, документы, деньги, склад, техника' },
+    { id: 'tasks', t: 'Задачи', ic: '☑', need: '*', badge: 3, toast: 'Мои и выданные задачи: поручения, сроки, отметки о сдаче' },
+    { g: 'Работа' },
+    { id: 'calc', t: 'Расчёты', ic: '▤', need: ['estimate', 'volume'], toast: 'Расчёт себестоимости, проверка сметы, коммерческое предложение, проверка объёмов' },
+    { id: 'docs', t: 'Документы', ic: '▭', need: ['documents'], toast: 'Новый документ (140 видов по формам РК) и сделанные' },
+    { id: 'site', t: 'Площадка', ic: '⛟', need: ['site', 'master', 'equipment'], toast: 'Начальник участка, график и выдача работ, прораб/мастер, нормы расхода, техника' },
+    { id: 'money', t: 'Деньги и снабжение', ic: '₸', need: ['finance', 'supplier'], toast: 'Финансовый отчёт, бюджет, снабженец, цена материала, запросы поставщикам, подрядчики' },
+    { id: 'legal', t: 'Договоры', ic: '⚖', need: ['legal'], toast: 'Договоры, проверка договора (правки в Word), письма и претензии, вопрос юристу' },
+    { id: 'sales', t: 'Тендеры и проекты', ic: '◈', need: ['tender', 'architect'], badge: 3, toast: 'Тендеры, паспорт компании, спрос по рынку, концепт проекта' },
+    { g: 'Компания (видит владелец)', owner: true },
+    { id: 'company', t: 'Компания', ic: '⚙', need: '*', owner: true, toast: 'Сотрудники и доступ, реквизиты, Google Диск, тариф' }
+  ];
+  var PERMS = { owner: 'ALL', pto: ['projects', 'documents', 'files', 'estimate', 'volume'], chief: ['projects', 'documents', 'files', 'site', 'master', 'equipment'], foreman: ['projects', 'master', 'equipment'], supply: ['projects', 'supplier', 'equipment'], fin: ['projects', 'finance', 'summary', 'volume'] };
+  var SCENE = { owner: 'director', pto: 'estimator', chief: 'site', foreman: 'foreman', supply: 'supply', fin: 'finance' };
+  function see(it, role) { var p = PERMS[role]; if (it.owner && role !== 'owner') return false; return it.need === '*' || p === 'ALL' || it.need.some(function (n) { return p.indexOf(n) > -1; }); }
+  function list(role) {
+    var out = [], pend = null;
+    MENU.forEach(function (it) {
+      if (it.g) { pend = it; return; }
+      if (!see(it, role)) return;
+      if (pend) { if (!pend.owner || role === 'owner') out.push(pend); pend = null; }
+      out.push(it);
+    });
+    return out;
+  }
+  var KIND = document.getElementById('navb') ? 'b' : 'a';
+  function render(role) {
+    var h = '';
+    list(role).forEach(function (it) {
+      if (it.g) { h += KIND === 'a' ? '<div class="grp">' + it.g + '</div>' : '<div class="g">' + it.g + '</div>'; return; }
+      var on = it.id === 'home' ? ' on' : '';
+      var t = it.id === 'home' ? '' : ' data-toast="' + it.toast + '"';
+      h += KIND === 'a'
+        ? '<a class="nav' + on + '" href="#"' + t + '><span>' + it.ic + '</span> ' + it.t + (it.badge ? '<span class="badge">' + it.badge + '</span>' : '') + '</a>'
+        : '<a class="' + on.trim() + '" href="#"' + t + '><i>' + it.ic + '</i>' + it.t + '</a>';
+    });
+    (document.getElementById('nav') || document.getElementById('navb')).innerHTML = h;
+    var img = '../media/scenes/' + SCENE[role] + '.webp';
+    var hi = document.getElementById('heroimg');
+    if (hi) hi.style.backgroundImage = 'url(' + img + ')';
+    var hero = document.querySelector('.hero.bgphoto');
+    if (hero) hero.style.backgroundImage = 'url(' + img + ')';
+  }
+  var sel = document.getElementById('role');
+  sel.addEventListener('change', function () { render(sel.value); });
+  render('owner');
+})();
+</script></body>
 </html>
