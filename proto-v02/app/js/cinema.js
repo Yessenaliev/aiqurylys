@@ -134,7 +134,7 @@
     AQ.every(function () {
       var p = POOL[i % POOL.length]; i++; m += 3 + i; if (m > 59) { m -= 60; h++; }
       var a = document.createElement('a'); a.className = 'ln pre'; if (AQ.canRoute(p[2])) a.href = '#/' + p[2]; else a.setAttribute('data-toast', 'Это видят другие роли');
-      a.innerHTML = '<time>' + (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + '</time><div><b>' + AQ.esc(p[0]) + '</b> · ' + AQ.esc(p[1]) + '</div>';
+      a.innerHTML = '<time>сейчас</time><div><b>' + AQ.esc(p[0]) + '</b> · ' + AQ.esc(p[1]) + '</div>';
       box.insertBefore(a, box.firstChild);
       setTimeout(function () { a.classList.remove('pre'); }, 30);
       while (box.children.length > 9) box.removeChild(box.lastChild);

@@ -19,7 +19,11 @@
   AQ.later = function (fn, ms) { var id = setTimeout(fn, ms); AQ.timers.push(id); return id; };
   AQ.every = function (fn, ms) { var id = setInterval(fn, ms); AQ.timers.push(id); return id; };
   function clearTimers() { AQ.timers.forEach(function (t) { clearTimeout(t); clearInterval(t); }); AQ.timers = []; }
-  AQ.reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  AQ.greet = function () {
+    var q = new URLSearchParams(location.search).get('hour'), h = q != null && q !== '' ? +q : new Date().getHours();
+    return h >= 5 && h < 12 ? 'Доброе утро' : h >= 12 && h < 18 ? 'Добрый день' : h >= 18 && h < 23 ? 'Добрый вечер' : 'Доброй ночи';
+  };
+  AQ.reduced =window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var ICO = {
     home: 'M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
@@ -99,11 +103,6 @@
       var on = cur.sec === s.id && !cur.special;
       var first = tabsOf(s)[0];
       h += '<a class="nav' + (on ? ' on' : '') + '" href="#/' + s.id + '/' + first.id + '">' + ico(s.ico) + '<span>' + esc(s.t) + '</span>' + (s.id === 'tasks' ? '<span class="badge">3</span>' : '') + '</a>';
-      if (on) {
-        h += '<div class="subs">';
-        tabsOf(s).forEach(function (t) { h += '<a class="sub' + (cur.tab === t.id ? ' on' : '') + '" href="#/' + s.id + '/' + t.id + '">' + esc(t.t) + '</a>'; });
-        h += '</div>';
-      }
     });
     if (r.company) {
       var u = AQ.D.tariff;
@@ -124,7 +123,8 @@
       '<span class="sp"></span>' +
       '<label class="pill hide-m" title="Прототип показывает кабинет глазами разных ролей">Смотреть как&nbsp;<select id="roleSel" aria-label="Смотреть как">' + opts + '</select></label>' +
       '<span class="demo-toggle hide-m' + (AQ.state.demo ? ' on' : '') + '" data-act="demo" role="switch" aria-checked="' + AQ.state.demo + '" tabindex="0"><span class="sw"></span>Демо-данные</span>' +
-      '<button class="pill cr" data-act="create">' + ico('plus') + '<span>Создать</span></button>' +
+      '<button class="pill cr hide-m" data-act="create">' + ico('plus') + '<span>Создать</span></button>' +
+      '<button class="pill ico show-m" data-act="ask" aria-label="Помощник">✦</button>' +
       '<button class="pill ico" data-act="bell" aria-label="Уведомления">' + ico('bell') + '<span class="dot"></span></button>' +
       '<a class="pill hide-m" href="#/help">' + ico('help') + '<span>Помощь</span></a>' +
       '<button class="ava" data-act="profile" aria-label="Профиль">' + esc(r.name.charAt(0)) + '</button>';
@@ -188,6 +188,11 @@
       title = route.tObj.t + ' — ' + route.sObj.t;
     }
     view.innerHTML = html;
+    $$('#view .tabs.sc').forEach(function (t) { var a = t.querySelector('.tab.on'); if (a) t.scrollLeft = Math.max(0, a.offsetLeft - 16); });
+    $$('#view table').forEach(function (tb) {
+      var heads = $$('thead th', tb).map(function (th) { return th.textContent.trim(); });
+      $$('tbody tr, tfoot tr', tb).forEach(function (tr) { Array.prototype.forEach.call(tr.children, function (td, i) { if (!td.hasAttribute('colspan') && heads[i]) td.setAttribute('data-label', heads[i]); }); });
+    });
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
     document.title = title + ' — AIQurylys (прототип v0.2)';
     renderSide(); renderBnav();
@@ -295,7 +300,11 @@
     h += '<button class="it" data-act="theme">Тема: ' + (document.documentElement.getAttribute('data-theme') === 'light' ? 'светлая → тёмная' : 'тёмная → светлая') + '<small>' + esc(P[4].d) + '</small></button>';
     h += '<button class="it" data-toast="В рабочей версии здесь будет: переключение языка Русский / Қазақша">Язык<small>' + esc(P[5].d) + '</small></button><hr>';
     h += '<button class="it" data-act="logout">Выйти<small>В прототипе вход не нужен: вернёт на первый экран</small></button>';
+    if (window.innerWidth <= 860) {
+      h += '<hr><div class="it">Смотреть как<br><select id="roleSel2" style="width:100%;margin-top:6px">' + AQ.M.roles.map(function (x) { return '<option value="' + x.id + '"' + (x.id === r.id ? ' selected' : '') + '>' + esc(x.n) + '</option>'; }).join('') + '</select></div><button class="it" data-act="demo">Демо-данные: ' + (AQ.state.demo ? 'включены' : 'выключены') + '<small>Нажмите, чтобы переключить</small></button>';
+    }
     popover(anchor, h);
+    var rs = $('#roleSel2'); if (rs) rs.addEventListener('change', function () { closePop(); setRole(rs.value); });
   }
   function openBell(anchor) {
     var h = '<div style="padding:8px 12px"><b>Уведомления</b></div>' + AQ.D.notifs.filter(function (n) { return AQ.canRoute(n.go); }).map(function (n) { return '<a class="it" href="#/' + n.go + '">' + (n.new ? '<span class="tag t-bad">новое</span> ' : '') + esc(n.t) + '<small>' + esc(n.time) + '</small></a>'; }).join('') + '<hr><a class="it" href="#/notif">Все уведомления и настройки</a>';

@@ -27,19 +27,20 @@
   S.home = function (rt, ctx) {
     var D = AQ.D, r = AQ.role(), all = r.perms === 'ALL', owner = r.id === 'owner', K = D.kpi, h = '';
     var scene = '../../media/scenes/' + r.scene + '.webp';
+    var tb = AQ.tabsOf(rt.sObj).length > 1 ? AQ.tabBar(rt.sObj, rt.tab) : '';
     var first = r.name.split(' ')[0];
     if (owner) {
       var vid = (!AQ.reduced && window.innerWidth > 860) ? '<video class="bgvid" muted loop playsinline preload="auto" src="../../media/scenes/' + r.scene + '.mp4"></video>' : '';
-      h += '<section class="hero"><div class="bgphoto" style="background-image:url(' + scene + ')"></div>' + vid +
-        '<div class="eyebrow">Главная · за последние 30 дней</div><h1>Доброе утро, ' + esc(first) + '.<br><em>Цифровой отдел сэкономил вам</em></h1>' +
-        '<p>Пока вы спали, ИИ-сотрудники посчитали, проверили и нашли. Нажмите на любую цифру, чтобы увидеть, откуда она взялась.</p>' +
+      h += tb + '<section class="hero"><div class="bgphoto" style="background-image:url(' + scene + ')"></div>' + vid +
+        '<div class="eyebrow">Главная · за последние 30 дней</div><h1>' + AQ.greet() + ', ' + esc(first) + '.<br><em>Цифровой отдел сэкономил вам</em></h1>' +
+        '<p>' + D.agents.length + ' ИИ-сотрудников считают, проверяют и ищут тендеры. Нажмите на любую цифру, чтобы увидеть, откуда она взялась.</p>' +
         '<div class="nums">' +
-        '<button class="bignum" data-toast="' + esc(K.sources.saved) + '"><span>Сэкономлено</span><b class="acc"><i data-cnt="6.6" data-dec="1">0</i> млн ₸</b><small>завышения в актах и сметах</small></button>' +
-        '<button class="bignum" data-toast="' + esc(K.sources.hours) + '"><span>Часов работы</span><b><i data-cnt="41" data-dec="0">0</i> ч</b><small>не пришлось делать руками</small></button>' +
-        '<button class="bignum" data-toast="' + esc(K.sources.tenders) + '"><span>Прибыль тендеров</span><b><i data-cnt="47" data-dec="1">0</i> млн ₸</b><small>3 тендера закрываются на этой неделе</small></button>' +
+        '<button class="bignum" data-toast="' + esc(K.sources.saved) + '"><span>Сэкономлено</span><b class="acc"><i data-cnt="6.6" data-dec="1">0</i> <em>млн ₸</em></b><small>завышения в актах и сметах</small></button>' +
+        '<button class="bignum" data-toast="' + esc(K.sources.hours) + '"><span>Часов работы</span><b><i data-cnt="41" data-dec="0">0</i> <em>ч</em></b><small>не пришлось делать руками</small></button>' +
+        '<button class="bignum" data-toast="' + esc(K.sources.tenders) + '"><span>Тендеры</span><b><em>на</em> <i data-cnt="47" data-dec="0">0</i> <em>млн ₸</em></b><small>3 тендера закрываются на этой неделе</small></button>' +
         '</div></section><div style="height:14px"></div>';
     } else {
-      h += AQ.head('Здравствуйте, ' + esc(r.n.toLowerCase()), esc(r.line), '<span>Главная · Сегодня</span>');
+      h += AQ.head(AQ.greet() + ', ' + esc(r.name), esc(r.line), '<span>Главная · Сегодня</span>', tb);
     }
     h += '<div class="bento">';
 
@@ -53,13 +54,13 @@
     if (!owner) {
       h += '<div class="tile ' + (dec.length ? 's5' : 's12') + '"><div class="lbl"><span>С чего начать</span></div>' + r.start.map(function (s, i) { return '<a class="row" href="#/' + s[0] + '"><span class="tag t-blue">' + (i + 1) + '</span><div><b>' + esc(s[1]) + '</b><small>' + esc(s[2]) + '</small></div><span class="mut">→</span></a>'; }).join('') + '</div>';
     } else {
-      // лента ночной смены
-      h += '<div class="tile s5"><div class="lbl"><span>Ночная смена</span><a class="acc" href="#/digital">весь отдел →</a></div><div class="feed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln pre" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>';
+      // лента за неделю
+      h += '<div class="tile s5"><div class="lbl"><span>Сделано за неделю</span><a class="acc" href="#/digital">весь отдел →</a></div><div class="feed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln pre" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>';
     }
     // цифровой отдел
     var ag = D.agents.filter(function (a) { return AQ.can(a.need); }).slice(0, 4);
     if (ag.length) {
-      h += '<div class="tile s12"><div class="lbl"><span>Цифровой отдел · ' + D.agents.filter(function (a) { return AQ.can(a.need); }).length + ' сотрудников</span><a class="acc" href="#/digital">Открыть →</a></div><div class="agents">' + ag.map(agentCard).join('') + '</div></div>';
+      h += '<div class="tile s12"><div class="lbl"><span>Цифровой отдел · ' + D.agents.length + ' ИИ-сотрудников</span><a class="acc" href="#/digital">Открыть →</a></div><div class="agents">' + ag.map(agentCard).join('') + '</div></div>';
     }
     // тендеры
     if (AQ.can('tender')) {
@@ -79,7 +80,7 @@
     }
     h += '</div>';
     if (!AQ.state.demo) {
-      h = AQ.head('Здравствуйте, ' + esc(first), 'Кабинет пока пустой: как у нового клиента. Начните с первого шага или посмотрите всё на демо-компании.', '<span>Главная · Сегодня</span>') +
+      h = AQ.head(AQ.greet() + ', ' + esc(first), 'Кабинет пока пустой: как у нового клиента. Начните с первого шага или посмотрите всё на демо-компании.', '<span>Главная · Сегодня</span>', tb) +
         '<div class="tile guide"><div class="lbl"><span>Путеводитель</span></div><b>0 из 10 шагов</b><div class="bar"><i style="width:0"></i></div><div class="btns"><a class="btn pri" href="#/projects/list">Заведите первый проект</a><button class="btn" data-act="demo-on">Показать на демо-компании</button></div></div>';
     }
     ctx.after = function () {
@@ -90,6 +91,7 @@
     return h;
   };
   function agentCard(a) {
+    if (!AQ.can(a.need)) return '<button class="ag" style="opacity:.5;width:100%" data-toast="Этого ИИ-сотрудника видит другая роль. Доступ раздаёт владелец."><div class="n"><span class="pulse w"></span>' + esc(a.n) + '</div><p>' + esc(a.role) + '</p><div class="meta">доступ у другой роли</div></button>';
     return '<a class="ag" href="#/' + (AQ.canRoute(a.go) ? a.go : 'digital') + '"><div class="n"><span class="pulse' + (a.status === 'готов' ? ' w' : '') + '"></span>' + esc(a.n) + '</div><p>' + esc(a.role) + '</p><p>' + esc(a.last) + '</p><div class="meta">сделано за месяц: ' + a.done + '</div></a>';
   }
   function projCard(p) {
@@ -109,11 +111,11 @@
 
   /* ---------- Цифровой отдел (специальная страница) ---------- */
   S._digital = function (rt, ctx) {
-    var D = AQ.D, list = D.agents.filter(function (a) { return AQ.can(a.need); });
-    var h = AQ.head('Цифровой отдел', 'ИИ-сотрудники вашей компании: что делает каждый и что сделал последним. Суммы считают формулы, а не ИИ: ИИ читает чертежи и документы, подсчёт делают проверяемые формулы.', '<a href="#/home/today">Главная</a> / Цифровой отдел');
+    var D = AQ.D, list = D.agents, mine = D.agents.filter(function (a) { return AQ.can(a.need); }).length;
+    var h = AQ.head('Цифровой отдел · ' + D.agents.length + ' ИИ-сотрудников', 'Доступно вашей роли: ' + mine + '. Что делает каждый и что сделал последним. Суммы считают формулы, а не ИИ: ИИ читает чертежи и документы, подсчёт делают проверяемые формулы.', '<a href="#/home/today">Главная</a> / Цифровой отдел');
     h += '<div class="agents">' + list.map(agentCard).join('') + '</div>';
     h += '<div class="bento" style="margin-top:14px"><div class="tile s7"><div class="lbl"><span>Лента работы</span><span class="tag t-ok">в эфире</span></div><div class="feed" id="livefeed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln pre" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>' +
-      '<div class="tile s5"><div class="lbl"><span>Как работает отдел</span></div><div class="row"><div><b>Вы даёте</b><small>Чертежи, акты, договоры, цены</small></div></div><div class="row"><div><b>Сотрудники работают ночью</b><small>Утром результат уже в кабинете и в Telegram</small></div></div><div class="row"><div><b>Вы решаете</b><small>Каждое решение — за вами, ИИ только предлагает</small></div></div><div class="btns"><button class="btn" data-act="ask">Спросить помощника</button></div></div></div>';
+      '<div class="tile s5"><div class="lbl"><span>Как работает отдел</span></div><div class="row"><div><b>Вы даёте</b><small>Чертежи, акты, договоры, цены</small></div></div><div class="row"><div><b>Сотрудники работают в фоне</b><small>Результат сразу в кабинете и в Telegram</small></div></div><div class="row"><div><b>Вы решаете</b><small>Каждое решение — за вами, ИИ только предлагает</small></div></div><div class="btns"><button class="btn" data-act="ask">Спросить помощника</button></div></div></div>';
     ctx.after = function () { AQ.reveal('#livefeed .ln.pre', 400); AQ.later(function () { AQ.liveFeed(AQ.$('#livefeed')); }, 3200); };
     return h;
   };
@@ -151,7 +153,8 @@
       body = '<div class="tile"><div class="lbl"><span>Площадка сегодня</span></div><p>Кладка 2 этажа: 28 из 40 м³. Арматура: поставка завтра. Автокран на простое.</p><div class="btns"><a class="btn pri" href="#/site/chief">Открыть «Начальник участка»</a><a class="btn" href="#/site/plan">График и выдача работ</a></div></div>';
     } else {
       var d = D.projectTabs[tab];
-      body = AQ.tbl(d.cols, d.rows) + '<div class="btns"><button class="btn sm" data-toast="В рабочей версии здесь будет: добавление и изменение записей в этой таблице">＋ Добавить</button></div>';
+      if (tab === 'files') d = { cols: d.cols.filter(function (c, i) { return i !== 1; }), rows: d.rows.filter(function (r) { return r[1] === p.n; }).map(function (r) { return r.filter(function (c, i) { return i !== 1; }); }) };
+      body = (d.rows.length ? AQ.tbl(d.cols, d.rows) : '<div class="tile"><p class="mut">В этом проекте файлов пока нет.</p></div>') + '<div class="btns"><button class="btn sm" data-toast="В рабочей версии здесь будет: добавление и изменение записей в этой таблице">＋ Добавить</button></div>';
     }
     return h + body;
   }
@@ -170,7 +173,7 @@
   /* ---------- Файлы ---------- */
   S.files = function (rt) {
     var d = AQ.D.projectTabs.files;
-    var h = AQ.tabHead(rt) + '<div class="drop" style="margin-bottom:14px">Перетащите файлы сюда: альбомы, сметы, договоры, акты<div class="btns" style="justify-content:center"><button class="btn pri" data-toast="В рабочей версии здесь будет: загрузка файлов с компьютера или с Google Диска. Ночью новые файлы находятся сами.">Загрузить файлы</button></div></div>';
+    var h = AQ.tabHead(rt) + '<div class="drop" style="margin-bottom:14px">Перетащите файлы сюда: альбомы, сметы, договоры, акты<div class="btns" style="justify-content:center"><button class="btn pri" data-toast="В рабочей версии здесь будет: загрузка файлов с компьютера или с Google Диска. Новые файлы находятся сами, автоматически.">Загрузить файлы</button></div></div>';
     h += AQ.tbl(d.cols, d.rows.map(function (r) { return r.slice(); })) + '<div class="btns">' + AQ.lnk('calc/est', 'Посчитать себестоимость по альбому') + '</div>';
     return h + AQ.wasBlock(rt.tObj);
   };
@@ -205,10 +208,10 @@
     h += '<div class="wiz">' + W.map(function (w, i) { return '<span class="' + (i + 1 === step ? 'on' : (i + 1 < step ? 'done' : '')) + '"><b>' + (i + 1 < step ? '✓' : i + 1) + '</b>' + esc(w.t) + '</span>'; }).join('') + '</div>';
     var w = W[step - 1];
     h += '<div class="tile"><div class="lbl"><span>Шаг ' + step + ' из 4 · ' + esc(w.t) + '</span></div><p class="mut" style="margin-bottom:12px">' + esc(w.d) + '</p>';
-    if (step === 1) h += '<select style="width:100%;max-width:420px">' + D.projects.map(function (p) { return '<option' + (p.id === 'ceh' ? ' selected' : '') + '>' + esc(p.n) + ', ' + esc(p.city) + '</option>'; }).join('') + '</select>';
+    if (step === 1) h += '<select style="width:100%;max-width:420px">' + D.projects.map(function (p) { return '<option' + (p.id === 'sklad' ? ' selected' : '') + '>' + esc(p.n) + ', ' + esc(p.city) + '</option>'; }).join('') + '</select>';
     if (step === 2) h += '<div class="drop"><b style="color:var(--ink)">' + esc(w.demo) + '</b><br>PDF или DWG, до 200 МБ<div class="btns" style="justify-content:center"><button class="btn" data-toast="В рабочей версии здесь будет: выбор файла на компьютере или в папке проекта">Выбрать другой файл</button></div></div>';
     if (step === 3) {
-      var DET = [['Фундаментная плита ФП-1', 1240, 0, 'м³', 3], ['Арматура А500С', 52.3, 1, 'т', 6], ['Сваи С1', 462, 0, 'шт', 9], ['Гидроизоляция обмазочная', 2140, 0, 'м²', 12]];
+      var DET = [['Сваи С1', 462, 0, 'шт', 3], ['Ростверк Пр1', 156.5, 1, 'м³', 6], ['Арматура А500С', 15.7, 1, 'т', 9], ['Кладка цоколя · Оценка', 109.2, 1, 'м³', 12]];
       h += '<div class="bento"><div class="tile s7"><div class="sheet" id="sheet"><svg viewBox="0 0 600 240" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--blue)" stroke-width="1.2"><rect x="60" y="40" width="300" height="150"/><rect x="90" y="70" width="110" height="90"/><rect x="230" y="70" width="100" height="90"/><path d="M60 100H360M200 40V190M400 60h150M400 90h150M400 120h110M400 150h150"/></g><g fill="var(--mute)" font-family="monospace" font-size="9"><text x="64" y="34" id="shTitle">ФП-1</text><text x="404" y="56">Бетон В25</text><text x="404" y="86">Арматура А500С</text><text x="404" y="116">Гидроизоляция</text></g></svg><div class="scan" id="scan"></div><span class="pg" id="pg">Лист 1 из 14</span><span class="ping" style="left:70px;top:48px" id="ping">найдено</span></div><p class="mut" style="margin-top:10px" id="reading">Открываю альбом КЖ…</p><div class="bar2" style="margin-top:8px"><i id="rbar" style="width:0;transition:width .3s"></i></div></div>' +
         '<div class="tile s5"><div class="lbl"><span>Найдено в чертежах</span></div><div class="det" id="det">' + DET.map(function (d, i) { return '<div class="d" id="d' + i + '"><span>' + esc(d[0]) + '</span><b><i data-v="' + d[1] + '" data-dec="' + d[2] + '">0</i> ' + d[3] + '</b></div>'; }).join('') + '</div></div></div>';
       ctx.after = function () {
@@ -239,8 +242,8 @@
   function estResult(rt) {
     var R = AQ.D.estResult;
     var h = AQ.head(esc(R.n), esc(R.project) + ' · результат расчёта', '<a href="#/calc/est">Расчёты</a> / Расчёт себестоимости / Результат');
-    h += '<div class="bento"><div class="tile s4"><div class="lbl"><span>Себестоимость</span></div><div class="big">' + fmt(R.cost) + ' ₸</div></div><div class="tile s4"><div class="lbl"><span>Цена для заказчика с НДС ' + R.vat + ' %</span></div><div class="big acc">' + fmt(R.price) + ' ₸</div></div><div class="tile s4"><div class="lbl"><span>Разница (ваша наценка)</span></div><div class="big ok">' + fmt(R.diff) + ' ₸</div></div></div><div style="height:14px"></div>';
-    h += '<div class="tbl-wrap"><table><thead><tr><th>Работа</th><th class="r">Кол-во</th><th>Ед.</th><th class="r">Цена, ₸</th><th class="r">Сумма, ₸</th><th></th></tr></thead><tbody>' + R.rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td class="num">' + String(r[1]).replace('.', ',') + '</td><td>' + esc(r[2]) + '</td><td class="num">' + fmt(r[3]) + '</td><td class="num">' + fmt(r[4]) + '</td><td>' + (r[5] ? '<span class="tag t-warn src" data-toast="Позиция посчитана приблизительно. Проверьте её в «Проверка сметы».">Оценка</span>' : '') + '</td></tr>'; }).join('') + '</tbody><tfoot><tr><td colspan="4">Итого себестоимость</td><td class="num">' + fmt(R.cost) + '</td><td></td></tr></tfoot></table></div>';
+    h += '<div class="bento"><div class="tile s4"><div class="lbl"><span>Себестоимость для вас</span></div><div class="big">' + fmt(R.cost) + ' ₸</div><p class="mut" style="margin-top:6px">Работы и материалы без наценки.</p></div><div class="tile s4"><div class="lbl"><span>Смета заказчику, с НДС ' + R.vat + ' %</span></div><div class="big acc">' + fmt(R.price) + ' ₸</div><p class="mut" style="margin-top:6px">С прибылью компании и налогами.</p></div><div class="tile s4"><div class="lbl"><span>Разница — прибыль и налоги</span></div><div class="big ok">' + fmt(R.diff) + ' ₸</div></div></div><div style="height:14px"></div>';
+    h += '<div class="tbl-wrap"><table><thead><tr><th>Работа</th><th class="r">Кол-во</th><th>Ед.</th><th class="r">Цена, ₸</th><th class="r">Сумма, ₸</th><th></th></tr></thead><tbody>' + R.rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td class="num">' + (r[1] % 1 ? String(r[1]).replace('.', ',') : fmt(r[1])) + '</td><td>' + esc(r[2]) + '</td><td class="num">' + fmt(r[3]) + '</td><td class="num">' + fmt(r[4]) + '</td><td>' + (r[5] ? '<span class="tag t-warn src" data-toast="Позиция посчитана приблизительно. Проверьте её в «Проверка сметы».">Оценка</span>' : '') + '</td></tr>'; }).join('') + '</tbody><tfoot><tr><td colspan="4">Итого себестоимость</td><td class="num">' + fmt(R.cost) + '</td><td></td></tr></tfoot></table></div>';
     h += '<div class="btns"><button class="btn" data-toast="В рабочей версии здесь будет: скачивание книги Excel с формулами">Скачать Excel</button><button class="btn" data-toast="В рабочей версии здесь будет: скачивание Word">Word</button><button class="btn" data-toast="В рабочей версии здесь будет: скачивание PDF">PDF</button><a class="btn" href="#/calc/check">Проверить спорные позиции</a><a class="btn pri" href="#/calc/offer">Сделать КП заказчику</a></div><p class="mut" style="margin-top:10px;font-size:12px">Суммы считают формулы, а не ИИ. Позиции «Оценка» ИИ определил приблизительно, их нужно проверить.</p>';
     return h;
   }
