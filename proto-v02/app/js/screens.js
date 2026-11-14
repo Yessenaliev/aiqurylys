@@ -19,6 +19,7 @@
     var n = 0, steps = Math.max(8, Math.round(ms / 40));
     var id = AQ.every(function () { n++; var v = to * (1 - Math.pow(1 - n / steps, 3)); el.textContent = v.toFixed(dec).replace('.', ','); if (n >= steps) clearInterval(id); }, 40);
   }
+  AQ.countUp = countUp;
   var statusTag = function (s) { return s === 'В работе' ? 't-blue' : (s.indexOf('Завершён') === 0 ? 't-ok' : 't-mute'); };
   AQ.statusTag = statusTag;
 
@@ -28,7 +29,8 @@
     var scene = '../../media/scenes/' + r.scene + '.webp';
     var first = r.name.split(' ')[0];
     if (owner) {
-      h += '<section class="hero"><div class="bgphoto" style="background-image:url(' + scene + ')"></div>' +
+      var vid = (!AQ.reduced && window.innerWidth > 860) ? '<video class="bgvid" muted loop playsinline preload="auto" src="../../media/scenes/' + r.scene + '.mp4"></video>' : '';
+      h += '<section class="hero"><div class="bgphoto" style="background-image:url(' + scene + ')"></div>' + vid +
         '<div class="eyebrow">Главная · за последние 30 дней</div><h1>Доброе утро, ' + esc(first) + '.<br><em>Цифровой отдел сэкономил вам</em></h1>' +
         '<p>Пока вы спали, ИИ-сотрудники посчитали, проверили и нашли. Нажмите на любую цифру, чтобы увидеть, откуда она взялась.</p>' +
         '<div class="nums">' +
@@ -52,7 +54,7 @@
       h += '<div class="tile ' + (dec.length ? 's5' : 's12') + '"><div class="lbl"><span>С чего начать</span></div>' + r.start.map(function (s, i) { return '<a class="row" href="#/' + s[0] + '"><span class="tag t-blue">' + (i + 1) + '</span><div><b>' + esc(s[1]) + '</b><small>' + esc(s[2]) + '</small></div><span class="mut">→</span></a>'; }).join('') + '</div>';
     } else {
       // лента ночной смены
-      h += '<div class="tile s5"><div class="lbl"><span>Ночная смена</span><a class="acc" href="#/digital">весь отдел →</a></div><div class="feed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>';
+      h += '<div class="tile s5"><div class="lbl"><span>Ночная смена</span><a class="acc" href="#/digital">весь отдел →</a></div><div class="feed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln pre" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>';
     }
     // цифровой отдел
     var ag = D.agents.filter(function (a) { return AQ.can(a.need); }).slice(0, 4);
@@ -61,7 +63,7 @@
     }
     // тендеры
     if (AQ.can('tender')) {
-      h += '<div class="tile s6"><div class="lbl"><span>Тендеры · закрываются на этой неделе</span><a class="acc" href="#/sales/tender">Все →</a></div><div class="tn">' + D.tenders.slice(0, 3).map(function (t) { return '<a class="t" href="#/sales/tender"><div><b>' + esc(t.n) + '</b><span class="tm">⏱ ' + esc(t.left) + '</span></div><div><span class="mut">' + esc(t.advice) + ' · совпадение ' + t.match + ' %</span><span class="pf">+' + String(t.profit).replace('.', ',') + ' млн ₸</span></div></a>'; }).join('') + '</div></div>';
+      h += '<div class="tile s6"><div class="lbl"><span>Тендеры · закрываются на этой неделе</span><a class="acc" href="#/sales/tender">Все →</a></div><div class="tn">' + D.tenders.slice(0, 3).map(function (t) { return '<a class="t" href="#/sales/tender"><div><b>' + esc(t.n) + '</b><span class="tm">⏱ <span data-cd="' + AQ.cdSecs(t.id, t.left) + '">' + esc(t.left) + '</span></span></div><div><span class="mut">' + esc(t.advice) + ' · совпадение ' + t.match + ' %</span><span class="pf">+' + String(t.profit).replace('.', ',') + ' млн ₸</span></div></a>'; }).join('') + '</div></div>';
     }
     // проекты
     h += '<div class="tile ' + (AQ.can('tender') ? 's6' : 's12') + '"><div class="lbl"><span>Проекты</span><a class="acc" href="#/projects/list">Все →</a></div><div class="prj">' + D.projects.filter(function (p) { return p.status === 'В работе'; }).map(projCard).join('') + '</div></div>';
@@ -80,7 +82,11 @@
       h = AQ.head('Здравствуйте, ' + esc(first), 'Кабинет пока пустой: как у нового клиента. Начните с первого шага или посмотрите всё на демо-компании.', '<span>Главная · Сегодня</span>') +
         '<div class="tile guide"><div class="lbl"><span>Путеводитель</span></div><b>0 из 10 шагов</b><div class="bar"><i style="width:0"></i></div><div class="btns"><a class="btn pri" href="#/projects/list">Заведите первый проект</a><button class="btn" data-act="demo-on">Показать на демо-компании</button></div></div>';
     }
-    ctx.after = function () { AQ.$$('[data-cnt]').forEach(function (el) { countUp(el, +el.getAttribute('data-cnt'), +el.getAttribute('data-dec'), 1400); }); };
+    ctx.after = function () {
+      AQ.$$('[data-cnt]').forEach(function (el) { countUp(el, +el.getAttribute('data-cnt'), +el.getAttribute('data-dec'), 1400); });
+      AQ.reveal('.feed .ln.pre', 420); AQ.cdStart();
+      var v = AQ.$('.hero .bgvid'); if (v) { v.addEventListener('playing', function () { v.classList.add('on'); }); var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); }
+    };
     return h;
   };
   function agentCard(a) {
@@ -106,8 +112,9 @@
     var D = AQ.D, list = D.agents.filter(function (a) { return AQ.can(a.need); });
     var h = AQ.head('Цифровой отдел', 'ИИ-сотрудники вашей компании: что делает каждый и что сделал последним. Суммы считают формулы, а не ИИ: ИИ читает чертежи и документы, подсчёт делают проверяемые формулы.', '<a href="#/home/today">Главная</a> / Цифровой отдел');
     h += '<div class="agents">' + list.map(agentCard).join('') + '</div>';
-    h += '<div class="bento" style="margin-top:14px"><div class="tile s7"><div class="lbl"><span>Лента работы</span></div><div class="feed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>' +
+    h += '<div class="bento" style="margin-top:14px"><div class="tile s7"><div class="lbl"><span>Лента работы</span><span class="tag t-ok">в эфире</span></div><div class="feed" id="livefeed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln pre" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>' +
       '<div class="tile s5"><div class="lbl"><span>Как работает отдел</span></div><div class="row"><div><b>Вы даёте</b><small>Чертежи, акты, договоры, цены</small></div></div><div class="row"><div><b>Сотрудники работают ночью</b><small>Утром результат уже в кабинете и в Telegram</small></div></div><div class="row"><div><b>Вы решаете</b><small>Каждое решение — за вами, ИИ только предлагает</small></div></div><div class="btns"><button class="btn" data-act="ask">Спросить помощника</button></div></div></div>';
+    ctx.after = function () { AQ.reveal('#livefeed .ln.pre', 400); AQ.later(function () { AQ.liveFeed(AQ.$('#livefeed')); }, 3200); };
     return h;
   };
 
@@ -201,11 +208,28 @@
     if (step === 1) h += '<select style="width:100%;max-width:420px">' + D.projects.map(function (p) { return '<option' + (p.id === 'ceh' ? ' selected' : '') + '>' + esc(p.n) + ', ' + esc(p.city) + '</option>'; }).join('') + '</select>';
     if (step === 2) h += '<div class="drop"><b style="color:var(--ink)">' + esc(w.demo) + '</b><br>PDF или DWG, до 200 МБ<div class="btns" style="justify-content:center"><button class="btn" data-toast="В рабочей версии здесь будет: выбор файла на компьютере или в папке проекта">Выбрать другой файл</button></div></div>';
     if (step === 3) {
-      h += '<div class="sheet" id="sheet"><svg viewBox="0 0 600 240" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--blue)" stroke-width="1.2"><rect x="60" y="40" width="300" height="150"/><rect x="90" y="70" width="110" height="90"/><rect x="230" y="70" width="100" height="90"/><path d="M60 100H360M200 40V190M400 60h150M400 90h150M400 120h110M400 150h150"/></g><g fill="var(--mute)" font-family="monospace" font-size="9"><text x="64" y="34">ФП-1 · 1240 м³</text><text x="404" y="56">Бетон В25</text><text x="404" y="86">Арматура А500С</text><text x="404" y="116">Гидроизоляция</text></g></svg><div class="scan" id="scan"></div><span class="ping" style="left:70px;top:48px" data-p="0">1 240 м³</span><span class="ping" style="left:420px;top:66px" data-p="1">52,3 т</span><span class="ping" style="left:420px;top:126px" data-p="2">2 140 м²</span></div><p class="mut" style="margin-top:10px" id="reading">Читаю лист 4 из 14…</p>';
+      var DET = [['Фундаментная плита ФП-1', 1240, 0, 'м³', 3], ['Арматура А500С', 52.3, 1, 'т', 6], ['Сваи С1', 462, 0, 'шт', 9], ['Гидроизоляция обмазочная', 2140, 0, 'м²', 12]];
+      h += '<div class="bento"><div class="tile s7"><div class="sheet" id="sheet"><svg viewBox="0 0 600 240" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--blue)" stroke-width="1.2"><rect x="60" y="40" width="300" height="150"/><rect x="90" y="70" width="110" height="90"/><rect x="230" y="70" width="100" height="90"/><path d="M60 100H360M200 40V190M400 60h150M400 90h150M400 120h110M400 150h150"/></g><g fill="var(--mute)" font-family="monospace" font-size="9"><text x="64" y="34" id="shTitle">ФП-1</text><text x="404" y="56">Бетон В25</text><text x="404" y="86">Арматура А500С</text><text x="404" y="116">Гидроизоляция</text></g></svg><div class="scan" id="scan"></div><span class="pg" id="pg">Лист 1 из 14</span><span class="ping" style="left:70px;top:48px" id="ping">найдено</span></div><p class="mut" style="margin-top:10px" id="reading">Открываю альбом КЖ…</p><div class="bar2" style="margin-top:8px"><i id="rbar" style="width:0;transition:width .3s"></i></div></div>' +
+        '<div class="tile s5"><div class="lbl"><span>Найдено в чертежах</span></div><div class="det" id="det">' + DET.map(function (d, i) { return '<div class="d" id="d' + i + '"><span>' + esc(d[0]) + '</span><b><i data-v="' + d[1] + '" data-dec="' + d[2] + '">0</i> ' + d[3] + '</b></div>'; }).join('') + '</div></div></div>';
       ctx.after = function () {
-        var sc = AQ.$('#scan'), pings = AQ.$$('.ping'), y = 0, n = 0;
-        pings.forEach(function (p, i) { AQ.later(function () { p.classList.add('on'); var rd = AQ.$('#reading'); if (rd) rd.textContent = 'Нашёл объём: ' + p.textContent + (i === 2 ? '. Лист 4 из 14 готов.' : '…'); }, AQ.reduced ? 0 : 900 + i * 900); });
-        if (!AQ.reduced) AQ.every(function () { y = (y + 4) % 240; if (sc) sc.style.top = y + 'px'; n++; }, 40);
+        var sc = AQ.$('#scan'), sheet = AQ.$('#sheet'), y = 0, pg = 0, TOTAL = 14, pings = [[70, 48], [420, 66], [90, 100], [420, 126]];
+        function show(i) {
+          var d = DET[i], el = AQ.$('#d' + i); if (!el) return; el.classList.add('on');
+          var num = el.querySelector('i'), to = d[1], dec = d[2], n = 0, steps = AQ.reduced ? 1 : 22;
+          var id = AQ.every(function () { n++; var v = to * (n / steps); num.textContent = (dec ? v.toFixed(dec).replace('.', ',') : String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')); if (n >= steps) clearInterval(id); }, 40);
+          var p = AQ.$('#ping'); if (p) { p.style.left = pings[i][0] + 'px'; p.style.top = pings[i][1] + 'px'; p.textContent = d[0] + ' — ' + d[1] + ' ' + d[3]; p.classList.add('on'); }
+        }
+        function step1() {
+          pg++; var el = AQ.$('#pg'); if (!el) return;
+          el.textContent = 'Лист ' + pg + ' из ' + TOTAL; AQ.$('#rbar').style.width = (pg / TOTAL * 100) + '%';
+          sheet.classList.add('flip'); setTimeout(function () { sheet.classList.remove('flip'); }, 120);
+          var p = AQ.$('#ping'); if (p) p.classList.remove('on');
+          DET.forEach(function (d, i) { if (d[4] === pg) show(i); });
+          var rd = AQ.$('#reading'); if (rd) rd.textContent = pg < TOTAL ? 'Читаю лист ' + pg + ' из ' + TOTAL + '…' : 'Готово: 14 листов, 4 вида работ. Объёмы посчитаны формулами.';
+        }
+        if (AQ.reduced) { for (pg = 0; pg < TOTAL;) step1(); return; }
+        AQ.every(function () { y = (y + 5) % 240; if (sc) sc.style.top = y + 'px'; }, 40);
+        var iv = AQ.every(function () { if (pg >= TOTAL) { clearInterval(iv); return; } step1(); }, 420);
       };
     }
     if (step === 4) h += '<div style="display:grid;gap:10px;max-width:420px"><label>Наценка, %<input value="20" style="width:100%"></label><label>НДС<select style="width:100%"><option>16 %</option><option>Без НДС</option></select></label></div><p class="mut" style="margin-top:10px">Цены берутся из базы и ответов поставщиков. Подсчёт делают формулы, не ИИ.</p>';

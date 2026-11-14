@@ -188,6 +188,7 @@
       title = route.tObj.t + ' — ' + route.sObj.t;
     }
     view.innerHTML = html;
+    if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
     document.title = title + ' — AIQurylys (прототип v0.2)';
     renderSide(); renderBnav();
     $('#side').classList.remove('open');
@@ -310,18 +311,22 @@
   var chips = ['Считает смету', 'Проверяет акты', 'Ищет тендеры', 'Ведёт график', 'Пишет документы', 'Читает договоры'];
   function showWelcome() {
     var w = document.createElement('div'); w.className = 'welcome'; w.id = 'welcome';
-    w.innerHTML = scenes.map(function (s, i) { return '<div class="wbg' + (i === 0 ? ' on' : '') + '" style="background-image:url(../../media/scenes/' + s + '.webp)"></div>'; }).join('') +
+    w.innerHTML = '<div class="wbg" style="background-image:url(../../media/scenes/intro.webp)"></div><canvas class="wcv" aria-hidden="true"></canvas>' +
       '<button class="skip" data-act="welcome-end">Пропустить →</button>' +
       '<div class="wc"><div class="eyebrow">AIQurylys · ' + esc(AQ.D.company.name) + '</div><h1>Ваш цифровой отдел<br><em>готов к работе</em></h1><p>Сметчик, юрист, снабженец и ещё пять ИИ-сотрудников уже на местах. Суммы считают формулы, а не ИИ.</p><div class="chips">' + chips.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div><div class="btns" style="justify-content:center;margin-top:26px"><button class="btn pri" data-act="welcome-end">Войти в кабинет</button></div></div>';
     document.body.appendChild(w);
-    var bgs = $$('.wbg', w), cs = $$('.chips span', w), i = 0;
-    cs.forEach(function (c, k) { setTimeout(function () { c.classList.add('on'); }, AQ.reduced ? 0 : 500 + k * 450); });
-    if (!AQ.reduced) w._int = setInterval(function () { bgs[i].classList.remove('on'); i = (i + 1) % bgs.length; bgs[i].classList.add('on'); }, 2600);
+    var cs = $$('.chips span', w), bg = $('.wbg', w);
+    function showText() {
+      w.classList.add('show'); bg.classList.add('on');
+      cs.forEach(function (c, k) { setTimeout(function () { c.classList.add('on'); }, AQ.reduced ? 0 : 500 + k * 380); });
+    }
+    if (AQ.cinema) w._cin = AQ.cinema.intro($('.wcv', w), { onText: showText });
+    else showText();
     w.querySelector('.btn').focus();
   }
   function endWelcome() {
     var w = $('#welcome'); if (!w) return;
-    clearInterval(w._int); w.style.transition = 'opacity .5s'; w.style.opacity = '0';
+    if (w._cin) w._cin.stop(); w.style.transition = 'opacity .5s'; w.style.opacity = '0';
     setTimeout(function () { w.remove(); }, 500);
     store.set('aq02_seen', '1');
     if (location.hash === '#/welcome') history.replaceState(null, '', '#/home/today');
