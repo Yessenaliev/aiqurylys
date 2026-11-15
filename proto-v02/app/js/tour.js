@@ -63,7 +63,7 @@
       state.i = N; clearTimeout(state.timer); state.tok++; vids.forEach((v) => v.pause()); setBg('finance'); dots(-1);
       const A = AQ.D.agents;
       $('#tbody').classList.add('end');
-      $('#tbody').innerHTML = `<div class="tt"><div class="eyebrow">Знакомство завершено</div><h2>${A.length} ИИ-сотрудников на месте</h2><p class="tlead">Каждый видит только то, что доступно роли. Юрист и Документовед — без отдельной сцены: они проверяют договоры и оформляют акты.</p><div class="tag-grid">${A.map((a) => `<div><i>✓</i><b>${esc(a.n)}</b><small>${esc(a.role)}</small></div>`).join('')}</div><div class="btns"><button class="btn pri" data-go="digital">Познакомиться с каждым подробнее</button><button class="btn" data-act="tour-end">Войти в кабинет</button><button class="btn" data-act="tour-again">Посмотреть ещё раз</button></div></div>`;
+      $('#tbody').innerHTML = `<div class="tt"><div class="eyebrow">Знакомство завершено</div><h2>${A.length} ИИ-сотрудников на месте</h2><p class="tlead">Каждый видит только то, что доступно роли. Юрист и Документовед — без отдельной сцены: они проверяют договоры и оформляют акты.</p><div class="tag-grid">${A.map((a) => `<div>${AQ.agIcon(a.id, 'sm')}<b>${esc(a.n)}</b><small>${esc(a.role)}</small></div>`).join('')}</div><div class="btns"><button class="btn pri" data-go="digital">Познакомиться с каждым подробнее</button><button class="btn" data-act="tour-end">Войти в кабинет</button><button class="btn" data-act="tour-again">Посмотреть ещё раз</button></div></div>`;
       setTimeout(() => { const tt = $('.tt', el); tt && tt.classList.add('on'); }, 40);
     }
     state.go = go; go(0);
@@ -89,10 +89,11 @@
   AQ.acts['agent-scroll'] = (t) => { const d = document.getElementById('ag-' + t.getAttribute('data-id')); if (d) { d.scrollIntoView({ behavior: AQ.reduced ? 'auto' : 'smooth', block: 'center' }); d.classList.add('flash'); setTimeout(() => d.classList.remove('flash'), 1600); } };
   AQ.agentVideos = function () {
     if (AQ.reduced || window.innerWidth <= 860) return;
-    $$('.agv:not(.dim)').forEach((c) => {
+    $$('.at:not(.dim)').forEach((card) => {
+      const b = $('.atb[data-scene]', card); if (!b) return;
       let v = null;
-      c.addEventListener('mouseenter', () => { if (!v) { v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.className = 'agv-v'; v.src = BASE + c.getAttribute('data-scene') + '.mp4'; c.insertBefore(v, c.firstChild.nextSibling); } v.play().then(() => v.classList.add('on')).catch(() => { }); });
-      c.addEventListener('mouseleave', () => { if (v) { v.classList.remove('on'); v.pause(); } });
+      card.addEventListener('mouseenter', () => { if (!v) { v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.className = 'agv-v'; v.src = BASE + b.getAttribute('data-scene') + '.mp4'; b.appendChild(v); } v.play().then(() => v.classList.add('on')).catch(() => { }); });
+      card.addEventListener('mouseleave', () => { if (v) { v.classList.remove('on'); v.pause(); } });
     });
   };
 })();

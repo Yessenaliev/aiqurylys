@@ -42,9 +42,15 @@
     menu: 'M4 7h16M4 12h16M4 17h16',
     search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-4.5-4.5',
     more: 'M5 12h.01M12 12h.01M19 12h.01',
-    x: 'M6 6l12 12M18 6L6 18'
+    x: 'M6 6l12 12M18 6L6 18',
+    checkdoc: 'M7 3h8l4 4v14H7zM15 3v4h4M9.5 14.5l2 2 3.8-4.4',
+    cart: 'M3 4h2.2l2.3 11h10.3L20 8H6M9.5 20h.01M17 20h.01',
+    target: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zM12 12h.01',
+    hardhat: 'M3 18h18M5 18v-2a7 7 0 0 1 14 0v2M12 9V6M9.3 9.6L7.8 7M14.7 9.6L16.2 7'
   };
   var ico = AQ.ico = function (k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + (ICO[k] || ICO.more) + '"/></svg>'; };
+  AQ.AGI = { estimator: 'calc', checker: 'checkdoc', docs: 'doc', lawyer: 'legal', supply: 'cart', tender: 'target', finance: 'money', site: 'hardhat' };
+  AQ.agIcon = function (id, cls, title) { return '<span class="agi ' + (cls || '') + '"' + (title ? ' title="' + esc(title) + '"' : '') + '>' + ico(AQ.AGI[id] || 'more') + '</span>'; };
 
   /* ---------- права ---------- */
   function role() { return AQ.M.roles.filter(function (r) { return r.id === AQ.state.role; })[0]; }
@@ -98,7 +104,7 @@
     var r = role(), h = '', lastGroup = null, cur = route;
     h += '<a class="logo" href="#/home/today" aria-label="AIQurylys — Главная"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x=".5" y=".5" width="27" height="27" rx="7" stroke="#F26B1D"/><path d="M7 20V9l7-3 7 3v11M11 20v-6h6v6" stroke="#EAF0FA" stroke-width="1.4"/></svg><span>AI<i>Qurylys</i><small>кабинет</small></span></a>';
     var seenDept = store.get('aq02_dept') === '1';
-    h += '<a class="dept' + (cur.special === 'digital' ? ' on' : '') + '" href="#/digital"><span class="dtop"><span class="dpl"></span><b>Цифровой отдел</b>' + (seenDept ? '' : '<i class="dnew">новое</i>') + '</span><small>' + AQ.D.agents.length + ' ИИ-сотрудников работают на вас</small><span class="davs">' + AQ.D.agents.map(function (a) { return '<i title="' + esc(a.n) + '">' + esc(a.n.charAt(0)) + '</i>'; }).join('') + '</span></a>';
+    h += '<a class="dept' + (cur.special === 'digital' ? ' on' : '') + '" href="#/digital"><span class="dtop"><span class="dpl"></span><b>Цифровой отдел</b>' + (seenDept ? '' : '<i class="dnew">новое</i>') + '</span><small>' + AQ.D.agents.length + ' ИИ-сотрудников работают на вас</small><span class="davs">' + AQ.D.agents.map(function (a) { return AQ.agIcon(a.id, 'xs', a.n); }).join('') + '</span></a>';
     secs().forEach(function (s) {
       if (s.group && s.group !== lastGroup) h += '<div class="grp">' + esc(s.group) + '</div>';
       if (!s.group) lastGroup = null; else lastGroup = s.group;
@@ -194,7 +200,7 @@
     $$('#view .tabs.sc').forEach(function (t) { var a = t.querySelector('.tab.on'); if (a) t.scrollLeft = Math.max(0, a.offsetLeft - 16); });
     AQ.tblLabels(view);
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
-    document.title = title + ' — AIQurylys (прототип v0.6)';
+    document.title = title + ' — AIQurylys (прототип v0.7)';
     renderSide(); renderBnav();
     $('#side').classList.remove('open');
     window.scrollTo(0, 0);

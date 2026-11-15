@@ -369,6 +369,27 @@ a.ln:hover { background:var(--panel); }
 .adex { margin-top:10px; padding:9px 12px; border-radius:10px; background:rgba(53,196,122,.1); border:1px solid rgba(53,196,122,.3); } .adex span { font:500 10px var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--ok); margin-right:8px; }
 .adf { display:flex; justify-content:space-between; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; font-size:12px; }
 @media (max-width:860px) { .ad { grid-template-columns:1fr; } .adp { min-height:120px; } .adio { grid-template-columns:1fr; } .adio .ar { transform:rotate(90deg); height:18px; } .deptstat .btn { margin-left:0; width:100%; justify-content:center; } }
+/* v0.7: иконки сотрудников и плитки «что нужно сделать» */
+.agi { display:inline-grid; place-items:center; width:34px; height:34px; border-radius:50%; border:1.5px solid rgba(242,107,29,.7); background:rgba(242,107,29,.12); color:var(--ink); flex:none; }
+.agi svg { width:17px; height:17px; } .agi.xs { width:24px; height:24px; margin-left:-6px; background:var(--solid); } .agi.xs:first-child { margin-left:0; } .agi.xs svg { width:12px; height:12px; }
+.agi.sm { width:28px; height:28px; margin-right:8px; } .agi.sm svg { width:14px; height:14px; } .agi.lg { width:46px; height:46px; } .agi.lg svg { width:23px; height:23px; }
+.ag .n { display:flex; align-items:center; }
+.ats { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:14px; }
+.at { position:relative; border:1px solid var(--panelb); border-radius:16px; overflow:hidden; background:var(--panel); display:flex; flex-direction:column; }
+.at.rec { border-color:var(--acc); box-shadow:0 0 0 2px rgba(242,107,29,.28); } .at.dim { opacity:.6; }
+.atrec { position:absolute; top:10px; right:10px; z-index:2; background:var(--acc); color:#fff; font:700 10px var(--mono); letter-spacing:.06em; text-transform:uppercase; border-radius:7px; padding:4px 8px; }
+.atb { height:92px; background:center/cover; position:relative; } .atb::after { content:""; position:absolute; inset:0; background:linear-gradient(0deg, var(--panel2), transparent 80%); }
+.atb.art { display:grid; place-items:center; background:linear-gradient(135deg, rgba(111,163,255,.16), rgba(242,107,29,.14)), repeating-linear-gradient(0deg, var(--grid) 0 1px, transparent 1px 16px), repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 16px); color:var(--blue); } .atb.art svg { width:46px; height:46px; opacity:.85; stroke-width:1.2; }
+.atbody { padding:0 14px 14px; display:flex; flex-direction:column; gap:10px; flex:1; margin-top:-22px; position:relative; z-index:1; }
+.ath { display:flex; gap:10px; align-items:center; } .ath h3 { font-size:16px; margin:0 0 3px; }
+.atjob { font-size:14px; font-weight:600; line-height:1.3; }
+.atflow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12px; } .atflow span, .atflow b { border:1px solid var(--panelb); border-radius:8px; padding:4px 9px; background:var(--panel); font-weight:600; } .atflow b { border-color:rgba(242,107,29,.6); color:var(--ink); } .atflow i { font-style:normal; color:var(--acc); font-weight:800; }
+.atres { font:600 12px var(--mono); border-radius:10px; padding:8px 10px; background:rgba(53,196,122,.09); border:1px solid rgba(53,196,122,.28); } .atres small { display:block; font:500 9.5px var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--ok); margin-bottom:3px; }
+.atbtn { justify-content:center; margin-top:auto; width:100%; } .atbtn[disabled] { opacity:.55; cursor:not-allowed; }
+.atpath { font-size:11.5px; color:var(--mute); text-align:center; margin-top:-4px; }
+.atmore summary { cursor:pointer; font-size:12px; color:var(--mute); list-style:none; text-align:center; } .atmore summary:hover { color:var(--acc); } .atmore summary::before { content:"▾ "; } .atmore[open] summary::before { content:"▴ "; }
+.atmore ul { margin:8px 0 0 16px; font-size:12.5px; color:var(--ink); } .atmore li { margin:3px 0; }
+.tag-grid .agi { margin-right:8px; vertical-align:middle; }
 .empty { text-align:center; padding:54px 20px; border:1.5px dashed var(--panelb); border-radius:16px; background:var(--panel); }
 .empty h2 { font-size:20px; margin-bottom:8px; } .empty p { color:var(--mute); max-width:480px; margin:0 auto; }
 
