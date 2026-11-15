@@ -192,7 +192,7 @@
     $$('#view .tabs.sc').forEach(function (t) { var a = t.querySelector('.tab.on'); if (a) t.scrollLeft = Math.max(0, a.offsetLeft - 16); });
     AQ.tblLabels(view);
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
-    document.title = title + ' — AIQurylys (прототип v0.4)';
+    document.title = title + ' — AIQurylys (прототип v0.5)';
     renderSide(); renderBnav();
     $('#side').classList.remove('open');
     window.scrollTo(0, 0);
@@ -323,10 +323,11 @@
   var scenes = ['intro', 'director', 'estimator', 'site', 'supply', 'gip'];
   var chips = ['Считает смету', 'Проверяет акты', 'Ищет тендеры', 'Ведёт график', 'Пишет документы', 'Читает договоры'];
   function showWelcome() {
+    if (document.getElementById('welcome')) return;
     var w = document.createElement('div'); w.className = 'welcome'; w.id = 'welcome';
     w.innerHTML = '<div class="wbg" style="background-image:url(../../media/scenes/intro.webp)"></div><canvas class="wcv" aria-hidden="true"></canvas>' +
       '<button class="skip" data-act="welcome-end">Пропустить →</button>' +
-      '<div class="wc"><div class="eyebrow">AIQurylys · ' + esc(AQ.D.company.name) + '</div><h1>Ваш цифровой отдел<br><em>готов к работе</em></h1><p>Сметчик, юрист, снабженец и ещё пять ИИ-сотрудников уже на местах. Суммы считают формулы, а не ИИ.</p><div class="chips">' + chips.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div><div class="btns" style="justify-content:center;margin-top:26px"><button class="btn pri" data-act="welcome-end">Войти в кабинет</button></div></div>';
+      '<div class="wc"><div class="eyebrow">AIQurylys · ' + esc(AQ.D.company.name) + '</div><h1>Ваш цифровой отдел<br><em>готов к работе</em></h1><p>Сметчик, юрист, снабженец и ещё пять ИИ-сотрудников уже на местах. Суммы считают формулы, а не ИИ.</p><div class="chips">' + chips.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div><div class="btns" style="justify-content:center;margin-top:26px"><button class="btn pri" data-act="tour-start">Познакомиться с отделом · 45 сек</button><button class="btn" data-act="welcome-end">Войти в кабинет</button></div></div>';
     document.body.appendChild(w);
     var cs = $$('.chips span', w), bg = $('.wbg', w);
     function showText() {
@@ -337,12 +338,13 @@
     else showText();
     w.querySelector('.btn').focus();
   }
+  AQ.endWelcome = function () { endWelcome(); };
   function endWelcome() {
     var w = $('#welcome'); if (!w) return;
     if (w._cin) w._cin.stop(); w.style.transition = 'opacity .5s'; w.style.opacity = '0';
     setTimeout(function () { w.remove(); }, 500);
     store.set('aq02_seen', '1');
-    if (location.hash === '#/welcome') history.replaceState(null, '', '#/home/today');
+    if (location.hash === '#/welcome') { try { history.replaceState(null, '', '#/home/today'); } catch (e) {} if (location.hash === '#/welcome') { location.hash = '#/home/today'; return; } }
     render();
   }
 
@@ -357,7 +359,7 @@
     if (t.hasAttribute('data-role')) { e.preventDefault(); setRole(t.getAttribute('data-role')); return; }
     if (t.hasAttribute('data-q')) { e.preventDefault(); layer._answer && layer._answer(t.getAttribute('data-q')); return; }
     if (t.hasAttribute('data-ask')) { e.preventDefault(); openAsk(t.getAttribute('data-ask')); return; }
-    if (t.hasAttribute('data-go')) { e.preventDefault(); closeLayer(); AQ.go(t.getAttribute('data-go')); return; }
+    if (t.hasAttribute('data-go')) { e.preventDefault(); closeLayer(); if (AQ.tour) AQ.tour.close(); AQ.go(t.getAttribute('data-go')); return; }
     var a = t.getAttribute('data-act');
     if (a) {
       if (t.tagName === 'A') { closeLayer(); return; }

@@ -113,10 +113,10 @@
   S._digital = function (rt, ctx) {
     var D = AQ.D, list = D.agents, mine = D.agents.filter(function (a) { return AQ.can(a.need); }).length;
     var h = AQ.head('Цифровой отдел · ' + D.agents.length + ' ИИ-сотрудников', 'Доступно вашей роли: ' + mine + '. Что делает каждый и что сделал последним. Суммы считают формулы, а не ИИ: ИИ читает чертежи и документы, подсчёт делают проверяемые формулы.', '<a href="#/home/today">Главная</a> / Цифровой отдел');
-    h += '<div class="agents">' + list.map(agentCard).join('') + '</div>';
+    h += '<div class="btns" style="margin:0 0 14px"><button class="btn pri" data-act="tour-open">▶ Знакомство с отделом · 45 сек</button></div><div class="agents">' + list.map(AQ.agentCardV || agentCard).join('') + '</div>';
     h += '<div class="bento" style="margin-top:14px"><div class="tile s7"><div class="lbl"><span>Лента работы</span><span class="tag t-ok">в эфире</span></div><div class="feed" id="livefeed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln pre" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>' +
       '<div class="tile s5"><div class="lbl"><span>Как работает отдел</span></div><div class="row"><div><b>Вы даёте</b><small>Чертежи, акты, договоры, цены</small></div></div><div class="row"><div><b>Сотрудники работают в фоне</b><small>Результат сразу в кабинете и в Telegram</small></div></div><div class="row"><div><b>Вы решаете</b><small>Каждое решение — за вами, ИИ только предлагает</small></div></div><div class="btns"><button class="btn" data-act="ask">Спросить помощника</button></div></div></div>';
-    ctx.after = function () { AQ.reveal('#livefeed .ln.pre', 400); AQ.later(function () { AQ.liveFeed(AQ.$('#livefeed')); }, 3200); };
+    ctx.after = function () { if (AQ.agentVideos) AQ.agentVideos(); AQ.reveal('#livefeed .ln.pre', 400); AQ.later(function () { AQ.liveFeed(AQ.$('#livefeed')); }, 3200); };
     return h;
   };
 
