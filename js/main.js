@@ -91,8 +91,8 @@ var selectRole = (function () {
     // Кнопка «Посмотреть кабинет»: открывает образец кабинета глазами выбранной роли
     var cab = document.getElementById('show-cabinet');
     if (cab) {
-      var CAB = { director: 'director', manager: 'manager', lawyer: 'lawyer', marketer: 'marketer', gip: 'gip', pto: 'pto', supply: 'supply', site: 'chief', foreman: 'foreman', fin: 'fin' };
-      cab.href = 'cabinet-prototype.html?role=' + (CAB[role] || 'director');
+      var CAB = { director: 'owner', manager: 'manager', lawyer: 'lawyer', marketer: 'manager', gip: 'pto', pto: 'pto', supply: 'supply', site: 'chief', foreman: 'foreman', fin: 'owner' };
+      cab.href = 'proto-v02/app/?role=' + (CAB[role] || 'owner');
       cab.textContent = role === 'all' ? 'Посмотреть кабинет →' : 'Посмотреть кабинет: ' + info[0].split(' — ')[0] + ' →';
     }
     if (example && role !== 'pto') example.hidden = true;

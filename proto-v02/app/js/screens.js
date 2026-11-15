@@ -42,6 +42,7 @@
     } else {
       h += AQ.head(AQ.greet() + ', ' + esc(r.name), esc(r.line), '<span>Главная · Сегодня</span>', tb);
     }
+    h += '<a class="deptbar" href="#/digital"><span class="dpl"></span><div><b>Цифровой отдел · ' + D.agents.length + ' ИИ-сотрудников</b><small>' + D.agents.slice(0, 4).map(function (a) { return esc(a.n); }).join(', ') + ' и ещё ' + (D.agents.length - 4) + ' работают на вас. Что умеет каждый — на одной странице.</small></div><span class="davs">' + D.agents.map(function (a) { return '<i>' + esc(a.n.charAt(0)) + '</i>'; }).join('') + '</span><span class="btn sm pri">Познакомиться →</span></a>';
     h += '<div class="bento">';
 
     // требует решения
@@ -111,10 +112,17 @@
 
   /* ---------- Цифровой отдел (специальная страница) ---------- */
   S._digital = function (rt, ctx) {
-    var D = AQ.D, list = D.agents, mine = D.agents.filter(function (a) { return AQ.can(a.need); }).length;
-    var h = AQ.head('Цифровой отдел · ' + D.agents.length + ' ИИ-сотрудников', 'Доступно вашей роли: ' + mine + '. Что делает каждый и что сделал последним. Суммы считают формулы, а не ИИ: ИИ читает чертежи и документы, подсчёт делают проверяемые формулы.', '<a href="#/home/today">Главная</a> / Цифровой отдел');
-    h += '<div class="btns" style="margin:0 0 14px"><button class="btn pri" data-act="tour-open">▶ Знакомство с отделом · 45 сек</button></div><div class="agents">' + list.map(AQ.agentCardV || agentCard).join('') + '</div>';
-    h += '<div class="bento" style="margin-top:14px"><div class="tile s7"><div class="lbl"><span>Лента работы</span><span class="tag t-ok">в эфире</span></div><div class="feed" id="livefeed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln pre" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>' +
+    var D = AQ.D, I = D.agentInfo, list = D.agents, mine = list.filter(function (a) { return AQ.can(a.need); }).length;
+    var total = list.reduce(function (s, a) { return s + a.done; }, 0);
+    AQ.store.set('aq02_dept', '1');
+    var h = AQ.head('Цифровой отдел', 'ИИ-сотрудники вашей компании. Суммы считают формулы, а не ИИ: ИИ читает чертежи и документы, подсчёт делают проверяемые формулы.', '<a href="#/home/today">Главная</a> / Цифровой отдел');
+    h += '<div class="deptstat"><div><b class="mono">' + list.length + '</b><span>ИИ-сотрудников</span></div><div><b class="mono">' + mine + '</b><span>доступно вашей роли</span></div><div><b class="mono">' + total + '</b><span>действий за месяц</span></div><button class="btn pri" data-act="tour-open">▶ Знакомство · 45 сек</button></div>';
+    h += '<div class="agents">' + list.map(AQ.agentCardV || agentCard).join('') + '</div>';
+    h += '<h2 style="margin:26px 0 12px;font-size:18px">Кто что делает</h2><div class="adetail">' + list.map(function (a, i) {
+      var f = I[a.id] || { does: [], give: '', get: '', example: '' }, ok = AQ.can(a.need), sc = D.tour.sceneOf[a.id] || 'intro';
+      return '<section class="ad" id="ag-' + a.id + '"><div class="adp" style="background-image:url(../../media/scenes/' + sc + '.webp)"><span class="adn">' + (i + 1) + '</span><span class="tag ' + (a.status === 'работает' ? 't-ok' : 't-warn') + '">' + esc(a.status) + '</span></div><div class="adb"><h3>' + esc(a.n) + '</h3><p class="mut">' + esc(a.role) + '</p><ul>' + f.does.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul><div class="adio"><div><span>Вы даёте</span>' + esc(f.give) + '</div><div class="ar">→</div><div><span>Получаете</span>' + esc(f.get) + '</div></div><div class="adex"><span>Пример</span><b>' + esc(f.example) + '</b></div><div class="adf"><span class="mut">Последнее: ' + esc(a.last) + ' · за месяц: ' + a.done + '</span>' + (ok && AQ.canRoute(a.go) ? '<a class="btn sm pri" href="#/' + a.go + '">Открыть раздел →</a>' : '<span class="tag t-mute">доступ у другой роли</span>') + '</div></div></section>';
+    }).join('') + '</div>';
+    h += '<div class="bento" style="margin-top:18px"><div class="tile s7"><div class="lbl"><span>Лента работы</span><span class="tag t-ok">в эфире</span></div><div class="feed" id="livefeed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln pre" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>' +
       '<div class="tile s5"><div class="lbl"><span>Как работает отдел</span></div><div class="row"><div><b>Вы даёте</b><small>Чертежи, акты, договоры, цены</small></div></div><div class="row"><div><b>Сотрудники работают в фоне</b><small>Результат сразу в кабинете и в Telegram</small></div></div><div class="row"><div><b>Вы решаете</b><small>Каждое решение — за вами, ИИ только предлагает</small></div></div><div class="btns"><button class="btn" data-act="ask">Спросить помощника</button></div></div></div>';
     ctx.after = function () { if (AQ.agentVideos) AQ.agentVideos(); AQ.reveal('#livefeed .ln.pre', 400); AQ.later(function () { AQ.liveFeed(AQ.$('#livefeed')); }, 3200); };
     return h;

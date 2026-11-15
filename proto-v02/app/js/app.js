@@ -97,6 +97,8 @@
   function renderSide() {
     var r = role(), h = '', lastGroup = null, cur = route;
     h += '<a class="logo" href="#/home/today" aria-label="AIQurylys — Главная"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x=".5" y=".5" width="27" height="27" rx="7" stroke="#F26B1D"/><path d="M7 20V9l7-3 7 3v11M11 20v-6h6v6" stroke="#EAF0FA" stroke-width="1.4"/></svg><span>AI<i>Qurylys</i><small>кабинет</small></span></a>';
+    var seenDept = store.get('aq02_dept') === '1';
+    h += '<a class="dept' + (cur.special === 'digital' ? ' on' : '') + '" href="#/digital"><span class="dtop"><span class="dpl"></span><b>Цифровой отдел</b>' + (seenDept ? '' : '<i class="dnew">новое</i>') + '</span><small>' + AQ.D.agents.length + ' ИИ-сотрудников работают на вас</small><span class="davs">' + AQ.D.agents.map(function (a) { return '<i title="' + esc(a.n) + '">' + esc(a.n.charAt(0)) + '</i>'; }).join('') + '</span></a>';
     secs().forEach(function (s) {
       if (s.group && s.group !== lastGroup) h += '<div class="grp">' + esc(s.group) + '</div>';
       if (!s.group) lastGroup = null; else lastGroup = s.group;
@@ -192,7 +194,7 @@
     $$('#view .tabs.sc').forEach(function (t) { var a = t.querySelector('.tab.on'); if (a) t.scrollLeft = Math.max(0, a.offsetLeft - 16); });
     AQ.tblLabels(view);
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
-    document.title = title + ' — AIQurylys (прототип v0.5)';
+    document.title = title + ' — AIQurylys (прототип v0.6)';
     renderSide(); renderBnav();
     $('#side').classList.remove('open');
     window.scrollTo(0, 0);

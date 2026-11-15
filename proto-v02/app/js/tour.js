@@ -63,7 +63,7 @@
       state.i = N; clearTimeout(state.timer); state.tok++; vids.forEach((v) => v.pause()); setBg('finance'); dots(-1);
       const A = AQ.D.agents;
       $('#tbody').classList.add('end');
-      $('#tbody').innerHTML = `<div class="tt"><div class="eyebrow">Знакомство завершено</div><h2>${A.length} ИИ-сотрудников на месте</h2><p class="tlead">Каждый видит только то, что доступно роли. Юрист и Документовед — без отдельной сцены: они проверяют договоры и оформляют акты.</p><div class="tag-grid">${A.map((a) => `<div><i>✓</i><b>${esc(a.n)}</b><small>${esc(a.role)}</small></div>`).join('')}</div><div class="btns"><button class="btn pri" data-act="tour-end">Войти в кабинет</button><button class="btn" data-go="digital">Цифровой отдел</button><button class="btn" data-act="tour-again">Посмотреть ещё раз</button></div></div>`;
+      $('#tbody').innerHTML = `<div class="tt"><div class="eyebrow">Знакомство завершено</div><h2>${A.length} ИИ-сотрудников на месте</h2><p class="tlead">Каждый видит только то, что доступно роли. Юрист и Документовед — без отдельной сцены: они проверяют договоры и оформляют акты.</p><div class="tag-grid">${A.map((a) => `<div><i>✓</i><b>${esc(a.n)}</b><small>${esc(a.role)}</small></div>`).join('')}</div><div class="btns"><button class="btn pri" data-go="digital">Познакомиться с каждым подробнее</button><button class="btn" data-act="tour-end">Войти в кабинет</button><button class="btn" data-act="tour-again">Посмотреть ещё раз</button></div></div>`;
       setTimeout(() => { const tt = $('.tt', el); tt && tt.classList.add('on'); }, 40);
     }
     state.go = go; go(0);
@@ -84,8 +84,9 @@
   AQ.agentCardV = function (a) {
     const sc = AQ.D.tour.sceneOf[a.id] || 'intro', ok = AQ.can(a.need);
     const inner = `<div class="agv-bg" style="background-image:url(${BASE}${sc}.webp)"></div><div class="agv-t"><div class="n"><span class="pulse${a.status === 'готов' ? ' w' : ''}"></span>${esc(a.n)}</div><p>${esc(a.role)}</p><p class="agv-last">${esc(a.last)}</p><div class="meta">${ok ? 'сделано за месяц: ' + a.done : 'доступ у другой роли'}</div></div>`;
-    return ok ? `<a class="agv" data-scene="${sc}" href="#/${AQ.canRoute(a.go) ? a.go : 'digital'}">${inner}</a>` : `<button class="agv dim" data-scene="${sc}" data-toast="Этого ИИ-сотрудника видит другая роль. Доступ раздаёт владелец.">${inner}</button>`;
+    return ok ? `<button class="agv" data-scene="${sc}" data-act="agent-scroll" data-id="${a.id}">${inner}</button>` : `<button class="agv dim" data-scene="${sc}" data-toast="Этого ИИ-сотрудника видит другая роль. Доступ раздаёт владелец.">${inner}</button>`;
   };
+  AQ.acts['agent-scroll'] = (t) => { const d = document.getElementById('ag-' + t.getAttribute('data-id')); if (d) { d.scrollIntoView({ behavior: AQ.reduced ? 'auto' : 'smooth', block: 'center' }); d.classList.add('flash'); setTimeout(() => d.classList.remove('flash'), 1600); } };
   AQ.agentVideos = function () {
     if (AQ.reduced || window.innerWidth <= 860) return;
     $$('.agv:not(.dim)').forEach((c) => {
