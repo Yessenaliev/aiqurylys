@@ -125,12 +125,12 @@
     if (rt.sub[0] === 'p') return projectView(rt, ctx);
     var D = AQ.D;
     var h = AQ.tabHead(rt);
-    h += '<div class="btns" style="margin:0 0 14px"><button class="btn pri" data-act="new-project">＋ Новый проект</button><span class="mut" style="align-self:center">Кнопка «Новый проект» здесь одна (раньше было четыре входа).</span></div>';
+    h += '<div class="btns" style="margin:0 0 14px"><button class="btn pri" data-act="new-project">＋ Новый проект</button></div>';
     h += '<div class="prj" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">' + D.projects.map(projCard).join('') + '</div>' + AQ.wasBlock(rt.tObj);
     return h;
   };
   AQ.acts['new-project'] = function () {
-    AQ.overlay('<div class="mh"><h2>Новый проект</h2><button class="pill ico" data-act="close" aria-label="Закрыть">✕</button></div><div style="display:grid;gap:10px"><label>Название<input style="width:100%" value="Склад в Караганде"></label><label>Адрес<input style="width:100%" value="г. Караганда, демо-адрес"></label><label>Стороны договора<input style="width:100%" value="Заказчик: демо · Подрядчик: Демо-компания"></label><label>Папка документов<select style="width:100%"><option>Создать папку на Google Диске</option><option>Выбрать существующую</option></select></label></div><div class="btns"><button class="btn pri" data-toast="В рабочей версии здесь будет: создание проекта и папки документов. В демо ничего не сохраняется.">Создать проект</button><button class="btn" data-act="close">Отмена</button></div>');
+    AQ.overlay('<div class="mh"><h2>Новый проект</h2><button class="pill ico" data-act="close" aria-label="Закрыть">✕</button></div><div style="display:grid;gap:10px"><label>Название<input style="width:100%" value="Склад в Караганде"></label><label>Адрес<input style="width:100%" value="г. Караганда, демо-адрес"></label><label>Стороны договора<input style="width:100%" value="Заказчик: демо · Подрядчик: Демо-компания"></label><label>Папка документов<select style="width:100%"><option>Создать папку на Google Диске</option><option>Выбрать существующую</option></select></label></div><div class="btns"><button class="btn pri" data-toast="Проект «Склад в Караганде» создан, папка на Google Диске подготовлена">Создать проект</button><button class="btn" data-act="close">Отмена</button></div>');
   };
 
   var PTABS = [['overview', 'Обзор', '*'], ['gantt', 'График', 'site'], ['site', 'Площадка', 'site'], ['volumes', 'Объёмы', '*'], ['docs', 'Документы', 'documents'], ['files', 'Файлы', 'files'], ['money', 'Деньги', 'finance'], ['stock', 'Склад', '*'], ['equipment', 'Техника', 'equipment'], ['people', 'Люди', '*']];
@@ -152,9 +152,10 @@
     } else if (tab === 'site') {
       body = '<div class="tile"><div class="lbl"><span>Площадка сегодня</span></div><p>Кладка 2 этажа: 28 из 40 м³. Арматура: поставка завтра. Автокран на простое.</p><div class="btns"><a class="btn pri" href="#/site/chief">Открыть «Начальник участка»</a><a class="btn" href="#/site/plan">График и выдача работ</a></div></div>';
     } else {
+      var rich = AQ.projTab ? AQ.projTab(tab, p) : null;
       var d = D.projectTabs[tab];
-      if (tab === 'files') d = { cols: d.cols.filter(function (c, i) { return i !== 1; }), rows: d.rows.filter(function (r) { return r[1] === p.n; }).map(function (r) { return r.filter(function (c, i) { return i !== 1; }); }) };
-      body = (d.rows.length ? AQ.tbl(d.cols, d.rows) : '<div class="tile"><p class="mut">В этом проекте файлов пока нет.</p></div>') + '<div class="btns"><button class="btn sm" data-toast="В рабочей версии здесь будет: добавление и изменение записей в этой таблице">＋ Добавить</button></div>';
+      if (tab === 'files') d ={ cols: d.cols.filter(function (c, i) { return i !== 1; }), rows: d.rows.filter(function (r) { return r[1] === p.n; }).map(function (r) { return r.filter(function (c, i) { return i !== 1; }); }) };
+      body = rich || ((d.rows.length ? AQ.tbl(d.cols, d.rows) : '<div class="tile"><p class="mut">В этом проекте файлов пока нет.</p></div>') + '<div class="btns"><button class="btn sm" data-toast="Файл добавлен в проект">＋ Добавить</button></div>');
     }
     return h + body;
   }
@@ -165,7 +166,7 @@
       h += '<div class="gr"><div class="gl">' + esc(r.t) + '<small>' + esc(r.who) + ' · ' + r.pct + ' %</small></div><div class="gtrack"><div class="gbar' + (r.late ? ' late' : '') + '" style="left:' + l + '%;width:' + w + '%"><i style="width:' + r.pct + '%"></i></div><div class="gtoday" style="left:' + g.today / g.weeks * 100 + '%"></div></div></div>';
     });
     h += '</div><div class="legend"><span><i style="background:var(--blue)"></i>факт</span><span><i style="background:var(--bad)"></i>отставание</span><span><i style="background:var(--acc)"></i>сегодня</span></div>';
-    if (full) h += '<div class="btns"><button class="btn" data-toast="В рабочей версии здесь будет: перетаскивание работ по графику и пересчёт сроков">Изменить график</button><a class="btn pri" href="#/tasks/issued">Выдать работы прорабам</a></div>';
+    if (full) h += '<div class="btns"><button class="btn" data-toast="График пересчитан: срок сдачи сдвинут на 4 дня, прорабам отправлено уведомление">Изменить график</button><a class="btn pri" href="#/tasks/issued">Выдать работы прорабам</a></div>';
     return h + '</div>';
   }
   AQ.ganttHtml = ganttHtml;
@@ -173,7 +174,7 @@
   /* ---------- Файлы ---------- */
   S.files = function (rt) {
     var d = AQ.D.projectTabs.files;
-    var h = AQ.tabHead(rt) + '<div class="drop" style="margin-bottom:14px">Перетащите файлы сюда: альбомы, сметы, договоры, акты<div class="btns" style="justify-content:center"><button class="btn pri" data-toast="В рабочей версии здесь будет: загрузка файлов с компьютера или с Google Диска. Новые файлы находятся сами, автоматически.">Загрузить файлы</button></div></div>';
+    var h = AQ.tabHead(rt) + '<div class="drop" style="margin-bottom:14px">Перетащите файлы сюда: альбомы, сметы, договоры, акты<div class="btns" style="justify-content:center"><button class="btn pri" data-toast="Загружено 2 файла: АР_Планы_v4.pdf, Спецификация.xlsx">Загрузить файлы</button></div></div>';
     h += AQ.tbl(d.cols, d.rows.map(function (r) { return r.slice(); })) + '<div class="btns">' + AQ.lnk('calc/est', 'Посчитать себестоимость по альбому') + '</div>';
     return h + AQ.wasBlock(rt.tObj);
   };
@@ -182,13 +183,13 @@
   S.tasks = function (rt) {
     var D = AQ.D;
     var h = AQ.tabHead(rt) + '<div class="tbl-wrap">' + D.tasks.map(function (t) {
-      return '<div class="row" style="padding:12px 14px"><span class="tag t-mute">№' + t.id + '</span><div><b>' + esc(t.t) + '</b><small>' + esc(t.who) + ' · срок: ' + esc(t.due) + ' · объём: ' + esc(t.vol) + '</small></div><span class="tag ' + (t.status === 'Сдана' ? 't-ok' : (t.status === 'В работе' ? 't-blue' : 't-warn')) + '">' + esc(t.status) + '</span>' + (t.status === 'Сдана' ? '' : '<button class="btn sm" data-toast="В рабочей версии здесь будет: отметка «Взял в работу» и сдача объёма. Сейчас это делается и в Telegram-боте.">' + (t.status === 'Новая' ? 'Взять в работу' : 'Сдать с объёмом') + '</button>') + '</div>';
+      return '<div class="row" style="padding:12px 14px"><span class="tag t-mute">№' + t.id + '</span><div><b>' + esc(t.t) + '</b><small>' + esc(t.who) + ' · срок: ' + esc(t.due) + ' · объём: ' + esc(t.vol) + '</small></div><span class="tag ' + (t.status === 'Сдана' ? 't-ok' : (t.status === 'В работе' ? 't-blue' : 't-warn')) + '">' + esc(t.status) + '</span>' + (t.status === 'Сдана' ? '' : '<button class="btn sm" data-toast="Принято: задача в работе, начальник участка видит статус">' + (t.status === 'Новая' ? 'Взять в работу' : 'Сдать с объёмом') + '</button>') + '</div>';
     }).join('') + '</div>';
     return h + AQ.wasBlock(rt.tObj);
   };
   S.issued = function (rt) {
     var D = AQ.D;
-    var h = AQ.tabHead(rt) + '<div class="bento"><div class="tile s5"><div class="lbl"><span>Новое задание</span></div><div style="display:grid;gap:10px"><label>Кому<select style="width:100%"><option>Ерлан Б. (прораб)</option><option>Мади К. (мастер)</option></select></label><label>Что сделать<input style="width:100%" value="Кладка наружных стен, 2 этаж"></label><label>Объём и срок<input style="width:100%" value="40 м³ · до пятницы"></label></div><div class="btns"><button class="btn pri" data-toast="В рабочей версии здесь будет: задача уйдёт прорабу в Telegram-бот с кнопкой «Взял в работу». В демо ничего не отправляется.">Отправить в Telegram</button></div></div>' +
+    var h = AQ.tabHead(rt) + '<div class="bento"><div class="tile s5"><div class="lbl"><span>Новое задание</span></div><div style="display:grid;gap:10px"><label>Кому<select style="width:100%"><option>Ерлан Б. (прораб)</option><option>Мади К. (мастер)</option></select></label><label>Что сделать<input style="width:100%" value="Кладка наружных стен, 2 этаж"></label><label>Объём и срок<input style="width:100%" value="40 м³ · до пятницы"></label></div><div class="btns"><button class="btn pri" data-toast="Задача №15 отправлена Ерлану Б. в Telegram. Ждём «Взял в работу»">Отправить в Telegram</button></div></div>' +
       '<div class="tile s7"><div class="lbl"><span>Выданные мной</span></div>' + D.tasks.map(function (t) { return '<div class="row"><span class="tag t-mute">№' + t.id + '</span><div><b>' + esc(t.t) + '</b><small>Кому: ' + esc(t.who) + ' · ' + esc(t.due) + '</small></div><span class="tag ' + (t.status === 'Сдана' ? 't-ok' : 't-blue') + '">' + esc(t.status) + '</span></div>'; }).join('') + '</div></div>';
     return h + AQ.wasBlock(rt.tObj);
   };
@@ -209,7 +210,7 @@
     var w = W[step - 1];
     h += '<div class="tile"><div class="lbl"><span>Шаг ' + step + ' из 4 · ' + esc(w.t) + '</span></div><p class="mut" style="margin-bottom:12px">' + esc(w.d) + '</p>';
     if (step === 1) h += '<select style="width:100%;max-width:420px">' + D.projects.map(function (p) { return '<option' + (p.id === 'sklad' ? ' selected' : '') + '>' + esc(p.n) + ', ' + esc(p.city) + '</option>'; }).join('') + '</select>';
-    if (step === 2) h += '<div class="drop"><b style="color:var(--ink)">' + esc(w.demo) + '</b><br>PDF или DWG, до 200 МБ<div class="btns" style="justify-content:center"><button class="btn" data-toast="В рабочей версии здесь будет: выбор файла на компьютере или в папке проекта">Выбрать другой файл</button></div></div>';
+    if (step === 2) h += '<div class="drop"><b style="color:var(--ink)">' + esc(w.demo) + '</b><br>PDF или DWG, до 200 МБ<div class="btns" style="justify-content:center"><button class="btn" data-toast="Выбран файл КЖ_Фундаменты_v2.pdf, 14 листов">Выбрать другой файл</button></div></div>';
     if (step === 3) {
       var DET = [['Сваи С1', 462, 0, 'шт', 3], ['Ростверк Пр1', 156.5, 1, 'м³', 6], ['Арматура А500С', 15.7, 1, 'т', 9], ['Кладка цоколя · Оценка', 109.2, 1, 'м³', 12]];
       h += '<div class="bento"><div class="tile s7"><div class="sheet" id="sheet"><svg viewBox="0 0 600 240" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="var(--blue)" stroke-width="1.2"><rect x="60" y="40" width="300" height="150"/><rect x="90" y="70" width="110" height="90"/><rect x="230" y="70" width="100" height="90"/><path d="M60 100H360M200 40V190M400 60h150M400 90h150M400 120h110M400 150h150"/></g><g fill="var(--mute)" font-family="monospace" font-size="9"><text x="64" y="34" id="shTitle">ФП-1</text><text x="404" y="56">Бетон В25</text><text x="404" y="86">Арматура А500С</text><text x="404" y="116">Гидроизоляция</text></g></svg><div class="scan" id="scan"></div><span class="pg" id="pg">Лист 1 из 14</span><span class="ping" style="left:70px;top:48px" id="ping">найдено</span></div><p class="mut" style="margin-top:10px" id="reading">Открываю альбом КЖ…</p><div class="bar2" style="margin-top:8px"><i id="rbar" style="width:0;transition:width .3s"></i></div></div>' +
@@ -244,15 +245,15 @@
     var h = AQ.head(esc(R.n), esc(R.project) + ' · результат расчёта', '<a href="#/calc/est">Расчёты</a> / Расчёт себестоимости / Результат');
     h += '<div class="bento"><div class="tile s4"><div class="lbl"><span>Себестоимость для вас</span></div><div class="big">' + fmt(R.cost) + ' ₸</div><p class="mut" style="margin-top:6px">Работы и материалы без наценки.</p></div><div class="tile s4"><div class="lbl"><span>Смета заказчику, с НДС ' + R.vat + ' %</span></div><div class="big acc">' + fmt(R.price) + ' ₸</div><p class="mut" style="margin-top:6px">С прибылью компании и налогами.</p></div><div class="tile s4"><div class="lbl"><span>Разница — прибыль и налоги</span></div><div class="big ok">' + fmt(R.diff) + ' ₸</div></div></div><div style="height:14px"></div>';
     h += '<div class="tbl-wrap"><table><thead><tr><th>Работа</th><th class="r">Кол-во</th><th>Ед.</th><th class="r">Цена, ₸</th><th class="r">Сумма, ₸</th><th></th></tr></thead><tbody>' + R.rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td class="num">' + (r[1] % 1 ? String(r[1]).replace('.', ',') : fmt(r[1])) + '</td><td>' + esc(r[2]) + '</td><td class="num">' + fmt(r[3]) + '</td><td class="num">' + fmt(r[4]) + '</td><td>' + (r[5] ? '<span class="tag t-warn src" data-toast="Позиция посчитана приблизительно. Проверьте её в «Проверка сметы».">Оценка</span>' : '') + '</td></tr>'; }).join('') + '</tbody><tfoot><tr><td colspan="4">Итого себестоимость</td><td class="num">' + fmt(R.cost) + '</td><td></td></tr></tfoot></table></div>';
-    h += '<div class="btns"><button class="btn" data-toast="В рабочей версии здесь будет: скачивание книги Excel с формулами">Скачать Excel</button><button class="btn" data-toast="В рабочей версии здесь будет: скачивание Word">Word</button><button class="btn" data-toast="В рабочей версии здесь будет: скачивание PDF">PDF</button><a class="btn" href="#/calc/check">Проверить спорные позиции</a><a class="btn pri" href="#/calc/offer">Сделать КП заказчику</a></div><p class="mut" style="margin-top:10px;font-size:12px">Суммы считают формулы, а не ИИ. Позиции «Оценка» ИИ определил приблизительно, их нужно проверить.</p>';
+    h += '<div class="btns"><button class="btn" data-doc="est-xlsx">Скачать Excel</button><button class="btn" data-doc="est-docx">Word</button><button class="btn" data-doc="est-pdf">PDF</button><a class="btn" href="#/calc/check">Проверить спорные позиции</a><a class="btn pri" href="#/calc/offer">Сделать КП заказчику</a></div><p class="mut" style="margin-top:10px;font-size:12px">Суммы считают формулы, а не ИИ. Позиции «Оценка» ИИ определил приблизительно, их нужно проверить.</p>';
     return h;
   }
 
   /* ---------- Проверка сметы ---------- */
   S.check = function (rt) {
     var F = AQ.D.checkFindings;
-    var h = AQ.tabHead(rt) + '<div class="bento"><div class="tile s4"><div class="lbl"><span>Загруженная смета</span></div><b>Смета_общая.xlsx</b><p class="mut">Мебельный цех, v2 · 1 824 строки</p><div class="btns"><button class="btn sm" data-toast="В рабочей версии здесь будет: загрузка вашей сметы в Excel">Загрузить другую</button></div></div>' +
-      '<div class="tile s8"><div class="lbl"><span>Найдено ' + F.length + ' замечаний</span></div>' + F.map(function (f) { return '<div class="row"><span class="tag ' + (f.k === 'Пропуск' ? 't-warn' : 't-bad') + '">' + esc(f.k) + '</span><div><b>' + esc(f.t) + '</b></div><span class="num ' + (f.sign === '−' ? 'ok' : 'bad') + '">' + (f.sum ? f.sign + fmt(f.sum) + ' ₸' : '—') + '</span></div>'; }).join('') + '<div class="btns"><a class="btn pri" href="#/calc/offer">Сделать КП</a><button class="btn" data-toast="В рабочей версии здесь будет: список замечаний в Excel с отметками по строкам">Скачать список</button></div></div></div>';
+    var h = AQ.tabHead(rt) + '<div class="bento"><div class="tile s4"><div class="lbl"><span>Загруженная смета</span></div><b>Смета_общая.xlsx</b><p class="mut">Мебельный цех, v2 · 1 824 строки</p><div class="btns"><button class="btn sm" data-toast="Загружен файл Смета_КЖ_v3.xlsx, 1 824 строки. Проверка выполнена: найдено 5 замечаний">Загрузить другую</button></div></div>' +
+      '<div class="tile s8"><div class="lbl"><span>Найдено ' + F.length + ' замечаний</span></div>' + F.map(function (f) { return '<div class="row"><span class="tag ' + (f.k === 'Пропуск' ? 't-warn' : 't-bad') + '">' + esc(f.k) + '</span><div><b>' + esc(f.t) + '</b></div><span class="num ' + (f.sign === '−' ? 'ok' : 'bad') + '">' + (f.sum ? f.sign + fmt(f.sum) + ' ₸' : '—') + '</span></div>'; }).join('') + '<div class="btns"><a class="btn pri" href="#/calc/offer">Сделать КП</a><button class="btn" data-doc="check-xlsx">Скачать список</button></div></div></div>';
     return h + AQ.wasBlock(rt.tObj);
   };
 
@@ -262,7 +263,7 @@
     var body = rows.map(function (r) { var d = r[1] - r[2], s = d * r[4]; total += s; return '<tr><td>' + esc(r[0]) + '</td><td class="num">' + fmt(r[1]) + '</td><td class="num">' + fmt(r[2]) + '</td><td>' + esc(r[3]) + '</td><td class="num bad">+' + fmt(d) + '</td><td class="num bad">' + fmt(s) + '</td></tr>'; }).join('');
     var h = AQ.tabHead(rt) + '<div class="bento"><div class="tile s12" style="border-color:rgba(255,98,98,.4)"><div class="lbl"><span>Итог сверки · акт №7</span></div><div class="big bad">Завышено на ' + fmt(total) + ' ₸</div><p class="mut" style="margin-top:6px">Вернуть до подписания. Расхождение по 4 позициям. <span class="src" data-toast="Сумма = (объём в акте − объём по проекту) × цена по договору. Источник: акт №7 и альбом КЖ.">Откуда цифра</span></p></div></div><div style="height:14px"></div>';
     h += '<div class="tbl-wrap"><table><thead><tr><th>Работа</th><th class="r">В акте</th><th class="r">По проекту</th><th>Ед.</th><th class="r">Разница</th><th class="r">Сумма, ₸</th></tr></thead><tbody>' + body + '</tbody><tfoot><tr><td colspan="5">Итого завышение</td><td class="num bad">' + fmt(total) + '</td></tr></tfoot></table></div>';
-    h += '<div class="btns"><button class="btn pri" data-toast="В рабочей версии здесь будет: письмо подрядчику с таблицей расхождений">Вернуть подрядчику</button>' + AQ.lnk('legal/letter', 'Составить претензию') + AQ.lnk('calc/vcmp', 'Сравнить предложение подрядчика') + '</div>';
+    h += '<div class="btns"><button class="btn pri" data-toast="Письмо отправлено в ТОО «Строй-Монтаж»: таблица расхождений на 1 800 000 ₸ во вложении">Вернуть подрядчику</button>' + AQ.lnk('legal/letter', 'Составить претензию') + AQ.lnk('calc/vcmp', 'Сравнить предложение подрядчика') + '</div>';
     return h + AQ.wasBlock(rt.tObj);
   };
   S.vcmp = function (rt) {

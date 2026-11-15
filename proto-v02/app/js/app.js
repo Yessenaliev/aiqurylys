@@ -148,13 +148,14 @@
     return '<div class="tabs sc" role="tablist">' + tabsOf(s).map(function (t) { return '<a class="tab' + (t.id === activeTab ? ' on' : '') + '" role="tab" href="#/' + s.id + '/' + t.id + '">' + esc(t.t) + '</a>'; }).join('') + '</div>';
   };
   AQ.flow = function (t) {
+    if (!AQ.dev) return '';
     var nx = (t.next || []).filter(function (n) { return AQ.canRoute(n[0]); }).map(function (n) { return '<a href="#/' + n[0] + '">→ ' + esc(n[1]) + '</a>'; }).join('') || '<span class="mut">—</span>';
     return '<div class="flow"><div><b>Вы даёте</b>' + esc(t.give || '—') + '</div><div class="ar">→</div><div><b>Получаете</b>' + esc(t.get || '—') + '</div><div class="ar">→</div><div class="nx"><b>Дальше</b>' + nx + '</div></div>';
   };
-  AQ.wasBlock = function (t) { return t.was ? '<div class="was"><b>Где это было раньше:</b> ' + esc(t.was) + '</div>' : ''; };
-  AQ.ext = function (t) { return t.url ? '<button class="btn sm ghost" data-ext="' + esc(t.url) + '">Открыть в рабочей версии ↗</button>' : ''; };
+  AQ.wasBlock = function (t) { return AQ.dev && t.was ? '<div class="was"><b>Где это было раньше:</b> ' + esc(t.was) + '</div>' : ''; };
+  AQ.ext = function (t) { return AQ.dev && t.url ? '<button class="btn sm ghost" data-ext="' + esc(t.url) + '">Открыть в рабочей версии ↗</button>' : ''; };
   AQ.empty = function (title, text) {
-    return '<div class="empty"><h2>' + esc(title) + '</h2><p>' + esc(text) + '</p><div class="btns" style="justify-content:center"><button class="btn pri" data-act="demo-on">Показать на демо-компании</button><button class="btn" data-toast="В рабочей версии здесь будет: загрузка ваших файлов или подключение Google Диска">Загрузить свои данные</button></div></div>';
+    return '<div class="empty"><h2>' + esc(title) + '</h2><p>' + esc(text) + '</p><div class="btns" style="justify-content:center"><button class="btn pri" data-act="demo-on">Показать на демо-компании</button></div></div>';
   };
 
   var DATA_SCREENS = ['projects', 'files', 'tasks', 'issued', 'est', 'check', 'offer', 'vol', 'vcmp', 'docsmade', 'chief', 'plan', 'master', 'norms', 'tech', 'fin', 'budget', 'sup', 'price', 'out', 'subs', 'contracts', 'review', 'letter', 'lchat', 'tender', 'passport', 'demand', 'concept', 'summary'];
@@ -189,12 +190,9 @@
     }
     view.innerHTML = html;
     $$('#view .tabs.sc').forEach(function (t) { var a = t.querySelector('.tab.on'); if (a) t.scrollLeft = Math.max(0, a.offsetLeft - 16); });
-    $$('#view table').forEach(function (tb) {
-      var heads = $$('thead th', tb).map(function (th) { return th.textContent.trim(); });
-      $$('tbody tr, tfoot tr', tb).forEach(function (tr) { Array.prototype.forEach.call(tr.children, function (td, i) { if (!td.hasAttribute('colspan') && heads[i]) td.setAttribute('data-label', heads[i]); }); });
-    });
+    AQ.tblLabels(view);
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
-    document.title = title + ' — AIQurylys (прототип v0.2)';
+    document.title = title + ' — AIQurylys (прототип v0.4)';
     renderSide(); renderBnav();
     $('#side').classList.remove('open');
     window.scrollTo(0, 0);
@@ -205,6 +203,12 @@
   }
   AQ.crumbs = crumbs;
   AQ.render = render;
+  AQ.tblLabels = function (root) {
+    $$('table', root).forEach(function (tb) {
+      var heads = $$('thead th', tb).map(function (th) { return th.textContent.trim(); });
+      $$('tbody tr, tfoot tr', tb).forEach(function (tr) { Array.prototype.forEach.call(tr.children, function (td, i) { if (!td.hasAttribute('colspan') && heads[i]) td.setAttribute('data-label', heads[i]); }); });
+    });
+  };
 
   function setRole(id) {
     AQ.state.role = id; store.set('aq02_role', id);
@@ -298,7 +302,7 @@
     h += '<a class="it" href="#/support">Поддержка<small>' + esc(P[2].d) + '</small></a>';
     h += '<a class="it" href="#/bot">Telegram-бот<small>' + esc(P[3].d) + '</small></a>';
     h += '<button class="it" data-act="theme">Тема: ' + (document.documentElement.getAttribute('data-theme') === 'light' ? 'светлая → тёмная' : 'тёмная → светлая') + '<small>' + esc(P[4].d) + '</small></button>';
-    h += '<button class="it" data-toast="В рабочей версии здесь будет: переключение языка Русский / Қазақша">Язык<small>' + esc(P[5].d) + '</small></button><hr>';
+    h += '<button class="it" data-toast="Язык интерфейса: русский. Қазақша — скоро">Язык<small>' + esc(P[5].d) + '</small></button><hr>';
     h += '<button class="it" data-act="logout">Выйти<small>В прототипе вход не нужен: вернёт на первый экран</small></button>';
     if (window.innerWidth <= 860) {
       h += '<hr><div class="it">Смотреть как<br><select id="roleSel2" style="width:100%;margin-top:6px">' + AQ.M.roles.map(function (x) { return '<option value="' + x.id + '"' + (x.id === r.id ? ' selected' : '') + '>' + esc(x.n) + '</option>'; }).join('') + '</select></div><button class="it" data-act="demo">Демо-данные: ' + (AQ.state.demo ? 'включены' : 'выключены') + '<small>Нажмите, чтобы переключить</small></button>';
@@ -344,10 +348,11 @@
 
   /* ---------- события ---------- */
   function onClick(e) {
-    var t = e.target.closest('[data-act],[data-go],[data-toast],[data-ext],[data-role],[data-q],[data-ask],a[href^="#/"]');
+    var t = e.target.closest('[data-act],[data-go],[data-toast],[data-ext],[data-role],[data-q],[data-ask],[data-doc],a[href^="#/"]');
     if (!t) { if (!e.target.closest('#pop')) closePop(); return; }
     if (!t.closest('#pop')) closePop();
     if (t.hasAttribute('data-toast')) { e.preventDefault(); AQ.toast(t.getAttribute('data-toast')); return; }
+    if (t.hasAttribute('data-doc')) { e.preventDefault(); closePop(); if (AQ.openDoc) AQ.openDoc(t.getAttribute('data-doc')); return; }
     if (t.hasAttribute('data-ext')) { e.preventDefault(); var u = t.getAttribute('data-ext'); window.open(AQ.M.base + u, '_blank', 'noopener'); AQ.toast('Откроется действующая версия: ' + AQ.M.base + u + ' (нужен вход)'); return; }
     if (t.hasAttribute('data-role')) { e.preventDefault(); setRole(t.getAttribute('data-role')); return; }
     if (t.hasAttribute('data-q')) { e.preventDefault(); layer._answer && layer._answer(t.getAttribute('data-q')); return; }
@@ -388,8 +393,10 @@
     layer = $('#layer');
     var q = new URLSearchParams(location.search);
     var base = 'data/';
-    Promise.all([load(base + 'menu.json'), load(base + 'create.json'), load(base + 'demo.json')]).then(function (a) {
-      AQ.M = a[0]; AQ.C = a[1]; AQ.D = a[2];
+    Promise.all([load(base + 'menu.json'), load(base + 'create.json'), load(base + 'demo.json'), load(base + 'demo2.json')]).then(function (a) {
+      AQ.M = a[0]; AQ.C = a[1]; AQ.D = Object.assign(a[2], a[3]);
+      AQ.D.assistant.answers = AQ.D.assistant.answers.concat(AQ.D.assistantMore);
+      AQ.dev = q.get('dev') === '1' || store.get('aq02_dev') === '1'; if (q.get('dev') === '0') { AQ.dev = false; store.set('aq02_dev', '0'); } else if (q.get('dev') === '1') store.set('aq02_dev', '1');
       var rid = q.get('role') || store.get('aq02_role') || 'owner';
       if (!AQ.M.roles.some(function (r) { return r.id === rid; })) rid = 'owner';
       AQ.state.role = rid;

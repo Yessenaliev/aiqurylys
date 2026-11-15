@@ -3,7 +3,7 @@
 (function () {
   'use strict';
   var AQ = window.AQ;
-  var EXTRA = ['digital', 'help', 'help/glossary', 'help/faq', 'bot', 'profile', 'notif', 'support', 'projects/list/p/bi', 'projects/list/p/ceh/gantt', 'projects/list/p/ceh/site', 'projects/list/p/ceh/volumes', 'projects/list/p/ceh/docs', 'projects/list/p/ceh/files', 'projects/list/p/ceh/money', 'projects/list/p/ceh/stock', 'projects/list/p/ceh/equipment', 'projects/list/p/ceh/people', 'calc/est/new', 'calc/est/new/2', 'calc/est/new/3', 'calc/est/new/4', 'calc/est/result', 'site/tech/map', 'site/tech/to', 'site/tech/fuel', 'site/tech/money', 'money/fin/bdds', 'sales/tender/t2', 'sales/tender/t3', 'company/tariff/up'];
+  var EXTRA = ['digital', 'help', 'help/glossary', 'help/faq', 'bot', 'profile', 'notif', 'support', 'projects/list/p/bi', 'projects/list/p/ceh/gantt', 'projects/list/p/ceh/site', 'projects/list/p/ceh/volumes', 'projects/list/p/ceh/docs', 'projects/list/p/ceh/files', 'projects/list/p/ceh/money', 'projects/list/p/ceh/stock', 'projects/list/p/ceh/equipment', 'projects/list/p/ceh/people', 'calc/est/new', 'calc/est/new/2', 'calc/est/new/3', 'calc/est/new/4', 'calc/est/result', 'site/tech/map', 'site/tech/to', 'site/tech/fuel', 'site/tech/money', 'money/fin/bdds', 'sales/tender/t2', 'sales/tender/t3', 'company/tariff/up', 'legal/contracts/c14', 'legal/contracts/c3'];
 
   AQ.selfcheck = function () {
     var out = { roles: 0, screens: 0, controls: 0, problems: [] }, saveRole = AQ.state.role, saveDemo = AQ.state.demo, saveH = AQ._h;
@@ -33,9 +33,9 @@
                 ok = true;
                 var p = h.slice(2).split('/');
                 if (!AQ.canRoute(p[0] + '/' + (p[1] || '')) && !/^(digital|help|bot|profile|notif|support)$/.test(p[0])) note(tag + ': ссылка «' + label + '» ведёт на закрытый экран ' + h);
-              } else if (el.hasAttribute('data-act') || el.hasAttribute('data-toast')) ok = true;
+              } else if (el.hasAttribute('data-act') || el.hasAttribute('data-toast') || el.hasAttribute('data-doc')) ok = true;
             } else {
-              ok = ['data-act', 'data-toast', 'data-ext', 'data-go', 'data-role', 'data-q'].some(function (a) { return el.hasAttribute(a); }) || el.type === 'submit' || el.tagName === 'SELECT';
+              ok = ['data-act', 'data-toast', 'data-ext', 'data-go', 'data-role', 'data-q', 'data-doc'].some(function (a) { return el.hasAttribute(a); }) || el.type === 'submit' || el.tagName === 'SELECT';
             }
             if (!ok) note(tag + ': кнопка «' + label + '» ничего не делает');
           });
