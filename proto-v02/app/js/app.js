@@ -421,7 +421,7 @@
       window.addEventListener('hashchange', render);
       if (q.get('embed') === '1') { var pb = $('#proto'); if (pb) pb.style.display = 'none'; }
       var seen = store.get('aq02_seen') === '1' || q.get('embed') === '1' || q.get('welcome') === '0';
-      if (!seen && !location.hash) showWelcome();
+      if (q.get('welcome') === '1') showWelcome(); else if (!seen && !location.hash) showWelcome();
       render();
       document.body.setAttribute('data-ready', '1');
     }).catch(function (err) {
