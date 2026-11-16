@@ -116,11 +116,11 @@
     var mine = list.filter(function (a) { return AQ.can(a.need); }).length, total = list.reduce(function (s, a) { return s + a.done; }, 0);
     AQ.store.set('aq02_dept', '1');
     var first = r.start && r.start[0] ? r.start[0][0] : '';
-    var rec = list.filter(function (a) { return AQ.can(a.need) && a.go === first; })[0] || list.filter(function (a) { return AQ.can(a.need); })[0];
+    var rec = list.filter(function (a) { return AQ.can(a.need) && a.go === first; })[0] || list.filter(function (a) { return AQ.can(a.need) && a.id === 'estimator'; })[0] || list.filter(function (a) { return AQ.can(a.need); })[0];
     var pathOf = function (route) { var f = AQ.findTab(route); return f ? f.s.t + ' → ' + f.t.t : ''; };
     var h = AQ.head('Цифровой отдел', 'Выберите, что нужно сделать. Нужный ИИ-сотрудник возьмётся за работу, результат появится в кабинете.', '<a href="#/home/today">Главная</a> / Цифровой отдел');
     h += '<div class="deptstat"><div><b class="mono">' + list.length + '</b><span>ИИ-сотрудников</span></div><div><b class="mono">' + mine + '</b><span>доступно вашей роли</span></div><div><b class="mono">' + total + '</b><span>действий за месяц</span></div><button class="btn" data-act="tour-open">▶ Знакомство · 45 сек</button></div>';
-    h += '<div class="ats">' + list.map(function (a) {
+    var tileOf = function (a) {
       var f = I[a.id] || {}, go = AQ.canRoute(a.go) ? a.go : (a.alt && AQ.canRoute(a.alt) ? a.alt : ''), ok = AQ.can(a.need) && !!go, sc = D.tour.sceneOf[a.id], art = (D.tour.artOnly || []).indexOf(a.id) !== -1;
       var banner = art ? '<div class="atb art" data-ico="' + a.id + '">' + AQ.ico(AQ.AGI[a.id]) + '</div>' : '<div class="atb" data-scene="' + sc + '" style="background-image:url(../../media/scenes/' + sc + '.webp)"></div>';
       return '<article class="at' + (rec && rec.id === a.id ? ' rec' : '') + (ok ? '' : ' dim') + '" id="ag-' + a.id + '">' + (rec && rec.id === a.id ? '<span class="atrec">С этого начать</span>' : '') + banner +
@@ -130,7 +130,10 @@
         '<div class="atres"><small>Недавно</small>' + esc(f.example || a.last) + '</div>' +
         (ok ? '<a class="btn pri atbtn" href="#/' + go + '">' + esc((go === a.alt && f.verbAlt) ? f.verbAlt : (f.verb || 'Открыть')) + ' →</a><div class="atpath">Где найти: ' + esc(pathOf(go)) + '</div>' : '<button class="btn atbtn" disabled>Доступно другой роли</button><div class="atpath">Доступ раздаёт владелец</div>') +
         '<details class="atmore"><summary>Что ещё умеет</summary><ul>' + (f.does || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></details></div></article>';
-    }).join('') + '</div>';
+    };
+    var groups = [];
+    list.forEach(function (a) { var g = groups.filter(function (x) { return x.n === a.group; })[0]; if (!g) { g = { n: a.group, items: [] }; groups.push(g); } g.items.push(a); });
+    groups.forEach(function (g) { h += '<h2 class="atgrp">' + esc(g.n || 'ИИ-сотрудники') + ' <span class="mut">· ' + g.items.length + '</span></h2><div class="ats">' + g.items.map(tileOf).join('') + '</div>'; });
     h += '<div class="tile" style="margin-top:18px"><div class="lbl"><span>Сделано за неделю</span><span class="tag t-ok">в эфире</span></div><div class="feed" id="livefeed">' + D.feed.filter(function (f) { return AQ.canRoute(f.go); }).map(function (f) { return '<a class="ln pre" href="#/' + f.go + '"><time>' + f.time + '</time><div><b>' + esc(f.agent) + '</b> · ' + esc(f.t) + '</div></a>'; }).join('') + '</div></div>';
     ctx.after = function () { if (AQ.agentVideos) AQ.agentVideos(); AQ.reveal('#livefeed .ln.pre', 400); AQ.later(function () { AQ.liveFeed(AQ.$('#livefeed')); }, 3200); };
     return h;
@@ -259,16 +262,16 @@
   function estResult(rt) {
     var R = AQ.D.estResult;
     var h = AQ.head(esc(R.n), esc(R.project) + ' · результат расчёта', '<a href="#/calc/est">Расчёты</a> / Расчёт себестоимости / Результат');
-    h += '<div class="bento"><div class="tile s4"><div class="lbl"><span>Себестоимость для вас</span></div><div class="big">' + fmt(R.cost) + ' ₸</div><p class="mut" style="margin-top:6px">Работы и материалы без наценки.</p></div><div class="tile s4"><div class="lbl"><span>Смета заказчику, с НДС ' + R.vat + ' %</span></div><div class="big acc">' + fmt(R.price) + ' ₸</div><p class="mut" style="margin-top:6px">С прибылью компании и налогами.</p></div><div class="tile s4"><div class="lbl"><span>Разница — прибыль и налоги</span></div><div class="big ok">' + fmt(R.diff) + ' ₸</div></div></div><div style="height:14px"></div>';
-    h += '<div class="tbl-wrap"><table><thead><tr><th>Работа</th><th class="r">Кол-во</th><th>Ед.</th><th class="r">Цена, ₸</th><th class="r">Сумма, ₸</th><th></th></tr></thead><tbody>' + R.rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td class="num">' + (r[1] % 1 ? String(r[1]).replace('.', ',') : fmt(r[1])) + '</td><td>' + esc(r[2]) + '</td><td class="num">' + fmt(r[3]) + '</td><td class="num">' + fmt(r[4]) + '</td><td>' + (r[5] ? '<span class="tag t-warn src" data-toast="Позиция посчитана приблизительно. Проверьте её в «Проверка сметы».">Оценка</span>' : '') + '</td></tr>'; }).join('') + '</tbody><tfoot><tr><td colspan="4">Итого себестоимость</td><td class="num">' + fmt(R.cost) + '</td><td></td></tr></tfoot></table></div>';
+    h += '<div class="bento"><div class="tile s4"><div class="lbl"><span>Себестоимость для вас</span></div><div class="big">' + fmt(R.cost) + ' ₸</div><p class="mut" style="margin-top:6px">Работы и материалы без наценки.</p></div><div class="tile s4"><div class="lbl"><span>Цена для заказчика, с НДС ' + R.vat + ' %</span></div><div class="big acc">' + fmt(R.price) + ' ₸</div><p class="mut" style="margin-top:6px">С прибылью компании и налогами.</p></div><div class="tile s4"><div class="lbl"><span>Разница — прибыль и налоги</span></div><div class="big ok">' + fmt(R.diff) + ' ₸</div></div></div><div style="height:14px"></div>';
+    h += '<div class="tbl-wrap"><table><thead><tr><th>Работа</th><th class="r">Кол-во</th><th>Ед.</th><th class="r">Цена, ₸</th><th class="r">Сумма, ₸</th><th></th></tr></thead><tbody>' + R.rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td class="num">' + (r[1] % 1 ? String(r[1]).replace('.', ',') : fmt(r[1])) + '</td><td>' + esc(r[2]) + '</td><td class="num">' + fmt(r[3]) + '</td><td class="num">' + fmt(r[4]) + '</td><td>' + (r[5] ? '<span class="tag t-warn src" data-toast="Позиция посчитана приблизительно. Проверьте её в «Проверка КП подрядчика».">Оценка</span>' : '') + '</td></tr>'; }).join('') + '</tbody><tfoot><tr><td colspan="4">Итого себестоимость</td><td class="num">' + fmt(R.cost) + '</td><td></td></tr></tfoot></table></div>';
     h += '<div class="btns"><button class="btn" data-doc="est-xlsx">Скачать Excel</button><button class="btn" data-doc="est-docx">Word</button><button class="btn" data-doc="est-pdf">PDF</button><a class="btn" href="#/calc/check">Проверить спорные позиции</a><a class="btn pri" href="#/calc/offer">Сделать КП заказчику</a></div><p class="mut" style="margin-top:10px;font-size:12px">Суммы считают формулы, а не ИИ. Позиции «Оценка» ИИ определил приблизительно, их нужно проверить.</p>';
     return h;
   }
 
-  /* ---------- Проверка сметы ---------- */
+  /* ---------- Проверка КП подрядчика ---------- */
   S.check = function (rt) {
     var F = AQ.D.checkFindings;
-    var h = AQ.tabHead(rt) + '<div class="bento"><div class="tile s4"><div class="lbl"><span>Загруженная смета</span></div><b>Смета_общая.xlsx</b><p class="mut">Мебельный цех, v2 · 1 824 строки</p><div class="btns"><button class="btn sm" data-toast="Загружен файл Смета_КЖ_v3.xlsx, 1 824 строки. Проверка выполнена: найдено 5 замечаний">Загрузить другую</button></div></div>' +
+    var h = AQ.tabHead(rt) + '<div class="bento"><div class="tile s4"><div class="lbl"><span>Загруженное КП подрядчика</span></div><b>КП_подрядчика_цех.xlsx</b><p class="mut">Мебельный цех · 1 824 строки</p><div class="btns"><button class="btn sm" data-toast="Загружен файл КП_подрядчика.xlsx, 1 824 строки. Проверка выполнена: найдено 5 замечаний">Загрузить другую</button></div></div>' +
       '<div class="tile s8"><div class="lbl"><span>Найдено ' + F.length + ' замечаний</span></div>' + F.map(function (f) { return '<div class="row"><span class="tag ' + (f.k === 'Пропуск' ? 't-warn' : 't-bad') + '">' + esc(f.k) + '</span><div><b>' + esc(f.t) + '</b></div><span class="num ' + (f.sign === '−' ? 'ok' : 'bad') + '">' + (f.sum ? f.sign + fmt(f.sum) + ' ₸' : '—') + '</span></div>'; }).join('') + '<div class="btns"><a class="btn pri" href="#/calc/offer">Сделать КП</a><button class="btn" data-doc="check-xlsx">Скачать список</button></div></div></div>';
     return h + AQ.wasBlock(rt.tObj);
   };

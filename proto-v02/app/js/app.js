@@ -46,10 +46,13 @@
     checkdoc: 'M7 3h8l4 4v14H7zM15 3v4h4M9.5 14.5l2 2 3.8-4.4',
     cart: 'M3 4h2.2l2.3 11h10.3L20 8H6M9.5 20h.01M17 20h.01',
     target: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zM12 12h.01',
-    hardhat: 'M3 18h18M5 18v-2a7 7 0 0 1 14 0v2M12 9V6M9.3 9.6L7.8 7M14.7 9.6L16.2 7'
+    hardhat: 'M3 18h18M5 18v-2a7 7 0 0 1 14 0v2M12 9V6M9.3 9.6L7.8 7M14.7 9.6L16.2 7',
+    send: 'M21 4L3 11l6.5 2.5L12 20l3-5 6-11zM9.5 13.5L21 4',
+    house: 'M3.5 11.5L12 4l8.5 7.5M6 10v10h12V10M10 20v-5h4v5',
+    truck: 'M2.5 7h11v9h-11zM13.5 10h4l3 3v3h-7M7 18.5h.01M17 18.5h.01'
   };
   var ico = AQ.ico = function (k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + (ICO[k] || ICO.more) + '"/></svg>'; };
-  AQ.AGI = { estimator: 'calc', checker: 'checkdoc', docs: 'doc', lawyer: 'legal', supply: 'cart', tender: 'target', finance: 'money', site: 'hardhat' };
+  AQ.AGI = { estimator: 'calc', checker: 'checkdoc', docs: 'doc', lawyer: 'legal', supply: 'cart', tender: 'target', finance: 'money', site: 'hardhat', foreman: 'send', arch: 'house', equip: 'truck' };
   AQ.agIcon = function (id, cls, title) { return '<span class="agi ' + (cls || '') + '"' + (title ? ' title="' + esc(title) + '"' : '') + '>' + ico(AQ.AGI[id] || 'more') + '</span>'; };
 
   /* ---------- права ---------- */
@@ -114,7 +117,7 @@
     });
     if (r.company) {
       var u = AQ.D.tariff;
-      h += '<a class="foot" href="#/company/tariff"><b>' + esc(u.plan) + '</b><div class="bar"><i style="width:' + (u.used / u.limit * 100) + '%"></i></div>Расчётов в пакете: ' + u.used + ' из ' + u.limit + '<br>До ' + esc(u.until) + ' · <span class="acc">Подключить тариф</span></a>';
+      h += '<a class="foot" href="#/company/tariff"><b>' + esc(u.plan) + '</b><div class="bar"><i style="width:' + (u.calcUsed / u.calcTotal * 100) + '%"></i></div>Расчётов осталось: ' + (u.calcTotal - u.calcUsed) + ' из ' + u.calcTotal + '<br>Оплачено до ' + esc(u.until) + ' · <span class="acc">Улучшить план</span></a>';
     } else {
       h += '<div class="foot" style="margin-top:auto"><b>Ваша роль: ' + esc(r.n) + '</b><br>Видны только ваши разделы. Права выдаёт владелец.</div>';
     }
@@ -200,7 +203,7 @@
     $$('#view .tabs.sc').forEach(function (t) { var a = t.querySelector('.tab.on'); if (a) t.scrollLeft = Math.max(0, a.offsetLeft - 16); });
     AQ.tblLabels(view);
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
-    document.title = title + ' — AIQurylys (прототип v0.8)';
+    document.title = title + ' — AIQurylys (прототип v0.9)';
     renderSide(); renderBnav();
     $('#side').classList.remove('open');
     window.scrollTo(0, 0);
@@ -335,7 +338,7 @@
     var w = document.createElement('div'); w.className = 'welcome'; w.id = 'welcome';
     w.innerHTML = '<div class="wbg" style="background-image:url(../../media/scenes/intro.webp)"></div><canvas class="wcv" aria-hidden="true"></canvas>' +
       '<button class="skip" data-act="welcome-end">Пропустить →</button>' +
-      '<div class="wc"><div class="eyebrow">AIQurylys · ' + esc(AQ.D.company.name) + '</div><h1>Ваш цифровой отдел<br><em>готов к работе</em></h1><p>Сметчик, юрист, снабженец и ещё пять ИИ-сотрудников уже на местах. Суммы считают формулы, а не ИИ.</p><div class="chips">' + chips.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div><div class="btns" style="justify-content:center;margin-top:26px"><button class="btn pri" data-act="tour-start">Познакомиться с отделом · 45 сек</button><button class="btn" data-act="welcome-end">Войти в кабинет</button></div></div>';
+      '<div class="wc"><div class="eyebrow">AIQurylys · ' + esc(AQ.D.company.name) + '</div><h1>Ваш цифровой отдел<br><em>готов к работе</em></h1><p>' + AQ.D.agents.length + ' ИИ-сотрудников уже на местах: от тендера до сдачи объекта. Суммы считают формулы, а не ИИ.</p><div class="chips">' + chips.map(function (c) { return '<span>' + c + '</span>'; }).join('') + '</div><div class="btns" style="justify-content:center;margin-top:26px"><button class="btn pri" data-act="tour-start">Познакомиться с отделом · 45 сек</button><button class="btn" data-act="welcome-end">Войти в кабинет</button></div></div>';
     document.body.appendChild(w);
     var cs = $$('.chips span', w), bg = $('.wbg', w);
     function showText() {
