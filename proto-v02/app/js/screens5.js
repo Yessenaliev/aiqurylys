@@ -42,7 +42,7 @@
   AQ.acts['new-project'] = () => AQ.formModal({
     title: 'Новый проект', lead: 'Адрес, стороны договора, папка документов.', submit: 'Создать проект',
     fields: [['n', 'Название проекта', 'text', 'Жилой дом, ул. Садовая, 12'], ['a', 'Адрес', 'text', 'г. Астана, ул. Садовая, 12'], ['r', 'Ваша роль', 'select', ['Генподрядчик', 'Субподрядчик']], ['c', 'Заказчик (если есть)', 'text', ''], ['p', 'Исполнитель / проектировщик (если есть)', 'text', 'ТОО «SAPA DESIGN»'], ['d', 'Состав проекта, шифр ПСД, что известно и чего нет', 'area', '']],
-    done: (v) => { const n = v.n || 'Новый проект'; AQ.D.projects.unshift({ id: 'new' + Date.now() % 1000, n, city: (v.a || '').replace(/^г\.\s*/, '').split(',')[0] || 'Астана', status: 'В работе', pct: 0, contract: 0, spent: 0, late: 0, img: 'cottage.jpg', customer: v.c || '—', end: '—' }); AQ.render(); AQ.toast('Проект «' + n + '» создан. Папка документов подготовлена'); }
+    done: (v) => { const n = v.n || 'Новый проект'; AQ.D.projects.unshift({ id: 'new' + Date.now() % 1000, n, city: (v.a || '').replace(/^г\.\s*/, '').split(',')[0] || 'Астана', fresh: true, status: 'В работе', pct: 0, contract: 0, spent: 0, late: 0, img: 'cottage.jpg', customer: v.c || '—', end: '—' }); AQ.render(); AQ.toast('Проект «' + n + '» создан. Папка документов подготовлена'); }
   });
 
   /* ---------- Задачи: «Выдать задание» ---------- */
