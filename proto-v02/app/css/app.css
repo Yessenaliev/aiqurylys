@@ -467,3 +467,6 @@ a.ln:hover { background:var(--panel); }
 .ff.chk { flex-direction:row; align-items:center; gap:8px; color:var(--ink); } .ff.chk input { width:18px; height:18px; }
 table[data-rows] input { width:100%; min-width:90px; padding:6px 8px; }
 @media (max-width:860px) { .hrow { margin-top:0; } .projsel { margin-left:0; width:100%; } .fgrid { grid-template-columns:1fr; } }
+
+.back-btn[hidden]{display:none}
+.back-btn{font-weight:600}

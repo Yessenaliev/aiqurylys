@@ -75,6 +75,25 @@
   };
   AQ.href = function (r) { return '#/' + r; };
   AQ.lnk = function (r, label, cls) { return AQ.canRoute(r) ? '<a class="' + (cls || 'btn') + '" href="#/' + r + '">' + label + '</a>' : ''; };
+  /* «Назад»: свой стек переходов; без истории ведёт на уровень выше */
+  var navStack = [location.hash || '#/home/today'];
+  window.addEventListener('hashchange', function () {
+    var h = location.hash, n = navStack.length;
+    if (n > 1 && navStack[n - 2] === h) navStack.pop(); else if (navStack[n - 1] !== h) navStack.push(h);
+    if (navStack.length > 60) navStack.shift();
+  });
+  function parentHash() {
+    var p = (location.hash || '').replace(/^#\/?/, '').split('/').filter(Boolean);
+    if (p.length > 2) return '#/' + p.slice(0, -1).join('/');
+    return '#/home/today';
+  }
+  function isHome() { var h = (location.hash || '').replace(/^#\/?/, ''); return !h || h === 'home' || h === 'home/today'; }
+  AQ.back = function () {
+    if (document.querySelector('#layer .overlay')) { AQ.closeLayer(); return; }
+    if (navStack.length > 1) { history.back(); return; }
+    if (!isHome()) location.hash = parentHash();
+  };
+  function updateBack() { var b = document.querySelector('.back-btn'); if (b) b.hidden = isHome() && navStack.length <= 1; }
   AQ.go = function (r) { var h = '#/' + r; if (location.hash === h) render(); else location.hash = h; };
 
   /* ---------- маршрут ---------- */
@@ -130,6 +149,7 @@
     var opts = AQ.M.roles.map(function (x) { return '<option value="' + x.id + '"' + (x.id === r.id ? ' selected' : '') + '>' + esc(x.n) + '</option>'; }).join('');
     $('#top').innerHTML =
       '<button class="pill ico menu-btn" data-act="menu" aria-label="Меню">' + ico('menu') + '</button>' +
+      '<button class="pill back-btn" data-act="back" aria-label="Назад" title="Назад (Alt + ←)" hidden>←<span class="hide-m">&nbsp;Назад</span></button>' +
       '<button class="search" data-act="palette">' + ico('search') + '<span>Спросить или найти</span><span class="kbd">Ctrl K</span></button>' +
       '<span class="sp"></span>' +
       '<label class="pill hide-m" title="Прототип показывает кабинет глазами разных ролей">Смотреть как&nbsp;<select id="roleSel" aria-label="Смотреть как">' + opts + '</select></label>' +
@@ -204,7 +224,7 @@
     AQ.tblLabels(view);
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
     document.title = title + ' — AIQurylys (прототип v1.0)';
-    renderSide(); renderBnav();
+    renderSide(); renderBnav(); updateBack();
     $('#side').classList.remove('open');
     window.scrollTo(0, 0);
     if (ctx.after) ctx.after();
@@ -385,6 +405,7 @@
         case 'close': closeLayer(); break;
         case 'close-bg': if (e.target === t) closeLayer(); break;
         case 'menu': $('#side').classList.toggle('open'); break;
+        case 'back': AQ.back(); break;
         case 'create': openCreate(); break;
         case 'palette': openPalette(); break;
         case 'ask': openAsk(); break;
@@ -403,6 +424,7 @@
   }
   function onKey(e) {
     if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K' || e.key === 'л' || e.key === 'Л')) { e.preventDefault(); openPalette(); }
+    else if (e.altKey && e.key === 'ArrowLeft') { e.preventDefault(); AQ.back(); }
     else if (e.key === 'Escape') { closeLayer(); closePop(); $('#side').classList.remove('open'); }
     else if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('demo-toggle')) { e.preventDefault(); setDemo(!AQ.state.demo); }
   }
