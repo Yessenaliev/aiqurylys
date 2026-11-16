@@ -337,6 +337,7 @@ var selectRole = (function () {
   }
 
   function run(fresh) {
+    if (!dots[current]) return;
     var v = bgVideo(current);
     if (v) {
       if (!v.getAttribute('src')) v.src = v.dataset.src;
@@ -354,7 +355,7 @@ var selectRole = (function () {
   }
 
   function step() {
-    if (suspended()) return;
+    if (suspended() || !dots[current]) return;
     var v = bgVideo(current);
     var p, total;
     if (v && v.getAttribute('src')) {
