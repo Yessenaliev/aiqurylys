@@ -176,7 +176,7 @@
 
   /* Сотрудники, для которых лежат ролики «миниатюры» в media/mini/<id>.mp4 (+ <id>.jpg).
      Пока файлов нет, список пуст и показывается нарисованная сцена. Готовый ролик: добавьте id сюда. */
-  const MINI = ['supply'];
+  const MINI = [];
   const miniVideo = (id) => `<video class="mini" muted loop playsinline preload="metadata" poster="../../media/mini/${id}.jpg" src="../../media/mini/${id}.mp4"></video>`;
 
   /* ---------- страница ---------- */
