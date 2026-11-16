@@ -200,7 +200,7 @@
     $$('#view .tabs.sc').forEach(function (t) { var a = t.querySelector('.tab.on'); if (a) t.scrollLeft = Math.max(0, a.offsetLeft - 16); });
     AQ.tblLabels(view);
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
-    document.title = title + ' — AIQurylys (прототип v0.7)';
+    document.title = title + ' — AIQurylys (прототип v0.8)';
     renderSide(); renderBnav();
     $('#side').classList.remove('open');
     window.scrollTo(0, 0);
@@ -249,7 +249,7 @@
       var items = g.items.filter(function (i) { total++; return can(i[2]); });
       if (!items.length) return;
       n += items.length;
-      h += '<div class="cgrp"><h3>' + esc(g.t) + '</h3>' + items.map(function (i) { return '<a class="cit" href="#/' + i[3] + '" data-act="close"><b>' + esc(i[0]) + '</b><small>' + esc(i[1]) + '</small></a>'; }).join('') + '</div>';
+      h += '<div class="cgrp"><h3>' + esc(g.t) + '</h3>' + items.map(function (i) { return '<a class="cit" href="#/' + i[3] + '" data-act="close"><b>' + esc(i[0]) + (i[4] ? ' <span class="tag t-mute" style="float:right">' + esc(i[4]) + '</span>' : '') + '</b><small>' + esc(i[1]) + '</small></a>'; }).join('') + '</div>';
     });
     h += '</div>';
     overlay(h);
@@ -403,8 +403,8 @@
     layer = $('#layer');
     var q = new URLSearchParams(location.search);
     var base = 'data/';
-    Promise.all([load(base + 'menu.json'), load(base + 'create.json'), load(base + 'demo.json'), load(base + 'demo2.json')]).then(function (a) {
-      AQ.M = a[0]; AQ.C = a[1]; AQ.D = Object.assign(a[2], a[3]);
+    Promise.all([load(base + 'menu.json'), load(base + 'create.json'), load(base + 'demo.json'), load(base + 'demo2.json'), load(base + 'demo3.json')]).then(function (a) {
+      AQ.M = a[0]; AQ.C = a[1]; AQ.D = Object.assign(a[2], a[3], a[4]);
       AQ.D.assistant.answers = AQ.D.assistant.answers.concat(AQ.D.assistantMore);
       AQ.dev = q.get('dev') === '1' || store.get('aq02_dev') === '1'; if (q.get('dev') === '0') { AQ.dev = false; store.set('aq02_dev', '0'); } else if (q.get('dev') === '1') store.set('aq02_dev', '1');
       var rid = q.get('role') || store.get('aq02_role') || 'owner';

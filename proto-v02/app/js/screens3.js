@@ -70,6 +70,7 @@
     const items = [['Заявка на участие', 'ok'], ['Лицензия II категории', 'ok'], ['Опыт: 2 объекта на сумму от 100 млн ₸', 'ok'], ['Справка об обороте за 3 года', 'miss'], ['Справка об отсутствии налоговой задолженности', 'warn'], ['Ценовое предложение (смета, 142 млн ₸)', 'ok']];
     return `<div class="ziplist">${items.map((i) => `<div class="row"><span class="tag ${i[1] === 'ok' ? 't-ok' : i[1] === 'warn' ? 't-warn' : 't-bad'}">${i[1] === 'ok' ? '✓' : i[1] === 'warn' ? '!' : '✕'}</span><div><b>${esc(i[0])}</b>${i[1] === 'miss' ? '<small class="bad">Не хватает: загрузите до подачи заявки</small>' : i[1] === 'warn' ? '<small class="warn">Срок справки истекает 30.11.2026</small>' : ''}</div></div>`).join('')}</div><p class="mut" style="margin-top:10px">Готово 4 из 6 документов. Подача до 16.11.2026, 18:00.</p>`;
   }
+  AQ.DOCS = DOCS; AQ.xl = xl; AQ.paper = paper; AQ.hb = hb; AQ.donut = donut; AQ.stars = stars; AQ.chip = chip; AQ.spark = spark;
   AQ.openDoc = function (kind) {
     const d = DOCS[kind]; if (!d) return; const x = d();
     AQ.overlay(`<div class="mh"><div><h2 style="font-size:16px">${esc(x.file)}</h2><span class="mut" style="font-size:12px">Сохранено в «Загрузки» · ${AQ.reduced ? '' : ''}демо-документ</span></div><button class="pill ico" data-act="close" aria-label="Закрыть">✕</button></div>${x.body}`, 'wide');
