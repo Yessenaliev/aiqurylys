@@ -127,12 +127,25 @@
     h += '<a class="logo" href="#/home/today" aria-label="AIQurylys — Главная"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x=".5" y=".5" width="27" height="27" rx="7" stroke="#F26B1D"/><path d="M7 20V9l7-3 7 3v11M11 20v-6h6v6" stroke="#EAF0FA" stroke-width="1.4"/></svg><span>AI<i>Qurylys</i><small>кабинет</small></span></a>';
     var seenDept = store.get('aq02_dept') === '1';
     h += '<a class="dept' + (cur.special === 'digital' ? ' on' : '') + '" href="#/digital"><span class="dtop"><span class="dpl"></span><b>Цифровой отдел</b>' + (seenDept ? '' : '<i class="dnew">новое</i>') + '</span><small>' + AQ.D.agents.length + ' ИИ-сотрудников работают на вас</small><span class="davs">' + AQ.D.agents.map(function (a) { return AQ.agIcon(a.id, 'xs', a.n); }).join('') + '</span></a>';
+    /* мягкая подсказка: редкие разделы свёрнуты под «Ещё разделы», пока вы в них не заходили; ничего не закрыто */
+    var all = secs(), CORE = ['home', 'projects', 'tasks'], open = AQ.hints && AQ.hints.expanded();
+    var soft = (AQ.hints && AQ.hints.on() && all.length > 5) ? all.filter(function (s) { return CORE.indexOf(s.id) === -1 && !AQ.hints.seen(s.id) && !(cur.sec === s.id && !cur.special); }).map(function (s) { return s.id; }) : [];
+    if (soft.length < 2) soft = [];
+    $('#side').classList.toggle('all', open || !soft.length);
+    var moreDone = false;
+    function more() { if (!soft.length || moreDone) return ''; moreDone = true; return '<button class="nav more" data-act="more-secs"><span>' + (open ? 'Свернуть дополнительные разделы' : 'Ещё разделы · ' + soft.length) + '</span><i>' + (open ? '▴' : '▾') + '</i></button>'; }
     secs().forEach(function (s) {
-      if (s.group && s.group !== lastGroup) h += '<div class="grp">' + esc(s.group) + '</div>';
+      var isSoft = soft.indexOf(s.id) !== -1;
+      if (s.group && s.group !== lastGroup) {
+        var allSoft = all.filter(function (x) { return x.group === s.group; }).every(function (x) { return soft.indexOf(x.id) !== -1; });
+        if (allSoft) h += more();
+        h += '<div class="grp' + (allSoft ? ' soft' : '') + '">' + esc(s.group) + '</div>';
+      }
       if (!s.group) lastGroup = null; else lastGroup = s.group;
       var on = cur.sec === s.id && !cur.special;
       var first = tabsOf(s)[0];
-      h += '<a class="nav' + (on ? ' on' : '') + '" href="#/' + s.id + '/' + first.id + '">' + ico(s.ico) + '<span>' + esc(s.t) + '</span>' + (s.id === 'tasks' ? '<span class="badge">3</span>' : '') + '</a>';
+      if (isSoft) h += more();
+      h += '<a class="nav' + (on ? ' on' : '') + (isSoft ? ' soft' : '') + '" href="#/' + s.id + '/' + first.id + '">' + ico(s.ico) + '<span>' + esc(s.t) + '</span>' + (s.id === 'tasks' ? '<span class="badge">3</span>' : '') + '</a>';
     });
     if (r.company) {
       var u = AQ.D.tariff;
@@ -224,6 +237,7 @@
     AQ.tblLabels(view);
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
     document.title = title + ' — AIQurylys (прототип v1.0)';
+    if (AQ.afterRender) AQ.afterRender(route, view);
     renderSide(); renderBnav(); updateBack();
     $('#side').classList.remove('open');
     window.scrollTo(0, 0);
@@ -330,6 +344,7 @@
     p.style.left = Math.max(8, Math.min(window.innerWidth - w - 8, b.right - w)) + 'px';
   }
   function closePop() { var p = $('#pop'); if (p) p.remove(); }
+  AQ.closePop = closePop;
 
   function openProfile(anchor) {
     var r = role(), P = AQ.M.profile;
@@ -338,6 +353,7 @@
     h += '<a class="it" href="#/notif">Уведомления<small>' + esc(P[1].d) + '</small></a>';
     h += '<a class="it" href="#/support">Поддержка<small>' + esc(P[2].d) + '</small></a>';
     h += '<a class="it" href="#/bot">Telegram-бот<small>' + esc(P[3].d) + '</small></a>';
+    h += '<button class="it" data-act="hints-toggle">Подсказки: ' + (AQ.hints && AQ.hints.on() ? 'включены → скрыть' : 'скрыты → включить') + '<small>Короткие пояснения к разделам и «что дальше» на главной</small></button>';
     h += '<button class="it" data-act="theme">Тема: ' + (document.documentElement.getAttribute('data-theme') === 'light' ? 'светлая → тёмная' : 'тёмная → светлая') + '<small>' + esc(P[4].d) + '</small></button>';
     h += '<button class="it" data-toast="Язык интерфейса: русский. Қазақша — скоро">Язык<small>' + esc(P[5].d) + '</small></button><hr>';
     h += '<button class="it" data-act="logout">Выйти<small>В прототипе вход не нужен: вернёт на первый экран</small></button>';
@@ -434,7 +450,8 @@
     layer = $('#layer');
     var q = new URLSearchParams(location.search);
     var base = 'data/';
-    Promise.all([load(base + 'menu.json'), load(base + 'create.json'), load(base + 'demo.json'), load(base + 'demo2.json'), load(base + 'demo3.json'), load(base + 'docforms.json')]).then(function (a) {
+    Promise.all([load(base + 'menu.json'), load(base + 'create.json'), load(base + 'demo.json'), load(base + 'demo2.json'), load(base + 'demo3.json'), load(base + 'docforms.json'), load(base + 'hints.json')]).then(function (a) {
+      AQ.H = a[6];
       AQ.M = a[0]; AQ.C = a[1]; AQ.D = Object.assign(a[2], a[3], a[4]); AQ.D.docforms = a[5]; AQ.D.assistant.byHelper = a[5].helpers; AQ.D.assistant.answers = a[5].askAnswers.concat(AQ.D.assistant.answers);
       AQ.D.assistant.answers = AQ.D.assistant.answers.concat(AQ.D.assistantMore);
       AQ.dev = q.get('dev') === '1' || store.get('aq02_dev') === '1'; if (q.get('dev') === '0') { AQ.dev = false; store.set('aq02_dev', '0'); } else if (q.get('dev') === '1') store.set('aq02_dev', '1');

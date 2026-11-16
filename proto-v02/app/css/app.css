@@ -470,3 +470,16 @@ table[data-rows] input { width:100%; min-width:90px; padding:6px 8px; }
 
 .back-btn[hidden]{display:none}
 .back-btn{font-weight:600}
+
+/* v1.1: мягкие подсказки */
+#side:not(.all) .soft { display:none; }
+.nav.more { background:none; border:0; cursor:pointer; text-align:left; font:600 13px var(--sans, inherit); color:var(--mute); }
+.nav.more i { margin-left:auto; font-style:normal; opacity:.7; }
+.hint { display:flex; align-items:flex-start; gap:12px; padding:10px 14px; margin:0 0 14px; border:1px dashed var(--panelb); border-radius:12px; background:color-mix(in srgb, var(--blue) 6%, transparent); color:var(--ink); font-size:14px; line-height:1.45; }
+.hint p { margin:0; flex:1; color:var(--mute); }
+.hint p b { color:var(--ink); }
+.hint .hi { flex:none; width:22px; height:22px; border-radius:50%; border:1px solid var(--blue); color:var(--blue); font:700 12px var(--mono); display:grid; place-items:center; margin-top:1px; }
+.hint .hb, .hint.next .btn { flex:none; display:flex; gap:6px; align-self:center; }
+.hint .ht { flex:1; display:grid; gap:2px; } .hint .ht small { color:var(--mute); font-size:12.5px; }
+.hint.next { align-items:center; }
+@media (max-width:860px) { .hint { flex-wrap:wrap; } .hint .hb { width:100%; } .hint .ht, .hint p { flex:1 1 calc(100% - 40px); min-width:0; } .hint.next .btn { flex:1 1 40%; text-align:center; justify-content:center; } }
