@@ -174,6 +174,11 @@
     'В процессе строительства': ['Площадка', 'Здесь идёт стройка: график, объёмы за день, акты, документы, деньги и техника.']
   };
 
+  /* Сотрудники, для которых лежат ролики «миниатюры» в media/mini/<id>.mp4 (+ <id>.jpg).
+     Пока файлов нет, список пуст и показывается нарисованная сцена. Готовый ролик: добавьте id сюда. */
+  const MINI = [];
+  const miniVideo = (id) => `<video class="mini" muted loop playsinline preload="metadata" poster="../../media/mini/${id}.jpg" src="../../media/mini/${id}.mp4"></video>`;
+
   /* ---------- страница ---------- */
   S._digital = function (rt, ctx) {
     const D = AQ.D, I = D.agentInfo, list = D.agents, r = AQ.role();
@@ -186,7 +191,8 @@
     const card = (a) => {
       const f = I[a.id] || {}, go = AQ.canRoute(a.go) ? a.go : (a.alt && AQ.canRoute(a.alt) ? a.alt : ''), ok = AQ.can(a.need) && !!go, live = LIVE[a.id] || [a.last];
       const svg = SC[a.id] ? `<svg viewBox="0 0 320 200" role="img" aria-label="${esc(a.n)} за работой" preserveAspectRatio="xMidYMid slice">${SC[a.id](a.id)}</svg>` : '';
-      return `<article class="dcard${rec && rec.id === a.id ? ' rec' : ''}${ok ? '' : ' dim'}" id="ag-${a.id}">${rec && rec.id === a.id ? '<span class="atrec">С этого начать</span>' : ''}<div class="dscene">${svg}</div><div class="dbody"><div class="dh"><h3>${esc(a.n)}</h3><span class="dst ${a.status === 'работает' ? 'on' : ''}"><i></i>${esc(a.status)}</span></div><p class="djob">${esc(f.job || a.role)}</p><p class="dlive" data-id="${a.id}"><span>${esc(live[0])}</span></p><div class="dbtn">${ok ? `<a class="btn pri" href="#/${go}">${esc((go === a.alt && f.verbAlt) ? f.verbAlt : (f.verb || 'Открыть'))} →</a>` : '<button class="btn" disabled>Доступно другой роли</button>'}<button class="btn" data-act="agent-info" data-id="${a.id}">Что умеет</button></div></div></article>`;
+      const vid = MINI.indexOf(a.id) !== -1;
+      return `<article class="dcard${rec && rec.id === a.id ? ' rec' : ''}${ok ? '' : ' dim'}${vid ? ' has-video' : ''}" id="ag-${a.id}">${rec && rec.id === a.id ? '<span class="atrec">С этого начать</span>' : ''}<div class="dscene">${svg}${vid ? miniVideo(a.id) : ''}</div><div class="dbody"><div class="dh"><h3>${esc(a.n)}</h3><span class="dst ${a.status === 'работает' ? 'on' : ''}"><i></i>${esc(a.status)}</span></div><p class="djob">${esc(f.job || a.role)}</p><p class="dlive" data-id="${a.id}"><span>${esc(live[0])}</span></p><div class="dbtn">${ok ? `<a class="btn pri" href="#/${go}">${esc((go === a.alt && f.verbAlt) ? f.verbAlt : (f.verb || 'Открыть'))} →</a>` : '<button class="btn" disabled>Доступно другой роли</button>'}<button class="btn" data-act="agent-info" data-id="${a.id}">Что умеет</button></div></div></article>`;
     };
     const groups = [];
     list.forEach((a) => { let g = groups.filter((x) => x.n === a.group)[0]; if (!g) { g = { n: a.group, items: [] }; groups.push(g); } g.items.push(a); });
@@ -199,7 +205,9 @@
       /* сцены играют только пока карточка видна */
       const cards = AQ.$$('.dcard');
       cards.forEach((c) => c.classList.add('run'));
-      if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle('run', e.isIntersecting)), { rootMargin: '120px' }); cards.forEach((c) => io.observe(c)); }
+      const playVid = (c, on) => { const v = c.querySelector('video.mini'); if (!v) return; if (on && !AQ.reduced) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); };
+      cards.forEach((c) => playVid(c, true));
+      if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => es.forEach((e) => { e.target.classList.toggle('run', e.isIntersecting); playVid(e.target, e.isIntersecting); }), { rootMargin: '120px' }); cards.forEach((c) => io.observe(c)); }
       /* строка «что делает сейчас» */
       if (!AQ.reduced) {
         const idx = {};
@@ -217,7 +225,7 @@
     const id = t.getAttribute('data-id'), a = AQ.D.agents.filter((x) => x.id === id)[0], f = AQ.D.agentInfo[id] || {};
     const go = AQ.canRoute(a.go) ? a.go : (a.alt && AQ.canRoute(a.alt) ? a.alt : ''), ok = AQ.can(a.need) && !!go, fnd = go ? AQ.findTab(go) : null;
     AQ.overlay(`<div class="mh"><div><h2>${esc(a.n)}</h2><span class="mut" style="font-size:13px">${esc(f.job || a.role)}</span></div><button class="pill ico" data-act="close" aria-label="Закрыть">✕</button></div>` +
-      `<div class="mscene"><svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">${SC[id] ? SC[id](id + 'm') : ''}</svg></div>` +
+      `<div class="mscene${MINI.indexOf(id) !== -1 ? ' has-video' : ''}"><svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">${SC[id] ? SC[id](id + 'm') : ''}</svg>${MINI.indexOf(id) !== -1 ? miniVideo(id).replace('<video ', '<video autoplay ') : ''}</div>` +
       `<h3 style="font-size:14px;margin:12px 0 6px">Что делает</h3><ul class="dlist">${(f.does || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` +
       `<div class="atflow" style="margin:12px 0"><span>${esc(f.giveS || '')}</span><i>→</i><b>${esc(f.getS || '')}</b></div><p class="mut" style="font-size:13px"><b>Недавно:</b> ${esc(f.example || a.last)}</p>` +
       `<div class="btns">${ok ? `<a class="btn pri" href="#/${go}" data-act="close">${esc((go === a.alt && f.verbAlt) ? f.verbAlt : (f.verb || 'Открыть'))} →</a>` : ''}<button class="btn" data-act="close">Закрыть</button></div>${fnd ? `<p class="mut" style="font-size:12px;margin-top:8px">Где найти: ${esc(fnd.s.t)} → ${esc(fnd.t.t)}</p>` : ''}`, 'wide');
