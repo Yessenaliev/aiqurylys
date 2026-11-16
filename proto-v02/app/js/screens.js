@@ -5,7 +5,7 @@
 
   function tabHead(rt, extra) {
     var t = rt.tObj;
-    return AQ.head(esc(t.t), esc(t.d || ''), AQ.crumbs(), AQ.tabBar(rt.sObj, rt.tab)) + (t.give ? AQ.flow(t) : '') + (extra || '');
+    return AQ.head(esc(t.t), esc(t.d || ''), AQ.crumbs(), AQ.tabBar(rt.sObj, rt.tab)) + (AQ.helpRow ? AQ.helpRow(rt) : '') + (t.give ? AQ.flow(t) : '') + (extra || '');
   }
   AQ.tabHead = tabHead;
   function tbl(cols, rows, opts) {

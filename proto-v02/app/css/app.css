@@ -458,3 +458,12 @@ a.ln:hover { background:var(--panel); }
 .tarf .it { border:1px solid var(--panelb); border-radius:12px; padding:14px; background:var(--panel); display:flex; flex-direction:column; gap:6px; }
 .tarf .it.on { border-color:var(--acc); box-shadow:0 0 0 2px rgba(242,107,29,.22); }
 .tarf .pr { font:700 18px var(--mono); }
+
+/* v1.0: шапка раздела и формы как на основном сайте */
+.hrow { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:-6px 0 16px; }
+.projsel { margin-left:auto; display:inline-flex; gap:8px; align-items:center; font-size:12px; color:var(--mute); } .projsel select, .projsel input { padding:6px 10px; }
+.fgrid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; }
+.ff { display:flex; flex-direction:column; gap:5px; font-size:12px; color:var(--mute); font-weight:600; } .ff input, .ff select, .ff textarea { width:100%; font-weight:400; color:var(--ink); }
+.ff.chk { flex-direction:row; align-items:center; gap:8px; color:var(--ink); } .ff.chk input { width:18px; height:18px; }
+table[data-rows] input { width:100%; min-width:90px; padding:6px 8px; }
+@media (max-width:860px) { .hrow { margin-top:0; } .projsel { margin-left:0; width:100%; } .fgrid { grid-template-columns:1fr; } }

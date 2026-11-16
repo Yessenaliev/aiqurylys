@@ -203,7 +203,7 @@
     $$('#view .tabs.sc').forEach(function (t) { var a = t.querySelector('.tab.on'); if (a) t.scrollLeft = Math.max(0, a.offsetLeft - 16); });
     AQ.tblLabels(view);
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
-    document.title = title + ' — AIQurylys (прототип v0.9)';
+    document.title = title + ' — AIQurylys (прототип v1.0)';
     renderSide(); renderBnav();
     $('#side').classList.remove('open');
     window.scrollTo(0, 0);
@@ -214,6 +214,7 @@
   }
   AQ.crumbs = crumbs;
   AQ.render = render;
+  AQ.curRoute = function () { return route; };
   AQ.tblLabels = function (root) {
     $$('table', root).forEach(function (tb) {
       var heads = $$('thead th', tb).map(function (th) { return th.textContent.trim(); });
@@ -247,16 +248,21 @@
   var closeBtn = '<button class="pill ico" data-act="close" aria-label="Закрыть">' + ico('x') + '</button>';
 
   function openCreate() {
-    var n = 0, total = 0, h = '<div class="mh"><h2>＋ Создать <span class="mut" style="font-weight:400;font-size:13px">действий: ' + '<span id="cn"></span></span></h2>' + closeBtn + '</div><div class="cgrid">';
+    var n = 0, total = 0, h = '<div class="mh"><h2>＋ Создать <span class="mut" style="font-weight:400;font-size:13px">действий: ' + '<span id="cn"></span></span></h2>' + closeBtn + '</div><input id="cq" type="search" placeholder="Найти дело" style="width:100%;margin-bottom:10px" autocomplete="off"><div class="btns" id="cchips" style="margin:0 0 6px"></div><div class="cgrid">';
     AQ.C.groups.forEach(function (g) {
       var items = g.items.filter(function (i) { total++; return can(i[2]); });
       if (!items.length) return;
       n += items.length;
-      h += '<div class="cgrp"><h3>' + esc(g.t) + '</h3>' + items.map(function (i) { return '<a class="cit" href="#/' + i[3] + '" data-act="close"><b>' + esc(i[0]) + (i[4] ? ' <span class="tag t-mute" style="float:right">' + esc(i[4]) + '</span>' : '') + '</b><small>' + esc(i[1]) + '</small></a>'; }).join('') + '</div>';
+      h += '<div class="cgrp" data-g="' + esc(g.t) + '"><h3>' + esc(g.t) + '</h3>' + items.map(function (i) { return '<a class="cit" data-k="' + esc((i[0] + ' ' + i[1]).toLowerCase()) + '" href="#/' + i[3] + '" data-act="close"><b>' + esc(i[0]) + (i[4] ? ' <span class="tag t-mute" style="float:right">' + esc(i[4]) + '</span>' : '') + '</b><small>' + esc(i[1]) + '</small></a>'; }).join('') + '</div>';
     });
     h += '</div>';
     overlay(h);
     $('#cn').textContent = n + ' из ' + total + ' доступно роли «' + role().n + '»';
+    var chips = ['Все'].concat(AQ.C.groups.filter(function (g) { return g.items.some(function (i) { return can(i[2]); }); }).map(function (g) { return g.t; })), cur = 'Все';
+    function applyF() { var q = ($('#cq').value || '').toLowerCase().trim(); $$('.cgrp').forEach(function (g) { var vis = 0; $$('.cit', g).forEach(function (a) { var ok = (!q || a.getAttribute('data-k').indexOf(q) !== -1) && (cur === 'Все' || g.getAttribute('data-g') === cur); a.style.display = ok ? '' : 'none'; if (ok) vis++; }); g.style.display = vis ? '' : 'none'; }); }
+    $('#cchips').innerHTML = chips.map(function (c, i) { return '<button class="btn sm' + (i === 0 ? ' pri' : '') + '" data-chip="' + esc(c) + '">' + esc(c.split(' ')[0]) + '</button>'; }).join('');
+    $$('[data-chip]').forEach(function (b) { b.addEventListener('click', function () { cur = b.getAttribute('data-chip'); $$('[data-chip]').forEach(function (x) { x.classList.toggle('pri', x === b); }); applyF(); }); });
+    $('#cq').addEventListener('input', applyF);
   }
 
   function openPalette(prefill) {
@@ -277,9 +283,9 @@
     draw();
   }
 
-  function openAsk(q) {
+  function openAsk(q, helper) {
     var d = AQ.D.assistant, r = role();
-    layer.innerHTML = '<aside class="drawer" role="dialog" aria-label="Помощник"><div class="dh"><b>✦ Помощник AIQurylys</b>' + closeBtn + '</div><div class="db"><div class="chat" id="achat"></div><div class="sugg" id="asugg"></div></div><form class="df" id="aform"><input id="ain" placeholder="Задайте вопрос" autocomplete="off"><button class="btn pri sm" type="submit">Спросить</button></form></aside>';
+    layer.innerHTML = '<aside class="drawer" role="dialog" aria-label="Помощник"><div class="dh"><b>✦ ' + esc(helper ? 'Спросить AIQurylys: ' + helper : 'Помощник AIQurylys') + '</b>' + closeBtn + '</div><div class="db"><div class="chat" id="achat"></div><div class="sugg" id="asugg"></div></div><form class="df" id="aform"><input id="ain" placeholder="Задайте вопрос" autocomplete="off"><button class="btn pri sm" type="submit">Спросить</button></form></aside>';
     var chat = $('#achat');
     function say(who, t, go) { var div = document.createElement('div'); div.className = 'msg ' + who; div.innerHTML = esc(t) + (go && AQ.canRoute(go) ? '<br><a class="mb" href="#/' + go + '" data-act="close">Открыть →</a>' : ''); chat.appendChild(div); chat.parentNode.scrollTop = 1e6; }
     function answer(text) {
@@ -287,8 +293,8 @@
       say('me', text);
       AQ.later(function () { hit ? say('bot', hit.a, hit.go) : say('bot', d.fallback); }, 450);
     }
-    say('bot', 'Здравствуйте! Вы смотрите кабинет как «' + r.n + '». ' + d.hello);
-    $('#asugg').innerHTML = ['Что с актом подрядчика?', 'Какие тендеры закрываются?', 'Хватит ли денег?', 'Что с договором?'].map(function (s) { return '<button data-q="' + esc(s) + '">' + esc(s) + '</button>'; }).join('');
+    say('bot', helper ? 'Здравствуйте! Я — ' + helper + '. Спросите по этому разделу, отвечу по вашим данным.' : 'Здравствуйте! Вы смотрите кабинет как «' + r.n + '». ' + d.hello);
+    $('#asugg').innerHTML = ((helper && d.byHelper && d.byHelper[helper]) || ['Что с актом подрядчика?', 'Какие тендеры закрываются?', 'Хватит ли денег?', 'Что с договором?']).map(function (s) { return '<button data-q="' + esc(s) + '">' + esc(s) + '</button>'; }).join('');
     $('#aform').addEventListener('submit', function (e) { e.preventDefault(); var v = $('#ain').value.trim(); if (v) { answer(v); $('#ain').value = ''; } });
     if (q) answer(q);
     else $('#ain').focus();
@@ -406,8 +412,8 @@
     layer = $('#layer');
     var q = new URLSearchParams(location.search);
     var base = 'data/';
-    Promise.all([load(base + 'menu.json'), load(base + 'create.json'), load(base + 'demo.json'), load(base + 'demo2.json'), load(base + 'demo3.json')]).then(function (a) {
-      AQ.M = a[0]; AQ.C = a[1]; AQ.D = Object.assign(a[2], a[3], a[4]);
+    Promise.all([load(base + 'menu.json'), load(base + 'create.json'), load(base + 'demo.json'), load(base + 'demo2.json'), load(base + 'demo3.json'), load(base + 'docforms.json')]).then(function (a) {
+      AQ.M = a[0]; AQ.C = a[1]; AQ.D = Object.assign(a[2], a[3], a[4]); AQ.D.docforms = a[5]; AQ.D.assistant.byHelper = a[5].helpers; AQ.D.assistant.answers = a[5].askAnswers.concat(AQ.D.assistant.answers);
       AQ.D.assistant.answers = AQ.D.assistant.answers.concat(AQ.D.assistantMore);
       AQ.dev = q.get('dev') === '1' || store.get('aq02_dev') === '1'; if (q.get('dev') === '0') { AQ.dev = false; store.set('aq02_dev', '0'); } else if (q.get('dev') === '1') store.set('aq02_dev', '1');
       var rid = q.get('role') || store.get('aq02_role') || 'owner';
