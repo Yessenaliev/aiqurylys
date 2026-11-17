@@ -37,12 +37,13 @@
   const DOCS = {
     'est-xlsx': () => {
       const r = R(), rows = r.rows.map((x, i) => [i + 1, x[0] + (x[5] ? ' (Оценка)' : ''), (x[1] % 1 ? String(x[1]).replace('.', ',') : fmt(x[1])) + ' ' + x[2], fmt(x[3]), fmt(x[4])]);
-      rows.push(['', 'Итого по разделу КЖ', '', '', fmt(r.cost)], ['', 'Наценка 20 %', '', '', fmt(Math.round(r.cost * .2))], ['', 'НДС 16 %', '', '', fmt(r.price - Math.round(r.cost * 1.2))], ['', 'Цена для заказчика', '', '', fmt(r.price)]);
-      return { file: 'КЖ_Фундаменты_смета.xlsx', body: xl('Локальная смета · КЖ · Фундаменты — Складской комплекс', ['№', 'Работы и материалы', 'Кол-во', 'Цена, ₸', 'Стоимость, ₸'], rows, { formula: '=СУММ(E3:E11)  →  ' + fmt(r.cost), tabs: ['Смета', 'Ведомость материалов', 'Сводка'], boldLast: 4 }) };
+      const vat = Math.round(r.price * r.vat / 100);
+      rows.push(['', 'Итого по разделу КЖ (себестоимость для вас)', '', '', fmt(r.cost)], ['', 'Прибыль компании', '', '', fmt(r.price - r.cost)], ['', 'КП для заказчика (без НДС)', '', '', fmt(r.price)], ['', 'НДС ' + r.vat + ' %', '', '', fmt(vat)], ['', 'Итого с НДС', '', '', fmt(r.price + vat)]);
+      return { file: 'КЖ_Фундаменты_смета.xlsx', body: xl('Локальная смета · КЖ · Фундаменты — Складской комплекс', ['№', 'Работы и материалы', 'Кол-во', 'Цена, ₸', 'Стоимость, ₸'], rows, { formula: '=СУММ(E3:E14)  →  ' + fmt(r.cost), tabs: ['Смета', 'Ведомость материалов', 'Сводка'], boldLast: 5 }) };
     },
     'est-docx': () => ({ file: 'КЖ_Фундаменты_смета.docx', body: estPaper('Word') }),
     'est-pdf': () => ({ file: 'КЖ_Фундаменты_смета.pdf', body: estPaper('PDF · стр. 1 из 3') }),
-    'check-xlsx': () => ({ file: 'Замечания_к_смете.xlsx', body: xl('Замечания к смете «КП_подрядчика.xlsx»', ['№', 'Вид', 'Замечание', 'Сумма, ₸'], AQ.D.checkFindings.map((f, i) => [i + 1, f.k, f.t, f.sum ? f.sign + fmt(f.sum) : '—']), { formula: 'Итого к исправлению: 622 400 ₸', tabs: ['Замечания', 'Строки со ссылками'] }) }),
+    'check-xlsx': () => ({ file: 'Замечания_к_смете.xlsx', body: xl('Замечания к смете «КП_подрядчика.xlsx»', ['№', 'Вид', 'Замечание', 'Сумма, ₸'], AQ.D.checkFindings.map((f, i) => [i + 1, f.k, f.t, f.sum ? f.sign + fmt(f.sum) : '—']), { formula: 'Исправлено автоматически: +190 400 ₸ · к решению: 612 000 ₸', tabs: ['Замечания', 'Строки со ссылками'] }) }),
     'fin-xlsx': () => { const F = AQ.D.finance; return { file: 'Финансовый_отчёт.xlsx', body: xl('Финансовый отчёт · БДР и БДДС, млн ₸', ['Месяц', 'БДР план', 'БДР факт', 'БДДС план', 'БДДС факт'], F.months.map((m, i) => [m, F.bdrPlan[i], F.bdrFact[i] || '—', F.cashPlan[i], F.cashFact[i] || '—']), { formula: '=СУММ(C3:C7)  →  ' + F.bdrFact.reduce((a, b) => a + b, 0), tabs: ['БДР', 'БДДС', 'Налоги 2026'] }) }; },
     'contract-docx': () => ({ file: 'Договор_субподряда_14_с_правками.docx', body: contractPaper() }),
     'act-2v': () => ({ file: 'Акт_2В_октябрь_2026.docx', body: actPaper() }),
@@ -53,7 +54,7 @@
   };
   function estPaper(kind) {
     const r = R();
-    return paper(`<div class="ph"><b>${esc(req()[0][1])}</b><span>БИН ${esc(req()[1][1])}</span></div><h3 class="pt">Локальная смета · КЖ · Фундаменты</h3><p class="mut">Объект: Складской комплекс (Мебельный склад), Астана</p>` + tbl(['Работы и материалы', 'Кол-во', 'Цена', 'Стоимость, ₸'], r.rows.slice(0, 5).map((x) => [x[0], (x[1] % 1 ? String(x[1]).replace('.', ',') : fmt(x[1])) + ' ' + x[2], fmt(x[3]), fmt(x[4])]), { r: [1, 2, 3] }) + `<p class="mut" style="margin:8px 0">… ещё 4 строки, всего 9 позиций</p><div class="ptot"><span>Итого по разделу</span><b>${money(r.cost)}</b></div><div class="ptot acc"><span>Цена для заказчика, с НДС 16 %</span><b>${money(r.price)}</b></div>`, kind);
+    return paper(`<div class="ph"><b>${esc(req()[0][1])}</b><span>БИН ${esc(req()[1][1])}</span></div><h3 class="pt">Локальная смета · КЖ · Фундаменты</h3><p class="mut">Объект: Складской комплекс (Мебельный склад), Астана</p>` + tbl(['Работы и материалы', 'Кол-во', 'Цена', 'Стоимость, ₸'], r.rows.slice(0, 5).map((x) => [x[0], (x[1] % 1 ? String(x[1]).replace('.', ',') : fmt(x[1])) + ' ' + x[2], fmt(x[3]), fmt(x[4])]), { r: [1, 2, 3] }) + `<p class="mut" style="margin:8px 0">… ещё 7 строк, всего 12 позиций</p><div class="ptot"><span>Себестоимость для вас</span><b>${money(r.cost)}</b></div><div class="ptot acc"><span>КП для заказчика</span><b>${money(r.price)}</b></div><div class="ptot"><span>С НДС ${r.vat} %</span><b>${money(r.price + Math.round(r.price * r.vat / 100))}</b></div>`, kind);
   }
   function actPaper() {
     return paper(`<div class="ph"><b>${esc(req()[0][1])}</b><span>БИН ${esc(req()[1][1])} · ${esc(req()[2][1])}</span></div><h3 class="pt">АКТ № 8 приёмки выполненных работ (форма 2В)</h3><p class="mut">Объект: Мебельный цех, Астана · Период: 01.10.2026 — 31.10.2026 · Заказчик: ТОО «Мебель-Групп»</p>` + tbl(['Работа', 'Ед.', 'Объём', 'Цена, ₸', 'Стоимость, ₸'], [['Кладка наружных стен', 'м³', '246', '38 000', '9 348 000'], ['Армирование колонн', 'т', '1,2', '385 000', '462 000'], ['Устройство перемычек', 'шт.', '38', '14 500', '551 000']], { r: [2, 3, 4] }) + `<div class="ptot"><span>Итого по акту</span><b>${money(10361000)}</b></div><div class="sign"><div><span>Подрядчик</span><i></i>${esc(req()[5][1])}</div><div><span>Заказчик</span><i></i>_______________</div></div>`, 'Реквизиты подставлены автоматически · Word');
@@ -83,7 +84,8 @@
   /* ---------- КП заказчику ---------- */
   S.offer = function (rt, ctx) {
     const O = AQ.D.offer, r = R();
-    const calc = (m) => { const base = Math.round(r.cost * (1 + m / 100)), price = Math.round(base * (1 + O.vat / 100)); return { base, price, vat: price - base, margin: base - r.cost }; };
+    const fm = (m) => String(m).replace('.', ',');
+    const calc = (m) => { const base = m === O.markup ? r.price : Math.round(r.cost * (1 + m / 100)), price = Math.round(base * (1 + O.vat / 100)); return { base, price, vat: price - base, margin: base - r.cost }; };
     const doc = (m) => {
       const k = 1 + m / 100;
       const c = calc(m);
@@ -93,13 +95,13 @@
     };
     const c0 = calc(O.markup);
     let h = head(rt) + `<div class="bento"><div class="tile s5"><div class="lbl"><span>Условия</span></div>
-      <label>Наценка: <b class="mono acc" id="mk">${O.markup} %</b></label><input id="mkr" type="range" min="0" max="40" step="1" value="${O.markup}" style="width:100%;accent-color:var(--acc);padding:0;margin:8px 0 14px">
+      <label>Наценка: <b class="mono acc" id="mk">${fm(O.markup)} %</b></label><input id="mkr" type="range" min="0" max="40" step="0.01" value="${O.markup}" style="width:100%;accent-color:var(--acc);padding:0;margin:8px 0 14px">
       <div class="kpis3"><div><span>Себестоимость</span><b class="mono">${money(r.cost)}</b></div><div><span>Прибыль до налогов</span><b class="mono ok" id="kmg">${money(c0.margin)}</b></div><div><span>Итого с НДС ${O.vat} %</span><b class="mono acc" id="kpr">${money(c0.price)}</b></div></div>
       <div class="lbl" style="margin-top:18px"><span>Версии</span></div>${O.versions.map((v) => `<div class="row"><span class="tag ${v[0] === 'v3' ? 't-ok' : 't-mute'}">${v[0]}</span><div><b>Наценка ${v[2]} %</b><small>${v[1]} · ${esc(v[3])}</small></div></div>`).join('')}
       <div class="btns"><button class="btn pri" data-doc="est-pdf">Скачать PDF</button><button class="btn" data-toast="КП-2026/117 отправлено на почту ТОО «Мебель-Групп»: info@mebel-group.demo">Отправить заказчику</button></div></div>
       <div class="tile s7"><div class="lbl"><span>Предпросмотр</span></div><div id="offDoc">${doc(O.markup)}</div></div></div>`;
     ctx.after = () => {
-      const sl = $('#mkr'); sl.addEventListener('input', () => { const m = +sl.value, c = calc(m); $('#mk').textContent = m + ' %'; $('#kmg').textContent = money(c.margin); $('#kpr').textContent = money(c.price); $('#offDoc').innerHTML = doc(m); });
+      const sl = $('#mkr'); sl.addEventListener('input', () => { const m = +sl.value, c = calc(m); $('#mk').textContent = fm(m) + ' %'; $('#kmg').textContent = money(c.margin); $('#kpr').textContent = money(c.price); $('#offDoc').innerHTML = doc(m); });
     };
     return h + AQ.wasBlock(rt.tObj);
   };

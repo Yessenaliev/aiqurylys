@@ -483,3 +483,14 @@ table[data-rows] input { width:100%; min-width:90px; padding:6px 8px; }
 .hint .ht { flex:1; display:grid; gap:2px; } .hint .ht small { color:var(--mute); font-size:12.5px; }
 .hint.next { align-items:center; }
 @media (max-width:860px) { .hint { flex-wrap:wrap; } .hint .hb { width:100%; } .hint .ht, .hint p { flex:1 1 calc(100% - 40px); min-width:0; } .hint.next .btn { flex:1 1 40%; text-align:center; justify-content:center; } }
+
+/* v1.3: смета по презентации */
+.estleg { display:flex; gap:16px; flex-wrap:wrap; margin:0 0 10px; font-size:12.5px; color:var(--mute); }
+.estleg span { display:inline-flex; align-items:center; gap:6px; }
+.estleg i { width:10px; height:14px; border-radius:2px; display:inline-block; }
+.estleg i.k { background:#111; border:1px solid var(--mute); } .estleg i.b { background:var(--blue); }
+.estleg i.y { background:rgba(245,197,66,.55); } .estleg i.w { background:#fff; border:1px solid var(--mute); }
+tr.estw td { font-weight:700; }
+tr.estm td { color:var(--blue); font-style:italic; font-weight:500; }
+tr.estfix td { background:rgba(245,197,66,.14); }
+.nb { display:inline-grid; place-items:center; min-width:18px; height:18px; border-radius:50%; background:var(--acc); color:#fff; font:700 11px var(--mono); font-style:normal; margin-left:4px; }

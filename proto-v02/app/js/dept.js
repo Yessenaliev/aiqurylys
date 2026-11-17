@@ -61,7 +61,7 @@
         `<text x="99" y="141" text-anchor="middle" font-size="7.5" fill="#9FB3D9" font-family="Onest,sans-serif">Сваи С1: 462 шт</text>` +
         `<g transform="translate(-14 -10)"><rect x="186" y="22" width="84" height="52" rx="4" fill="#F4F7FB"/><rect x="186" y="22" width="84" height="10" rx="4" fill="#1F7A4D"/><text x="192" y="30" font-size="6.5" font-weight="700" fill="#fff" font-family="Onest,sans-serif">Смета.xlsx</text>` +
         [0, 1, 2, 3].map((i) => `<rect x="190" y="${36 + i * 8}" width="${52 - (i % 2) * 14}" height="3" rx="1.5" fill="#B9C1D0"/><rect class="cell" style="animation-delay:${i * 0.7}s" x="246" y="${35 + i * 8}" width="12" height="5" rx="1.5" fill="#35C47A"/>`).join('') +
-        `<rect x="188" y="64" width="80" height="8" rx="2" fill="#FFE9A8"/><text x="228" y="70" text-anchor="middle" font-size="5.6" font-weight="700" fill="#5B4300" font-family="Onest,sans-serif">Итого 68 312 049 ₸</text></g>` +
+        `<rect x="188" y="64" width="80" height="8" rx="2" fill="#FFE9A8"/><text x="228" y="70" text-anchor="middle" font-size="5.6" font-weight="700" fill="#5B4300" font-family="Onest,sans-serif">Итого 71 540 200 ₸</text></g>` +
         desk(184, 120) + `<rect x="204" y="125" width="24" height="13" rx="2" fill="#2B3752"/><rect x="207" y="127" width="18" height="4" fill="#35C47A"/><path d="M208 134h2M213 134h2M218 134h2M223 134h2" stroke="#9FB3D9" stroke-width="2"/>` +
         person(262, 98, { shirt: '#7B6AD8' }) + arm(246, 104, 234, 124, 222, 132, '#7B6AD8', 'a-type') + arm(278, 104, 290, 122, 282, 135, '#7B6AD8', '') + `<rect x="274" y="76" width="13" height="2.6" rx="1.3" fill="#F5C542" transform="rotate(-20 280 77)"/>`;
     },
@@ -138,7 +138,7 @@
       hs.forEach((h, i) => { bars += `<rect class="bar" style="animation-delay:${i * 0.25}s;transform-origin:${38 + i * 24}px 124px" x="${38 + i * 24}" y="${124 - h}" width="16" height="${h}" rx="2" fill="${i % 2 ? '#6FA3FF' : '#35C47A'}"/>`; path += ` L${46 + i * 24} ${124 - h - 10}`; });
       let grid = ''; for (let j = 1; j < 5; j++) grid += `<path d="M30 ${124 - j * 20}h140" stroke="#fff" opacity=".08"/>`;
       return office() + `<rect x="16" y="22" width="164" height="112" rx="6" fill="#0C111B" stroke="#2B3752" stroke-width="2"/><text x="28" y="38" font-size="8" font-weight="700" fill="#9FB3D9" font-family="Onest,sans-serif">План и факт, млн ₸</text>${grid}<path d="M30 124h140" stroke="#5B6C8F"/>${bars}<path class="draw" pathLength="1" d="${path}" fill="none" stroke="#F5C542" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>` +
-        pop(190, 22, 84, 'Остаток 31,2 млн ₸', '#F5C542', '#2B2100', 1) +
+        pop(190, 22, 84, 'Остаток 15,6 млн ₸', '#F5C542', '#2B2100', 1) +
         person(284, 98, { shirt: '#2E9D8F' }) + desk(184, 136) + [[200, 3], [224, 5], [248, 7]].map((c, i) => `<g class="coin" style="animation-delay:${i * 0.5}s;transform-origin:${c[0]}px 138px">` + Array.from({ length: c[1] }, (_, n) => `<rect x="${c[0] - 10}" y="${134 - n * 4.4}" width="20" height="4.2" rx="2" fill="#F5C542" stroke="#B88A1B" stroke-width=".8"/>`).join('') + '</g>').join('') +
         arm(268, 104, 260, 122, 270, 134, '#2E9D8F', 'a-type') + arm(300, 104, 306, 122, 296, 134, '#2E9D8F', '');
     },
