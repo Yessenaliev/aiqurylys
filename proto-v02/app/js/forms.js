@@ -7,7 +7,9 @@
   /* ---------- поля ---------- */
   function field(f, vals) {
     const k = f[0], l = f[1], t = f[2] || 'text', x = f[3], v = vals && vals[k] != null ? vals[k] : null;
-    const lab = (inner) => `<label class="ff">${esc(l)}${inner}</label>`;
+    const hint = f[4] ? `<small class="fh">${esc(f[4])}</small>` : '';
+    const lab = (inner) => `<label class="ff">${esc(l)}${inner}${hint}</label>`;
+    if (t === 'radio') return `<div class="ff"><span>${esc(l)}</span><div class="seg2">${x.map((o) => `<label class="rad"><input type="radio" name="${k}" data-k="${k}" value="${esc(o)}"${v === o ? ' checked' : ''}> ${esc(o)}</label>`).join('')}</div>${hint}</div>`;
     if (t === 'project') { const cur = v || (AQ.projName ? AQ.projName() : ''); return lab(`<select data-k="${k}">${AQ.D.projects.map((p) => `<option${p.n === cur ? ' selected' : ''}>${esc(p.n)}</option>`).join('')}<option>Новый проект (без сохранения)</option></select>`); }
     if (t === 'select') return lab(`<select data-k="${k}">${x.map((o) => `<option${v === o ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`);
     if (t === 'area') return lab(`<textarea data-k="${k}" rows="3">${esc(v != null ? v : (x || ''))}</textarea>`);
@@ -24,7 +26,7 @@
   function rowHtml(cols, r) { return '<tr>' + cols.map((c, i) => `<td data-label="${esc(c)}"><input value="${esc(r[i] || '')}" aria-label="${esc(c)}"></td>`).join('') + '<td><button type="button" class="btn sm ghost" data-act="row-del" aria-label="Удалить">✕</button></td></tr>'; }
   function read(root) {
     const o = {};
-    $$('[data-k]', root).forEach((e) => { if (e.tagName === 'TABLE') return; o[e.getAttribute('data-k')] = e.type === 'checkbox' ? e.checked : e.value; });
+    $$('[data-k]', root).forEach((e) => { if (e.tagName === 'TABLE') return; if (e.type === 'radio') { if (e.checked) o[e.getAttribute('data-k')] = e.value; return; } o[e.getAttribute('data-k')] = e.type === 'checkbox' ? e.checked : e.value; });
     $$('table[data-rows]', root).forEach((t) => { o[t.getAttribute('data-rows')] = $$('tbody tr', t).map((tr) => $$('input', tr).map((i) => i.value)); });
     return o;
   }
@@ -34,10 +36,10 @@
 
   /* ---------- модальная форма ---------- */
   AQ.formModal = function (cfg) {
-    AQ.overlay(`<div class="mh"><h2>${esc(cfg.title)}</h2><button class="pill ico" data-act="close" aria-label="Закрыть">✕</button></div>${cfg.lead ? `<p class="mut" style="margin-bottom:10px">${esc(cfg.lead)}</p>` : ''}<div class="fgrid" id="mfb">${cfg.fields.map((f) => field(f)).join('')}</div><div class="btns"><button class="btn pri" data-act="mf-submit">${esc(cfg.submit || 'Готово')}</button><button class="btn" data-act="close">Отмена</button></div>`);
+    AQ.overlay(`<div class="mh"><h2>${esc(cfg.title)}</h2><button class="pill ico" data-act="close" aria-label="Закрыть">✕</button></div>${cfg.lead ? `<p class="mut" style="margin-bottom:10px">${esc(cfg.lead)}</p>` : ''}${cfg.top || ''}<div class="fgrid" id="mfb">${cfg.fields.map((f) => field(f)).join('')}</div>${cfg.foot ? `<p class="mut" style="font-size:12.5px;margin:10px 0 0">${esc(cfg.foot)}</p>` : ''}<div class="btns"><button class="btn pri" data-act="mf-submit">${esc(cfg.submit || 'Готово')}</button><button class="btn" data-act="close">Отмена</button></div>`);
     AQ.ui.mf = cfg;
   };
-  AQ.acts['mf-submit'] = () => { const cfg = AQ.ui.mf, v = read($('#mfb')); AQ.closeLayer(); if (cfg.done) cfg.done(v); };
+  AQ.acts['mf-submit'] = () => { const cfg = AQ.ui.mf, v = read($('#mfb')); const miss = (cfg.req || []).filter((k) => !String(v[k] || '').trim()); if (miss.length) { $$('#mfb [data-k]').forEach((e) => e.classList.toggle('bad-in', miss.indexOf(e.getAttribute('data-k')) !== -1)); AQ.toast('Заполните обязательные поля: они отмечены звёздочкой'); return; } AQ.closeLayer(); if (cfg.done) cfg.done(v); };
 
   /* ---------- мастер документов ---------- */
   AQ.projName = () => (AQ.D.projects.filter((p) => p.id === (AQ.ui.proj || 'ceh'))[0] || AQ.D.projects[0]).n;

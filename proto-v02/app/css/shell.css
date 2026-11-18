@@ -170,3 +170,12 @@ a.usage:hover { border-color:var(--acc); }
 .hstep.warn { background:linear-gradient(135deg, rgba(242,177,52,.2), rgba(242,107,29,.08)); border-color:rgba(242,177,52,.55); }
 .btn.dark { background:var(--ink); color:var(--bg); border-color:var(--ink); }
 .side-min .nav .lk { display:none; }
+
+/* ---------- формы по оригиналу ---------- */
+.fh { display:block; color:var(--mute); font-size:12px; line-height:1.4; margin-top:4px; font-weight:400; }
+.seg2 { display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
+.rad { display:inline-flex; align-items:center; gap:7px; padding:8px 12px; border:1px solid var(--panelb); border-radius:10px; background:var(--panel); cursor:pointer; font-weight:600; transition:border-color .15s, background .15s; }
+.rad:hover { border-color:var(--acc); } .rad input { width:16px; height:16px; padding:0; accent-color:var(--acc); }
+.stp2 { display:flex; gap:6px; align-items:center; } .stp2 input { width:84px; text-align:center; }
+.stagebar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:0 0 12px; padding:10px 14px; border:1px solid var(--panelb); border-radius:12px; background:var(--panel); } .stagebar b { font-size:15px; } .stagebar .btn:last-child { margin-left:auto; }
+.bad-in { border-color:var(--bad) !important; }

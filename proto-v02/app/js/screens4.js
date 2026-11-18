@@ -112,7 +112,7 @@
   S.tech = function (rt) {
     const cur = rt.sub[0] || 'today', d = D3(), E = AQ.D.equipment, M = d.mapPins;
     const items = [['today', 'Дела на сегодня'], ['reg', 'Реестр'], ['map', 'Карта'], ['to', 'Учёт ТО'], ['remind', 'Напоминания'], ['money', 'Деньги']];
-    let h = head(rt) + stabs('site/tech', items, cur) + `<div class="btns" style="margin:0 0 12px"><button class="btn pri" data-act="tech-rec">Записать</button><button class="btn" data-toast="Список техники загружен: 6 машин добавлено в реестр">Импорт списком</button><button class="btn" data-toast="Машина добавлена: Каток дорожный, 0 моточасов">Добавить технику</button></div>`;
+    let h = head(rt) + stabs('site/tech', items, cur) + `<div class="btns" style="margin:0 0 12px"><button class="btn pri" data-act="tech-rec">Записать</button><button class="btn" data-act="tech-import">Импорт списком</button><button class="btn" data-act="tech-add">Добавить технику</button></div>`;
     if (cur === 'today') {
       h += tile('Дела на сегодня', d.techToday.map((x) => `<div class="row"><span class="tag ${x[2] === 'bad' ? 't-bad' : 't-warn'}">${x[2] === 'bad' ? 'срочно' : 'внимание'}</span><div><b>${esc(x[0])}</b><small>${esc(x[1])}</small></div><button class="btn sm" data-act="tech-rec">Записать</button></div>`).join(''));
     } else if (cur === 'reg') {
