@@ -48,6 +48,9 @@
     target: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zM12 12h.01',
     hardhat: 'M3 18h18M5 18v-2a7 7 0 0 1 14 0v2M12 9V6M9.3 9.6L7.8 7M14.7 9.6L16.2 7',
     send: 'M21 4L3 11l6.5 2.5L12 20l3-5 6-11zM9.5 13.5L21 4',
+    panel: 'M4 5h16v14H4zM9 5v14',
+    chev: 'M6 9l6 6 6-6',
+    user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',
     house: 'M3.5 11.5L12 4l8.5 7.5M6 10v10h12V10M10 20v-5h4v5',
     truck: 'M2.5 7h11v9h-11zM13.5 10h4l3 3v3h-7M7 18.5h.01M17 18.5h.01'
   };
@@ -61,8 +64,12 @@
   var can = AQ.can = function (need) { var r = role(); return need === '*' || r.perms === 'ALL' || r.perms.indexOf(need) !== -1; };
   var tabsOf = AQ.tabsOf = function (s) { return s.tabs.filter(function (t) { return can(t.need); }); };
   var secs = AQ.secs = function () { return AQ.M.sections.filter(function (s) { return (!s.owner || role().company) && tabsOf(s).length; }); };
+  var SPECIAL = ['digital', 'help', 'bot', 'profile', 'notif', 'support', 'welcome', 'more'];
+  AQ.SPECIAL = SPECIAL;
+  /* старые адреса вкладок продолжают работать: переходят на новое место по структуре оригинала */
+  AQ.alias = function (r) { var a = AQ.M && AQ.M.alias; if (!a) return r; var q = String(r || '').split('/'), k = q[0] + '/' + (q[1] || ''); return a[k] ? a[k] + (q.length > 2 ? '/' + q.slice(2).join('/') : '') : r; };
   var findTab = AQ.findTab = function (r) {
-    var p = (r || '').split('/');
+    var p = AQ.alias(r || '').split('/');
     var s = AQ.M.sections.filter(function (x) { return x.id === p[0]; })[0];
     if (!s || (s.owner && !role().company)) return null;
     var t = s.tabs.filter(function (x) { return x.id === p[1] && can(x.need); })[0] || (p[1] ? null : tabsOf(s)[0]);
@@ -70,7 +77,7 @@
   };
   AQ.canRoute = function (r) {
     var p = String(r).split('/');
-    if (['digital', 'help', 'bot', 'profile', 'notif', 'support', 'welcome'].indexOf(p[0]) !== -1) return true;
+    if (SPECIAL.indexOf(p[0]) !== -1) return true;
     return !!findTab(p[0] + '/' + (p[1] || ''));
   };
   AQ.href = function (r) { return '#/' + r; };
@@ -102,7 +109,8 @@
     var p = (AQ._h != null ? AQ._h : location.hash).replace(/^#\/?/, '').split('/').filter(Boolean);
     var r = { sub: [], special: null, p: p };
     if (!p.length) p = ['home'];
-    if (['digital', 'help', 'bot', 'profile', 'notif', 'support', 'welcome'].indexOf(p[0]) !== -1) {
+    p = AQ.alias(p.join('/')).split('/').filter(Boolean);
+    if (SPECIAL.indexOf(p[0]) !== -1) {
       r.special = p[0]; r.sub = p.slice(1); r.key = p[0]; return r;
     }
     var f = findTab(p[0] + '/' + (p[1] || ''));
@@ -121,67 +129,73 @@
   };
   AQ.stub = function (what) { AQ.toast('В рабочей версии здесь будет: ' + what); };
 
-  /* ---------- боковое меню ---------- */
+﻿  /* ---------- левая панель: порядок и названия как на ai-qurylys.kz ---------- */
+  var plural = AQ.plural = function (n, a, b, c) { var m = n % 10, k = n % 100; return n + ' ' + (m === 1 && k !== 11 ? a : (m >= 2 && m <= 4 && (k < 10 || k >= 20) ? b : c)); };
+  AQ.hiddenFor = function (s) { return !!(s.hideFor && s.hideFor.indexOf(role().id) !== -1); };
+  function secById(id) { return AQ.M.sections.filter(function (s) { return s.id === id; })[0]; }
+  var navLink = AQ.navLink = function (id, cur) {
+    if (id === 'help') return '<a class="nav' + (cur.special === 'help' ? ' on' : '') + '" href="#/help" title="Инструкция">' + ico('help') + '<span>Инструкция</span></a>';
+    var s = secById(id);
+    if (!s || (s.owner && !role().company) || AQ.hiddenFor(s)) return '';
+    var ts = tabsOf(s);
+    if (!ts.length) return '';
+    return '<a class="nav' + (cur.sec === id && !cur.special ? ' on' : '') + '" href="#/' + id + '/' + ts[0].id + '" title="' + esc(s.t) + '">' + ico(s.ico) + '<span>' + esc(s.t) + '</span></a>';
+  };
+  /* блок «Осталось расчётов» внизу панели */
+  var usage = AQ.usage = function () {
+    var r = role(), u = AQ.D.tariff, demo = AQ.state.demo;
+    if (!r.company) return '<div class="usage plain"><b>Ваша роль: ' + esc(r.n) + '</b><span>Видны только ваши разделы. Права выдаёт владелец.</span></div>';
+    var left = demo ? u.calcTotal - u.calcUsed : 1, total = demo ? u.calcTotal : 1, pct = demo ? Math.round(u.calcUsed / u.calcTotal * 100) : 0;
+    return '<a class="usage" href="#/company/tariff"><div class="u1"><span>Осталось расчётов</span><b class="' + (left === 0 ? 'bad' : '') + '">' + left + ' из ' + total + '</b></div><div class="bar"><i style="width:' + pct + '%"></i></div>' +
+      (demo ? '<div class="u2">' + esc(u.plan) + '<br>Оплачено до ' + esc(u.until) + ' · <span class="acc">Улучшить план</span></div>' : '<div class="u2"><b>Пробный доступ ' + pct + ' %</b><br>Пробный расчёт ещё не использован. <span class="acc">Выбрать пакет расчётов</span></div>') + '</a>';
+  };
   function renderSide() {
-    var r = role(), h = '', lastGroup = null, cur = route;
-    h += '<a class="logo" href="#/home/today" aria-label="AIQurylys — Главная"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x=".5" y=".5" width="27" height="27" rx="7" stroke="#F26B1D"/><path d="M7 20V9l7-3 7 3v11M11 20v-6h6v6" stroke="#EAF0FA" stroke-width="1.4"/></svg><span>AI<i>Qurylys</i><small>кабинет</small></span></a>';
-    var seenDept = store.get('aq02_dept') === '1';
-    h += '<a class="dept' + (cur.special === 'digital' ? ' on' : '') + '" href="#/digital"><span class="dtop"><span class="dpl"></span><b>Цифровой отдел</b>' + (seenDept ? '' : '<i class="dnew">новое</i>') + '</span><small>' + AQ.D.agents.length + ' ИИ-сотрудников работают на вас</small><span class="davs">' + AQ.D.agents.map(function (a) { return AQ.agIcon(a.id, 'xs', a.n); }).join('') + '</span></a>';
-    /* мягкая подсказка: редкие разделы свёрнуты под «Ещё разделы», пока вы в них не заходили; ничего не закрыто */
-    var all = secs(), CORE = ['home', 'projects', 'tasks'], open = AQ.hints && AQ.hints.expanded();
-    var soft = (AQ.hints && AQ.hints.on() && all.length > 5) ? all.filter(function (s) { return CORE.indexOf(s.id) === -1 && !AQ.hints.seen(s.id) && !(cur.sec === s.id && !cur.special); }).map(function (s) { return s.id; }) : [];
-    if (soft.length < 2) soft = [];
-    $('#side').classList.toggle('all', open || !soft.length);
-    var moreDone = false;
-    function more() { if (!soft.length || moreDone) return ''; moreDone = true; return '<button class="nav more" data-act="more-secs"><span>' + (open ? 'Свернуть дополнительные разделы' : 'Ещё разделы · ' + soft.length) + '</span><i>' + (open ? '▴' : '▾') + '</i></button>'; }
-    secs().forEach(function (s) {
-      var isSoft = soft.indexOf(s.id) !== -1;
-      if (s.group && s.group !== lastGroup) {
-        var allSoft = all.filter(function (x) { return x.group === s.group; }).every(function (x) { return soft.indexOf(x.id) !== -1; });
-        if (allSoft) h += more();
-        h += '<div class="grp' + (allSoft ? ' soft' : '') + '">' + esc(s.group) + '</div>';
-      }
-      if (!s.group) lastGroup = null; else lastGroup = s.group;
-      var on = cur.sec === s.id && !cur.special;
-      var first = tabsOf(s)[0];
-      if (isSoft) h += more();
-      h += '<a class="nav' + (on ? ' on' : '') + (isSoft ? ' soft' : '') + '" href="#/' + s.id + '/' + first.id + '">' + ico(s.ico) + '<span>' + esc(s.t) + '</span>' + (s.id === 'tasks' ? '<span class="badge">3</span>' : '') + '</a>';
+    var r = role(), cur = route, demo = AQ.state.demo, h = '';
+    var sub = r.company ? plural(demo ? AQ.D.projects.length : 0, 'проект', 'проекта', 'проектов') + ' · ' + (demo ? 'Подписка «Проект»' : 'пробный доступ') : r.n;
+    h += '<div class="shead"><a class="logo" href="#/home/today" aria-label="AIQurylys — Главная"><span class="lmark"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x=".5" y=".5" width="27" height="27" rx="7" stroke="#F26B1D"/><path d="M7 20V9l7-3 7 3v11M11 20v-6h6v6" stroke="currentColor" stroke-width="1.4"/></svg></span><span class="lt"><b>AI<i>Qurylys</i></b><small>Платформа для строительства</small></span></a><button class="sbtn" data-act="side-collapse" aria-label="Свернуть панель" title="Свернуть панель">' + ico('panel') + '</button></div>';
+    h += '<a class="ucard" href="#/more" title="Кабинет и настройки"><span class="ava">' + esc(r.name.charAt(0)) + '</span><span class="ut"><b>' + esc(r.name) + '</b><small>' + esc(sub) + '</small></span></a>';
+    h += '<button class="screate" data-act="create" title="Создать">' + ico('plus') + '<span>Создать</span></button>';
+    h += '<nav class="snav" aria-label="Разделы">';
+    AQ.M.nav.forEach(function (n) {
+      if (n.sec) { h += navLink(n.sec, cur); return; }
+      var items = n.items.map(function (id) { return navLink(id, cur); }).join('');
+      if (items) h += '<div class="grp">' + esc(n.g) + '</div>' + items;
     });
-    if (r.company) {
-      var u = AQ.D.tariff;
-      h += '<a class="foot" href="#/company/tariff"><b>' + esc(u.plan) + '</b><div class="bar"><i style="width:' + (u.calcUsed / u.calcTotal * 100) + '%"></i></div>Расчётов осталось: ' + (u.calcTotal - u.calcUsed) + ' из ' + u.calcTotal + '<br>Оплачено до ' + esc(u.until) + ' · <span class="acc">Улучшить план</span></a>';
-    } else {
-      h += '<div class="foot" style="margin-top:auto"><b>Ваша роль: ' + esc(r.n) + '</b><br>Видны только ваши разделы. Права выдаёт владелец.</div>';
-    }
+    h += '</nav>';
+    h += '<a class="nav sfoot' + (cur.special === 'more' ? ' on' : '') + '" href="#/more" title="Кабинет и настройки">' + ico('user') + '<span>Кабинет и настройки</span></a>' + usage();
     $('#side').innerHTML = h;
   }
+  function applySide() { var c = store.get('aq_side') === '1'; document.body.classList.toggle('side-min', c); var b = document.querySelector('.sbtn'); if (b) b.setAttribute('aria-expanded', String(!c)); }
 
   /* ---------- верхняя панель ---------- */
   function renderTop() {
-    var r = role();
+    var r = role(), nn = AQ.D.notifs.filter(function (n) { return n.new; }).length;
     var opts = AQ.M.roles.map(function (x) { return '<option value="' + x.id + '"' + (x.id === r.id ? ' selected' : '') + '>' + esc(x.n) + '</option>'; }).join('');
     $('#top').innerHTML =
-      '<button class="pill ico menu-btn" data-act="menu" aria-label="Меню">' + ico('menu') + '</button>' +
+      '<a class="mlogo" href="#/home/today" aria-label="AIQurylys — Главная">AI<i>Qurylys</i></a>' +
       '<button class="pill back-btn" data-act="back" aria-label="Назад" title="Назад (Alt + ←)" hidden>←<span class="hide-m">&nbsp;Назад</span></button>' +
-      '<button class="search" data-act="palette">' + ico('search') + '<span>Спросить или найти</span><span class="kbd">Ctrl K</span></button>' +
+      '<button class="search" data-act="palette" aria-label="Поиск">' + ico('search') + '<span>Поиск</span><span class="kbd">Ctrl K</span></button>' +
       '<span class="sp"></span>' +
       '<label class="pill hide-m" title="Прототип показывает кабинет глазами разных ролей">Смотреть как&nbsp;<select id="roleSel" aria-label="Смотреть как">' + opts + '</select></label>' +
       '<span class="demo-toggle hide-m' + (AQ.state.demo ? ' on' : '') + '" data-act="demo" role="switch" aria-checked="' + AQ.state.demo + '" tabindex="0"><span class="sw"></span>Демо-данные</span>' +
-      '<button class="pill cr hide-m" data-act="create">' + ico('plus') + '<span>Создать</span></button>' +
-      '<button class="pill ico show-m" data-act="ask" aria-label="Помощник">✦</button>' +
-      '<button class="pill ico" data-act="bell" aria-label="Уведомления">' + ico('bell') + '<span class="dot"></span></button>' +
-      '<a class="pill hide-m" href="#/help">' + ico('help') + '<span>Помощь</span></a>' +
-      '<button class="ava" data-act="profile" aria-label="Профиль">' + esc(r.name.charAt(0)) + '</button>';
+      '<a class="pill hide-m" href="#/digital" title="Цифровой отдел: 11 ИИ-сотрудников">' + ico('hardhat') + '<span>Цифровой отдел</span></a>' +
+      '<a class="pill hide-m" href="#/help">' + ico('help') + '<span>Инструкция</span></a>' +
+      '<button class="pill ico" data-act="bell" aria-label="Уведомления">' + ico('bell') + (nn ? '<span class="cnt">' + nn + '</span>' : '') + '</button>' +
+      '<button class="umenu" data-act="profile" aria-label="Меню профиля"><span class="ava">' + esc(r.name.charAt(0)) + '</span><span class="un hide-m">' + esc(r.name) + '</span><span class="hide-m">' + ico('chev') + '</span></button>';
     var sel = $('#roleSel');
     if (sel) sel.addEventListener('change', function () { setRole(sel.value); });
   }
 
+  /* нижняя панель телефона: Главная · Проекты · Создать · Задачи · Ещё */
   function renderBnav() {
-    var vis = secs().filter(function (s) { return ['home', 'projects', 'tasks'].indexOf(s.id) !== -1 || true; }).slice(0, 3);
-    var h = '';
-    vis.forEach(function (s) { h += '<button data-go="' + s.id + '/' + tabsOf(s)[0].id + '" class="' + (route.sec === s.id && !route.special ? 'on' : '') + '">' + ico(s.ico) + s.t.split(' ')[0] + '</button>'; });
-    h += '<button data-act="create">' + ico('plus') + 'Создать</button><button data-act="menu">' + ico('menu') + 'Меню</button>';
-    $('#bnav').innerHTML = h;
+    var s = route.special, sec = route.sec;
+    var hm = !s && sec === 'home', pj = !s && sec === 'projects', tk = !s && sec === 'tasks', mo = !(hm || pj || tk);
+    $('#bnav').innerHTML =
+      '<button data-go="home/today" class="' + (hm ? 'on' : '') + '">' + ico('home') + '<span>Главная</span></button>' +
+      '<button data-go="projects/list" class="' + (pj ? 'on' : '') + '">' + ico('company') + '<span>Проекты</span></button>' +
+      '<button class="bcreate" data-act="create" aria-label="Создать"><i>' + ico('plus') + '</i><span>Создать</span></button>' +
+      '<button data-go="tasks/mine" class="' + (tk ? 'on' : '') + '">' + ico('check') + '<span>Задачи</span></button>' +
+      '<button data-go="more" class="' + (mo ? 'on' : '') + '">' + ico('more') + '<span>Ещё</span></button>';
   }
 
   /* ---------- общий каркас экрана ---------- */
@@ -189,6 +203,7 @@
     return '<div class="crumbs">' + (crumbs || '') + '</div><h1 class="ptitle">' + title + '</h1>' + (desc ? '<p class="pdesc">' + desc + '</p>' : '') + (tabsHtml || '');
   };
   AQ.tabBar = function (s, activeTab) {
+    if (tabsOf(s).length < 2) return '';
     return '<div class="tabs sc" role="tablist">' + tabsOf(s).map(function (t) { return '<a class="tab' + (t.id === activeTab ? ' on' : '') + '" role="tab" href="#/' + s.id + '/' + t.id + '">' + esc(t.t) + '</a>'; }).join('') + '</div>';
   };
   AQ.flow = function (t) {
@@ -202,7 +217,7 @@
     return '<div class="empty"><h2>' + esc(title) + '</h2><p>' + esc(text) + '</p><div class="btns" style="justify-content:center"><button class="btn pri" data-act="demo-on">Показать на демо-компании</button></div></div>';
   };
 
-  var DATA_SCREENS = ['projects', 'files', 'tasks', 'issued', 'est', 'check', 'offer', 'vol', 'vcmp', 'docsmade', 'chief', 'plan', 'master', 'norms', 'tech', 'fin', 'budget', 'sup', 'price', 'out', 'subs', 'contracts', 'review', 'letter', 'lchat', 'tender', 'passport', 'demand', 'concept', 'summary'];
+  var DATA_SCREENS = ['projects', 'files', 'tasks', 'issued', 'est', 'check', 'offer', 'vol', 'vcmp', 'docsmade', 'chief', 'plan', 'master', 'norms', 'tech', 'fin', 'budget', 'sup', 'price', 'out', 'subs', 'contracts', 'review', 'letter', 'lchat', 'tender', 'passport', 'demand', 'concept', 'summary', 'warehouse'];
   var EMPTY_TEXT = {
     projects: ['Проектов пока нет', 'Добавьте первый проект: адрес, стороны договора и папка документов. Или посмотрите, как всё выглядит на демо-компании.'],
     est: ['Расчётов пока нет', 'Загрузите чертежи проекта, и сметчик посчитает объёмы и себестоимость.'],
@@ -221,7 +236,7 @@
     } else if (route.special) {
       var fn = AQ.screens['_' + route.special];
       html = fn ? fn(route, ctx) : '';
-      title = ({ digital: 'Цифровой отдел', help: 'Помощь', bot: 'Telegram-бот и телефон', profile: 'Профиль и вход', notif: 'Уведомления', support: 'Поддержка' })[route.special] || 'Страница';
+      title = ({ digital: 'Цифровой отдел', more: 'Ещё', help: 'Инструкция', bot: 'Telegram-бот и телефон', profile: 'Профиль и вход', notif: 'Уведомления', support: 'Поддержка' })[route.special] || 'Страница';
     } else {
       var fn2 = AQ.screens[route.tObj.screen] || AQ.screens._generic;
       if (!AQ.state.demo && DATA_SCREENS.indexOf(route.tObj.screen) !== -1) {
@@ -233,6 +248,9 @@
       title = route.tObj.t + ' — ' + route.sObj.t;
     }
     view.innerHTML = html;
+    /* две строки вкладок подряд: если вторая уже содержит все пункты первой, первую убираем */
+    var bars = $$('#view .tabs.sc');
+    if (bars.length > 1) { var lab = function (b) { return $$('.tab', b).map(function (x) { return x.textContent.trim(); }); }, l1 = lab(bars[0]), l2 = lab(bars[1]); if (l1.length && l1.every(function (x) { return l2.indexOf(x) !== -1; })) bars[0].remove(); }
     $$('#view .tabs.sc').forEach(function (t) { var a = t.querySelector('.tab.on'); if (a) t.scrollLeft = Math.max(0, a.offsetLeft - 16); });
     AQ.tblLabels(view);
     if (!AQ.reduced) { view.classList.remove('vin'); void view.offsetWidth; view.classList.add('vin'); }
@@ -346,23 +364,22 @@
   function closePop() { var p = $('#pop'); if (p) p.remove(); }
   AQ.closePop = closePop;
 
-  function openProfile(anchor) {
-    var r = role(), P = AQ.M.profile;
-    var h = '<div style="padding:8px 12px 6px"><b>' + esc(r.name) + '</b><div class="mut" style="font-size:12px">' + esc(r.n) + ' · demo@aiqurylys.kz</div></div><hr>';
-    h += '<a class="it" href="#/profile">Профиль и вход<small>' + esc(P[0].d) + '</small></a>';
-    h += '<a class="it" href="#/notif">Уведомления<small>' + esc(P[1].d) + '</small></a>';
-    h += '<a class="it" href="#/support">Поддержка<small>' + esc(P[2].d) + '</small></a>';
-    h += '<a class="it" href="#/bot">Telegram-бот<small>' + esc(P[3].d) + '</small></a>';
-    h += '<button class="it" data-act="hints-toggle">Подсказки: ' + (AQ.hints && AQ.hints.on() ? 'включены → скрыть' : 'скрыты → включить') + '<small>Короткие пояснения к разделам и «что дальше» на главной</small></button>';
-    h += '<button class="it" data-act="theme">Тема: ' + (document.documentElement.getAttribute('data-theme') === 'light' ? 'светлая → тёмная' : 'тёмная → светлая') + '<small>' + esc(P[4].d) + '</small></button>';
-    h += '<button class="it" data-toast="Язык интерфейса: русский. Қазақша — скоро">Язык<small>' + esc(P[5].d) + '</small></button><hr>';
+﻿  function openProfile(anchor) {
+    var r = role();
+    var h = '<div class="pmh"><span class="ava">' + esc(r.name.charAt(0)) + '</span><div><b>' + esc(r.name) + '</b><small>' + esc(r.n) + ' · demo@aiqurylys.kz</small></div></div><hr>';
+    h += '<a class="it" href="#/profile">Профиль и вход<small>Имя, почта, пароль, язык и тема</small></a>';
+    h += '<a class="it" href="#/tasks/mine">Мои задачи<small>Поручения, сроки и отметки о сдаче</small></a>';
+    h += '<a class="it" href="#/notif">Уведомления<small>О чём сообщать на сайте</small></a>';
+    h += '<a class="it" href="#/support">Мои обращения<small>Вопросы в поддержку и ответы на них</small></a>';
+    h += '<a class="it" href="#/bot">Telegram-бот<small>Задачи и отчёты с телефона</small></a>';
+    h += '<a class="it" href="#/more">Кабинет и настройки<small>Разделы, доступ по должностям, тариф</small></a><hr>';
+    h += '<button class="it" data-act="hints-toggle">Подсказки: ' + (AQ.hints && AQ.hints.on() ? 'включены → скрыть' : 'скрыты → включить') + '<small>Короткие пояснения к разделам</small></button>';
+    h += '<button class="it" data-act="theme">Тема: ' + (document.documentElement.getAttribute('data-theme') === 'light' ? 'День → Ночь' : 'Ночь → День') + '<small>Тёмная или светлая</small></button>';
+    h += '<button class="it" data-toast="Язык интерфейса: русский. Қазақша — скоро">Язык: Рус · Қаз<small>Русский · Қазақша (в рабочей версии)</small></button><hr>';
     h += '<button class="it" data-act="logout">Выйти<small>В прототипе вход не нужен: вернёт на первый экран</small></button>';
-    if (window.innerWidth <= 860) {
-      h += '<hr><div class="it">Смотреть как<br><select id="roleSel2" style="width:100%;margin-top:6px">' + AQ.M.roles.map(function (x) { return '<option value="' + x.id + '"' + (x.id === r.id ? ' selected' : '') + '>' + esc(x.n) + '</option>'; }).join('') + '</select></div><button class="it" data-act="demo">Демо-данные: ' + (AQ.state.demo ? 'включены' : 'выключены') + '<small>Нажмите, чтобы переключить</small></button>';
-    }
     popover(anchor, h);
-    var rs = $('#roleSel2'); if (rs) rs.addEventListener('change', function () { closePop(); setRole(rs.value); });
   }
+
   function openBell(anchor) {
     var h = '<div style="padding:8px 12px"><b>Уведомления</b></div>' + AQ.D.notifs.filter(function (n) { return AQ.canRoute(n.go); }).map(function (n) { return '<a class="it" href="#/' + n.go + '">' + (n.new ? '<span class="tag t-bad">новое</span> ' : '') + esc(n.t) + '<small>' + esc(n.time) + '</small></a>'; }).join('') + '<hr><a class="it" href="#/notif">Все уведомления и настройки</a>';
     popover(anchor, h);
@@ -422,6 +439,7 @@
         case 'close-bg': if (e.target === t) closeLayer(); break;
         case 'menu': $('#side').classList.toggle('open'); break;
         case 'back': AQ.back(); break;
+        case 'side-collapse': store.set('aq_side', store.get('aq_side') === '1' ? '0' : '1'); applySide(); break;
         case 'create': openCreate(); break;
         case 'palette': openPalette(); break;
         case 'ask': openAsk(); break;
@@ -460,7 +478,7 @@
       AQ.state.role = rid;
       var dm = q.get('demo'); AQ.state.demo = dm != null ? dm !== '0' : store.get('aq02_demo') !== '0';
       var th = q.get('theme') || store.get('aq02_theme'); if (th === 'light' || th === 'dark') setTheme(th);
-      renderTop();
+      renderTop(); applySide();
       document.addEventListener('click', onClick);
       document.addEventListener('keydown', onKey);
       window.addEventListener('hashchange', render);

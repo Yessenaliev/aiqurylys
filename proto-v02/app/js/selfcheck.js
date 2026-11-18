@@ -3,7 +3,7 @@
 (function () {
   'use strict';
   var AQ = window.AQ;
-  var EXTRA = ['digital', 'help', 'help/glossary', 'help/faq', 'bot', 'profile', 'notif', 'support', 'projects/list/p/bi', 'projects/list/p/ceh/gantt', 'projects/list/p/ceh/site', 'projects/list/p/ceh/volumes', 'projects/list/p/ceh/docs', 'projects/list/p/ceh/files', 'projects/list/p/ceh/money', 'projects/list/p/ceh/stock', 'projects/list/p/ceh/equipment', 'projects/list/p/ceh/people', 'calc/est/new', 'calc/est/new/2', 'calc/est/new/3', 'calc/est/new/4', 'calc/est/result', 'site/tech/map', 'site/tech/to', 'site/tech/fuel', 'site/tech/money', 'money/fin/bdds', 'sales/tender/t2', 'sales/tender/t3', 'company/tariff/up', 'docs/new/f/aosr', 'docs/new/f/batch', 'docs/new/f/accept', 'docs/new/f/defect', 'docs/new/f/downtime', 'docs/new/f/2v', 'docs/new/f/r1', 'docs/new/f/avr', 'docs/new/f/input', 'support/16', 'notif/history', 'company/team/sections', 'company/team/access', 'help/guide', 'calc/svod', 'docs/new/stages', 'docs/new/area', 'docs/new/complete', 'money/fin/bdr', 'money/fin/bdds', 'money/fin/all', 'money/fin/c1', 'money/fin/receipts', 'site/chief/schedule', 'site/chief/stock', 'site/chief/tech', 'site/chief/subs', 'site/master/norms', 'site/master/stock', 'site/master/tech', 'site/tech/reg', 'site/tech/remind', 'money/sup/suppliers', 'sales/tender/check', 'sales/concept/plot', 'sales/concept/saved', 'sales/concept/3d', 'tasks/mine/team', 'projects/list/timeline', 'help/articles', 'help/checklists', 'help/courses', 'legal/contracts/c14', 'legal/contracts/c3'];
+  var EXTRA = ['more', 'warehouse/stock', 'summary/summary', 'storage/files', 'digital', 'help', 'help/glossary', 'help/faq', 'bot', 'profile', 'notif', 'support', 'projects/list/p/bi', 'projects/list/p/ceh/gantt', 'projects/list/p/ceh/site', 'projects/list/p/ceh/volumes', 'projects/list/p/ceh/docs', 'projects/list/p/ceh/files', 'projects/list/p/ceh/money', 'projects/list/p/ceh/stock', 'projects/list/p/ceh/equipment', 'projects/list/p/ceh/people', 'calc/est/new', 'calc/est/new/2', 'calc/est/new/3', 'calc/est/new/4', 'calc/est/result', 'site/tech/map', 'site/tech/to', 'site/tech/fuel', 'site/tech/money', 'money/fin/bdds', 'sales/tender/t2', 'sales/tender/t3', 'company/tariff/up', 'docs/new/f/aosr', 'docs/new/f/batch', 'docs/new/f/accept', 'docs/new/f/defect', 'docs/new/f/downtime', 'docs/new/f/2v', 'docs/new/f/r1', 'docs/new/f/avr', 'docs/new/f/input', 'support/16', 'notif/history', 'company/team/sections', 'company/team/access', 'help/guide', 'calc/svod', 'docs/new/stages', 'docs/new/area', 'docs/new/complete', 'money/fin/bdr', 'money/fin/bdds', 'money/fin/all', 'money/fin/c1', 'money/fin/receipts', 'site/chief/schedule', 'site/chief/stock', 'site/chief/tech', 'site/chief/subs', 'site/master/norms', 'site/master/stock', 'site/master/tech', 'site/tech/reg', 'site/tech/remind', 'money/sup/suppliers', 'sales/tender/check', 'sales/concept/plot', 'sales/concept/saved', 'sales/concept/3d', 'tasks/mine/team', 'projects/list/timeline', 'help/articles', 'help/checklists', 'help/courses', 'legal/contracts/c14', 'legal/contracts/c3'];
 
   AQ.selfcheck = function () {
     var out = { roles: 0, screens: 0, controls: 0, problems: [] }, saveRole = AQ.state.role, saveDemo = AQ.state.demo, saveH = AQ._h;
@@ -14,7 +14,7 @@
         AQ.state.role = role.id; out.roles++;
         var list = [];
         AQ.secs().forEach(function (s) { AQ.tabsOf(s).forEach(function (t) { list.push(s.id + '/' + t.id); }); });
-        EXTRA.forEach(function (x) { if (AQ.canRoute(x.split('/').slice(0, 2).join('/')) || /^(digital|help|bot|profile|notif|support)/.test(x)) list.push(x); });
+        EXTRA.forEach(function (x) { if (AQ.canRoute(x.split('/').slice(0, 2).join('/')) || /^(digital|help|bot|profile|notif|support|more)/.test(x)) list.push(x); });
         list.forEach(function (rt) {
           var tag = (demo ? '' : '[пусто] ') + role.n + ' · ' + rt;
           AQ._h = '#/' + rt;
@@ -32,7 +32,7 @@
               if (/^#\//.test(h)) {
                 ok = true;
                 var p = h.slice(2).split('/');
-                if (!AQ.canRoute(p[0] + '/' + (p[1] || '')) && !/^(digital|help|bot|profile|notif|support)$/.test(p[0])) note(tag + ': ссылка «' + label + '» ведёт на закрытый экран ' + h);
+                if (!AQ.canRoute(p[0] + '/' + (p[1] || '')) && !/^(digital|help|bot|profile|notif|support|more)$/.test(p[0])) note(tag + ': ссылка «' + label + '» ведёт на закрытый экран ' + h);
               } else if (el.hasAttribute('data-act') || el.hasAttribute('data-toast') || el.hasAttribute('data-doc')) ok = true;
             } else {
               ok = ['data-act', 'data-toast', 'data-ext', 'data-go', 'data-role', 'data-q', 'data-doc'].some(function (a) { return el.hasAttribute(a); }) || el.type === 'submit' || el.tagName === 'SELECT';

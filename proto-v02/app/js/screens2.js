@@ -163,7 +163,7 @@
   /* ---------- Специальные страницы ---------- */
   S._help = function (rt) {
     var D = AQ.D, cur = rt.sub[0] || 'guide';
-    var h = AQ.head('Помощь', 'Один вход вместо трёх: путеводитель, словарь и ответы на вопросы.', '<a href="#/home/today">Главная</a> / Помощь', '<div class="tabs sc">' + [['guide', 'Путеводитель'], ['glossary', 'Словарь'], ['faq', 'Вопросы']].map(function (t) { return '<a class="tab' + (t[0] === cur ? ' on' : '') + '" href="#/help/' + t[0] + '">' + t[1] + '</a>'; }).join('') + '</div>');
+    var h = AQ.head('Помощь', 'Один вход вместо трёх: путеводитель, словарь и ответы на вопросы.', '<a href="#/home/today">Главная</a> / Помощь', '<div class="tabs sc">' + [['guide', 'Пошаговая инструкция'], ['glossary', 'Словарь'], ['faq', 'Вопросы']].map(function (t) { return '<a class="tab' + (t[0] === cur ? ' on' : '') + '" href="#/help/' + t[0] + '">' + t[1] + '</a>'; }).join('') + '</div>');
     if (cur === 'guide') {
       var done = D.guide.filter(function (g) { return g.done; }).length;
       h += '<div class="tile guide" style="margin-bottom:14px"><b>' + done + ' из ' + D.guide.length + ' шагов</b><div class="bar"><i style="width:' + done / D.guide.length * 100 + '%"></i></div></div><div class="steps">' + D.guide.map(function (g, i) { return '<a class="step' + (g.done ? ' done' : '') + '" href="#/' + (g.go === 'bot' ? 'bot' : (AQ.canRoute(g.go) ? g.go : 'help')) + '"><span class="n">' + (g.done ? '✓' : i + 1) + '</span><div><b>' + esc(g.t) + '</b><small>' + esc(g.d) + '</small></div><span class="mut">→</span></a>'; }).join('') + '</div>';

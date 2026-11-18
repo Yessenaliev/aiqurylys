@@ -218,11 +218,11 @@
   AQ.acts['drive-on'] = () => { AQ.ui.drive = true; AQ.render(); AQ.toast('Папка подключена: найдено 137 файлов в 3 проектах'); };
   AQ.acts['drive-off'] = () => { AQ.ui.drive = false; AQ.render(); AQ.toast('Диск отключён'); };
 
-  /* ---------- Помощь: Путеводитель · Статьи · Словарь · Чеклисты · Курсы ---------- */
+  /* ---------- Помощь: Пошаговая инструкция · Статьи · Словарь · Чеклисты · Курсы ---------- */
   AQ.screens._help = function (rt) {
     const D = AQ.D, cur = rt.sub[0] || 'guide', f = D.faq;
-    const items = [['guide', 'Путеводитель'], ['articles', 'Статьи'], ['glossary', 'Словарь'], ['checklists', 'Чеклисты'], ['courses', 'Курсы']];
-    let h = AQ.head('FAQ', 'Выберите, что хотите сделать: путеводитель покажет, что подготовить, и проверит готовность.', '<a href="#/home/today">Главная</a> / FAQ', '<div class="tabs sc">' + items.map((t) => `<a class="tab${t[0] === cur ? ' on' : ''}" href="#/help/${t[0]}">${t[1]}</a>`).join('') + '</div>');
+    const items = [['guide', 'Пошаговая инструкция'], ['articles', 'Статьи'], ['glossary', 'Словарь'], ['checklists', 'Чеклисты'], ['courses', 'Курсы']];
+    let h = AQ.head('Инструкция', 'Выберите, что хотите сделать: путеводитель покажет, что подготовить, и проверит готовность.', '<a href="#/home/today">Главная</a> / Инструкция', '<div class="tabs sc">' + items.map((t) => `<a class="tab${t[0] === cur ? ' on' : ''}" href="#/help/${t[0]}">${t[1]}</a>`).join('') + '</div>');
     if (cur === 'guide') { const done = D.guide.filter((g) => g.done).length; h += `<div class="tile guide" style="margin-bottom:14px"><b>${done} из ${D.guide.length} шагов</b><div class="bar"><i style="width:${done / D.guide.length * 100}%"></i></div></div><div class="steps">${D.guide.map((g, i) => `<a class="step${g.done ? ' done' : ''}" href="#/${g.go === 'bot' ? 'bot' : (AQ.canRoute(g.go) ? g.go : 'help')}"><span class="n">${g.done ? '✓' : i + 1}</span><div><b>${esc(g.t)}</b><small>${esc(g.d)}</small></div><span class="mut">→</span></a>`).join('')}</div>`; }
     else if (cur === 'articles') h += `<div class="tile">${f.articles.map((a) => `<div class="row"><div><b>${esc(a[0])}</b><small>${esc(a[1])}</small></div><span class="tag t-mute">${esc(a[2])}</span><button class="btn sm" data-toast="Статья открыта: «${esc(a[0])}»">Читать</button></div>`).join('')}</div>`;
     else if (cur === 'glossary') h += tbl(['Термин', 'Что это'], D.glossary);

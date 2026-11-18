@@ -4,8 +4,9 @@
   var AQ = window.AQ, S = AQ.screens, esc = AQ.esc, fmt = AQ.fmt;
 
   function tabHead(rt, extra) {
-    var t = rt.tObj;
-    return AQ.head(esc(t.t), esc(t.d || ''), AQ.crumbs(), AQ.tabBar(rt.sObj, rt.tab)) + (AQ.helpRow ? AQ.helpRow(rt) : '') + (t.give ? AQ.flow(t) : '') + (extra || '');
+    var t = rt.tObj, s = rt.sObj;
+    /* заголовок страницы, как на оригинале, — название раздела; у «Задач» и кабинета компании — название вкладки */
+    return AQ.head(esc(s && !s.nonav ? s.t : t.t), esc(t.d || (s && s.sd) || ''), AQ.crumbs(), AQ.tabBar(rt.sObj, rt.tab)) + (AQ.helpRow ? AQ.helpRow(rt) : '') + (t.give ? AQ.flow(t) : '') + (extra || '');
   }
   AQ.tabHead = tabHead;
   function tbl(cols, rows, opts) {
@@ -74,7 +75,7 @@
     h += '<div class="tile s6"><div class="lbl"><span>Быстрые действия</span></div><div class="quick">' + q.map(function (x) { return '<a href="#/' + x[2] + '">' + esc(x[0]) + '<small>' + esc(x[1]) + '</small></a>'; }).join('') + '</div></div>';
     // путеводитель
     var done = D.guide.filter(function (g) { return g.done; }).length, next = D.guide.filter(function (g) { return !g.done; })[0];
-    h += '<div class="tile s6 guide"><div class="lbl"><span>Путеводитель</span><a class="acc" href="#/help">Все шаги →</a></div><b>' + done + ' из ' + D.guide.length + ' шагов</b><div class="bar"><i style="width:' + done / D.guide.length * 100 + '%"></i></div><a class="row" href="#/' + (AQ.canRoute(next.go) ? next.go : 'help') + '"><div><b>Дальше: ' + esc(next.t) + '</b><small>' + esc(next.d) + '</small></div><span class="mut">→</span></a></div>';
+    h += '<div class="tile s6 guide"><div class="lbl"><span>Пошаговая инструкция</span><a class="acc" href="#/help">Все шаги →</a></div><b>' + done + ' из ' + D.guide.length + ' шагов</b><div class="bar"><i style="width:' + done / D.guide.length * 100 + '%"></i></div><a class="row" href="#/' + (AQ.canRoute(next.go) ? next.go : 'help') + '"><div><b>Дальше: ' + esc(next.t) + '</b><small>' + esc(next.d) + '</small></div><span class="mut">→</span></a></div>';
     // задачи
     if (!owner) {
       h += '<div class="tile s6"><div class="lbl"><span>Мои задачи</span><a class="acc" href="#/tasks/mine">Все →</a></div>' + D.tasks.slice(0, 3).map(function (t) { return '<a class="row" href="#/tasks/mine"><div><b>' + esc(t.t) + '</b><small>' + esc(t.who) + ' · ' + esc(t.due) + '</small></div><span class="tag t-blue">' + esc(t.status) + '</span></a>'; }).join('') + '</div>';
@@ -82,7 +83,7 @@
     h += '</div>';
     if (!AQ.state.demo) {
       h = AQ.head(AQ.greet() + ', ' + esc(first), 'Кабинет пока пустой: как у нового клиента. Начните с первого шага или посмотрите всё на демо-компании.', '<span>Главная · Сегодня</span>', tb) +
-        '<div class="tile guide"><div class="lbl"><span>Путеводитель</span></div><b>0 из 10 шагов</b><div class="bar"><i style="width:0"></i></div><div class="btns"><a class="btn pri" href="#/projects/list">Заведите первый проект</a><button class="btn" data-act="demo-on">Показать на демо-компании</button></div></div>';
+        '<div class="tile guide"><div class="lbl"><span>Пошаговая инструкция</span></div><b>0 из 10 шагов</b><div class="bar"><i style="width:0"></i></div><div class="btns"><a class="btn pri" href="#/projects/list">Заведите первый проект</a><button class="btn" data-act="demo-on">Показать на демо-компании</button></div></div>';
     }
     ctx.after = function () {
       AQ.$$('[data-cnt]').forEach(function (el) { countUp(el, +el.getAttribute('data-cnt'), +el.getAttribute('data-dec'), 1400); });
