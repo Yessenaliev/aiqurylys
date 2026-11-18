@@ -179,3 +179,5 @@ a.usage:hover { border-color:var(--acc); }
 .stp2 { display:flex; gap:6px; align-items:center; } .stp2 input { width:84px; text-align:center; }
 .stagebar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:0 0 12px; padding:10px 14px; border:1px solid var(--panelb); border-radius:12px; background:var(--panel); } .stagebar b { font-size:15px; } .stagebar .btn:last-child { margin-left:auto; }
 .bad-in { border-color:var(--bad) !important; }
+
+.kpis4 { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:12px; } .kpis4 > div { border:1px solid var(--panelb); border-radius:12px; padding:12px 14px; background:var(--panel); display:grid; gap:3px; } .kpis4 span { color:var(--mute); font-size:12px; } .kpis4 b { font-size:22px; } .kpis4 small { font-size:12px; }
