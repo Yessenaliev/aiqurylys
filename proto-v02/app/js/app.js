@@ -51,6 +51,7 @@
     panel: 'M4 5h16v14H4zM9 5v14',
     chev: 'M6 9l6 6 6-6',
     user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0',
+    lock: 'M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5zM12 15v2',
     house: 'M3.5 11.5L12 4l8.5 7.5M6 10v10h12V10M10 20v-5h4v5',
     truck: 'M2.5 7h11v9h-11zM13.5 10h4l3 3v3h-7M7 18.5h.01M17 18.5h.01'
   };
@@ -131,6 +132,9 @@
 
 ﻿  /* ---------- левая панель: порядок и названия как на ai-qurylys.kz ---------- */
   var plural = AQ.plural = function (n, a, b, c) { var m = n % 10, k = n % 100; return n + ' ' + (m === 1 && k !== 11 ? a : (m >= 2 && m <= 4 && (k < 10 || k >= 20) ? b : c)); };
+  /* «Проба использована»: Тендеры и закупки и Себестоимость закрыты до подключения тарифа */
+  AQ.locked = function (sec) { return !AQ.state.demo && !!AQ.state.trial && (sec === 'sales' || sec === 'calc'); };
+  AQ.lockedHtml = function (route) { var nm = route.sec === 'calc' ? 'Расчёт себестоимости' : (route.sObj ? route.sObj.t : ''); return '<div class="empty lock"><h2>Раздел «' + esc(nm) + '» закрыт</h2><p>Проба раздела «' + esc(nm) + '» использована. Чтобы работать дальше, подключите тариф.</p><div class="btns" style="justify-content:center"><a class="btn pri" href="#/company/tariff/up">Улучшить план</a><a class="btn" href="#/home/today">На главную</a></div></div>'; };
   AQ.hiddenFor = function (s) { return !!(s.hideFor && s.hideFor.indexOf(role().id) !== -1); };
   function secById(id) { return AQ.M.sections.filter(function (s) { return s.id === id; })[0]; }
   var navLink = AQ.navLink = function (id, cur) {
@@ -139,15 +143,16 @@
     if (!s || (s.owner && !role().company) || AQ.hiddenFor(s)) return '';
     var ts = tabsOf(s);
     if (!ts.length) return '';
-    return '<a class="nav' + (cur.sec === id && !cur.special ? ' on' : '') + '" href="#/' + id + '/' + ts[0].id + '" title="' + esc(s.t) + '">' + ico(s.ico) + '<span>' + esc(s.t) + '</span></a>';
+    var lk = AQ.locked(id);
+    return '<a class="nav' + (cur.sec === id && !cur.special ? ' on' : '') + (lk ? ' locked' : '') + '" href="#/' + id + '/' + ts[0].id + '" title="' + esc(s.t) + '">' + ico(s.ico) + '<span>' + esc(s.t) + '</span>' + (lk ? '<i class="lk">' + ico('lock') + '</i>' : '') + '</a>';
   };
   /* блок «Осталось расчётов» внизу панели */
   var usage = AQ.usage = function () {
     var r = role(), u = AQ.D.tariff, demo = AQ.state.demo;
     if (!r.company) return '<div class="usage plain"><b>Ваша роль: ' + esc(r.n) + '</b><span>Видны только ваши разделы. Права выдаёт владелец.</span></div>';
-    var left = demo ? u.calcTotal - u.calcUsed : 1, total = demo ? u.calcTotal : 1, pct = demo ? Math.round(u.calcUsed / u.calcTotal * 100) : 0;
+    var used = !demo && !!AQ.state.trial, left = demo ? u.calcTotal - u.calcUsed : (used ? 0 : 1), total = demo ? u.calcTotal : 1, pct = demo ? Math.round(u.calcUsed / u.calcTotal * 100) : (used ? 85 : 0);
     return '<a class="usage" href="#/company/tariff"><div class="u1"><span>Осталось расчётов</span><b class="' + (left === 0 ? 'bad' : '') + '">' + left + ' из ' + total + '</b></div><div class="bar"><i style="width:' + pct + '%"></i></div>' +
-      (demo ? '<div class="u2">' + esc(u.plan) + '<br>Оплачено до ' + esc(u.until) + ' · <span class="acc">Улучшить план</span></div>' : '<div class="u2"><b>Пробный доступ ' + pct + ' %</b><br>Пробный расчёт ещё не использован. <span class="acc">Выбрать пакет расчётов</span></div>') + '</a>';
+      (demo ? '<div class="u2">' + esc(u.plan) + '<br>Оплачено до ' + esc(u.until) + ' · <span class="acc">Улучшить план</span></div>' : (used ? '<div class="u2"><b>Пробный доступ ' + pct + ' %</b><br>Пробный доступ почти израсходован.<br>Расчёты в пакете закончились. Чтобы считать дальше, подключите тариф. <span class="acc">Улучшить план</span></div>' : '<div class="u2"><b>Пробный доступ ' + pct + ' %</b><br>Пробный расчёт ещё не использован. <span class="acc">Выбрать пакет расчётов</span></div>')) + '</a>';
   };
   function renderSide() {
     var r = role(), cur = route, demo = AQ.state.demo, h = '';
@@ -203,7 +208,7 @@
     return '<div class="crumbs">' + (crumbs || '') + '</div><h1 class="ptitle">' + title + '</h1>' + (desc ? '<p class="pdesc">' + desc + '</p>' : '') + (tabsHtml || '');
   };
   AQ.tabBar = function (s, activeTab) {
-    if (tabsOf(s).length < 2) return '';
+    if (tabsOf(s).length < 2) return '<div class="tabs sc" style="display:none"></div>';
     return '<div class="tabs sc" role="tablist">' + tabsOf(s).map(function (t) { return '<a class="tab' + (t.id === activeTab ? ' on' : '') + '" role="tab" href="#/' + s.id + '/' + t.id + '">' + esc(t.t) + '</a>'; }).join('') + '</div>';
   };
   AQ.flow = function (t) {
@@ -241,12 +246,13 @@
       var fn2 = AQ.screens[route.tObj.screen] || AQ.screens._generic;
       if (!AQ.state.demo && DATA_SCREENS.indexOf(route.tObj.screen) !== -1) {
         var et = EMPTY_TEXT[route.tObj.screen] || ['Здесь пока пусто', 'Данные появятся, когда вы загрузите свои файлы. Или включите демо-компанию, чтобы увидеть экран заполненным.'];
-        html = AQ.head(esc(route.tObj.t), esc(route.tObj.d || ''), crumbs(), AQ.tabBar(route.sObj, route.tab)) + AQ.flow(route.tObj) + AQ.empty(et[0], et[1]) + AQ.wasBlock(route.tObj);
+        html = AQ.tabHead(route) + AQ.empty(et[0], et[1]) + AQ.wasBlock(route.tObj);
       } else {
         html = fn2(route, ctx);
       }
       title = route.tObj.t + ' — ' + route.sObj.t;
     }
+    if (!route.denied && !route.special && AQ.locked(route.sec)) { html = AQ.lockedHtml(route); ctx.after = null; }
     view.innerHTML = html;
     /* две строки вкладок подряд: если вторая уже содержит все пункты первой, первую убираем */
     var bars = $$('#view .tabs.sc');
@@ -477,6 +483,7 @@
       if (!AQ.M.roles.some(function (r) { return r.id === rid; })) rid = 'owner';
       AQ.state.role = rid;
       var dm = q.get('demo'); AQ.state.demo = dm != null ? dm !== '0' : store.get('aq02_demo') !== '0';
+      var tr = q.get('trial'); AQ.state.trial = tr != null ? tr === 'used' : store.get('aq02_trial') === '1'; if (tr != null) store.set('aq02_trial', tr === 'used' ? '1' : '0');
       var th = q.get('theme') || store.get('aq02_theme'); if (th === 'light' || th === 'dark') setTheme(th);
       renderTop(); applySide();
       document.addEventListener('click', onClick);

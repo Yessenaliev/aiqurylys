@@ -61,7 +61,7 @@
     if (!AQ.ui.wiz || AQ.ui.wiz.id !== id) AQ.ui.wiz = { id, step: 0, vals: {}, all: false };
     const W = AQ.ui.wiz, n = F.steps.length, last = W.step === n - 1;
     const stepHtml = (s, i) => `<div class="tile" style="margin-bottom:14px"><div class="lbl"><span>Шаг ${i + 1} из ${n}</span></div><h2 style="font-size:19px">${esc(s.t)}</h2>${s.note ? `<p class="mut" style="margin:4px 0 12px">${esc(s.note)}</p>` : ''}<div class="fgrid">${s.f.map((f) => field(f, W.vals)).join('')}</div></div>`;
-    let h = AQ.head(esc(F.title), 'Отвечайте по шагам: реквизиты и данные проекта подставятся сами.', AQ.crumbs() + ' / <a href="#/docs/new/stages">По этапам</a>', '') +
+    let h = AQ.head(esc(F.title), 'Отвечайте по шагам: реквизиты и данные проекта подставятся сами.', AQ.crumbs() + ' / <a href="#/docs/new/stages">Этапы строительства</a>', '') +
       `<div class="wiz">${F.steps.map((s, i) => `<span class="${i === W.step ? 'on' : (i < W.step ? 'done' : '')}"><b>${i < W.step ? '✓' : i + 1}</b>${esc(s.t.length > 26 ? s.t.slice(0, 24) + '…' : s.t)}</span>`).join('')}</div><div id="wizbody">`;
     h += W.all ? F.steps.map(stepHtml).join('') : stepHtml(F.steps[W.step], W.step);
     h += '</div><div class="btns">';

@@ -20,7 +20,7 @@
 
   S.home = function (rt, ctx) {
     const D = AQ.D, demo = AQ.state.demo, role = AQ.role();
-    const calcs = demo ? D.estCalcs : [];
+    const used = !demo && !!AQ.state.trial, calcs = demo ? D.estCalcs : (used ? [D.estCalcs[0]] : []);
     const steps = stepsFor(role, calcs), N = steps.length, k = steps.filter((s) => s.done).length;
     const curI = steps.findIndex((s) => !s.done), cur = steps[curI];
     const first = (role.name || '').split(' ')[0];
@@ -29,7 +29,9 @@
 
     /* карточка текущего шага */
     if (N) {
-      h += cur
+      h += used && curI === 1
+        ? `<section class="card hstep warn rv" style="--d:0"><span class="eyebrow acc">Шаг 2 из ${N}</span><h2>Пробный расчёт использован</h2><p>Чтобы рассчитать следующие разделы, выберите пакет расчётов.</p><a class="btn big dark" href="#/company/tariff/up">Выбрать пакет расчётов</a><a class="lnk" href="#/calc/est">Готовые расчёты</a></section>`
+        : cur
         ? `<section class="card hstep rv" style="--d:0"><span class="eyebrow acc">Шаг ${curI + 1} из ${N}</span><h2>${esc(cur.t)}</h2><p>${esc(cur.d)}</p><a class="btn pri big" href="#/${cur.go}">${esc(cur.btn)}</a>${AQ.canRoute('calc/est') ? '<a class="lnk" href="#/calc/est">Готовые расчёты</a>' : ''}</section>`
         : `<section class="card hstep ok rv" style="--d:0"><span class="eyebrow ok">Всё готово</span><h2>Основные шаги пройдены</h2><p>Дальше можно оформить акты, проверить КП подрядчика или посмотреть деньги проекта. Цифровой отдел подскажет, с чего начать.</p><a class="btn pri big" href="#/digital">Открыть цифровой отдел</a></section>`;
 

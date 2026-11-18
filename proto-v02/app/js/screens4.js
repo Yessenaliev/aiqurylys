@@ -29,9 +29,9 @@
   };
   const money = (n) => fmt(n) + ' ₸';
 
-  /* ---------- Документы: Сейчас · По этапам · Схема площадей · Комплектность ---------- */
+  /* ---------- Документы: Сейчас · Этапы строительства · Схема площадей · Комплектность ---------- */
   S.docsnew = function (rt, ctx) {
-    const cur = rt.sub[0] || 'now', items = [['now', 'Сейчас'], ['stages', 'По этапам'], ['area', 'Схема площадей'], ['complete', 'Комплектность']], d = D3();
+    const cur = rt.sub[0] || 'now', items = [['now', 'Сейчас'], ['stages', 'Этапы строительства'], ['made', 'Сделанные', 'docs/made'], ['area', 'Схема площадей'], ['complete', 'Комплектность']], d = D3();
     let h = head(rt) + stabs('docs/new', items, cur);
     if (cur === 'now') {
       h += `<div class="bento"><div class="tile s7"><div class="lbl"><span>Что оформить сейчас</span><span class="tag t-warn">${d.docsNow.ready.length}</span></div><p class="mut" style="margin-bottom:8px">Сданные работы без акта и документы по событиям на площадке. Осталось проверить.</p>${d.docsNow.ready.map((r) => `<div class="row"><div><b>${esc(r[0])}</b><small>${esc(r[1])}</small></div><button class="btn sm pri" data-doc="${r[2]}">Оформить</button></div>`).join('')}</div>
@@ -51,7 +51,7 @@
   /* ---------- Финансист: По проекту · БДР · БДДС · По всем проектам · Отчёты 1С · Приход материалов ---------- */
   S.fin = function (rt) {
     const cur = rt.sub[0] || 'project', d = D3(), F = d.finance;
-    const items = [['project', 'По проекту'], ['bdr', 'БДР'], ['bdds', 'БДДС'], ['all', 'По всем проектам'], ['c1', 'Отчёты 1С'], ['receipts', 'Приход материалов']];
+    const items = [['project', 'По проекту'], ['budget', 'Бюджет', 'money/budget'], ['bdr', 'БДР'], ['bdds', 'БДДС'], ['all', 'По всем проектам'], ['c1', 'Отчёты 1С'], ['receipts', 'Приход материалов']];
     let h = head(rt) + stabs('money/fin', items, cur);
     const chart = (c) => { const plan = c === 'bdr' ? F.bdrPlan : F.cashPlan, fact = c === 'bdr' ? F.bdrFact : F.cashFact, mx = Math.max.apply(null, plan.concat(fact)) * 1.1; return `<div class="chart">${F.months.map((m, i) => `<div class="col"><i style="height:${plan[i] / mx * 100}%"></i><i class="${i < 5 ? 'f' : ''}" style="height:${fact[i] / mx * 100}%"></i><span>${m}</span></div>`).join('')}</div><div class="legend"><span><i style="background:var(--panelb)"></i>план</span><span><i style="background:var(--blue)"></i>факт</span></div>`; };
     if (cur === 'project') {
@@ -99,7 +99,7 @@
 
   /* ---------- Прораб/Мастер: Мои работы · Материалы и нормы · Склад · Техника ---------- */
   S.master = function (rt, ctx) {
-    const cur = rt.sub[0] || 'works', items = [['works', 'Мои работы'], ['norms', 'Материалы и нормы'], ['stock', 'Склад'], ['tech', 'Техника']];
+    const cur = rt.sub[0] || 'works', items = [['works', 'Мои работы'], ['norms', 'Материалы и нормы'], ['tech', 'Техника']];
     let h = head(rt) + stabs('site/master', items, cur);
     if (cur === 'works') h += bodyOf(old.master(fake(rt, []), ctx)) + `<div class="bento" style="margin-top:14px"><div class="tile s6"><div class="lbl"><span>Отчёт за сегодня</span></div><p class="mut">Люди, техника, фото и чего не хватает — уходит начальнику участка.</p><div class="btns"><button class="btn pri" data-toast="Отчёт за сегодня отправлен начальнику участка: 5 человек, 2 машины, 3 фото, не хватает 4 м³ раствора">Заполнить отчёт</button></div></div></div>`;
     else if (cur === 'norms') h += bodyOf(old.norms(fake(rt, []), ctx));
@@ -163,14 +163,14 @@
 
   /* ---------- Архитектор: Концепт · Генплан участка · Концепты · 3D-модель ---------- */
   S.concept = function (rt, ctx) {
-    const cur = rt.sub[0] || 'concept', d = D3(), items = [['concept', 'Новый концепт'], ['plot', 'Генплан участка'], ['saved', 'Концепты'], ['3d', '3D-модель']];
+    const cur = rt.sub[0] || 'concept', d = D3(), items = [['concept', 'Новый концепт'], ['plot', 'Генплан участка'], ['saved', 'Концепты']];
     let h = head(rt) + stabs('sales/concept', items, cur);
     if (cur === 'concept') return h + bodyOf(old.concept(fake(rt, []), ctx)) + AQ.wasBlock(rt.tObj);
     if (cur === 'plot') {
       const p = d.plot, k = 9, b = p.build;
       h += tile('Генплан участка · ' + p.w + '×' + p.h + ' м', `<svg viewBox="0 0 ${p.w * k + 60} ${p.h * k + 60}" class="plansvg" aria-label="Генплан"><g transform="translate(30,30)"><rect width="${p.w * k}" height="${p.h * k}" fill="rgba(53,196,122,.06)" stroke="var(--ok)" stroke-width="1.6"/><rect x="${3 * k}" y="${3 * k}" width="${(p.w - 6) * k}" height="${(p.h - 6) * k}" fill="none" stroke="var(--mute)" stroke-dasharray="5 4"/><rect x="${b[0] * k}" y="${b[1] * k}" width="${b[2] * k}" height="${b[3] * k}" fill="rgba(242,107,29,.18)" stroke="var(--acc)" stroke-width="2"/><text x="${(b[0] + b[2] / 2) * k}" y="${(b[1] + b[3] / 2) * k}" text-anchor="middle" font-size="11" fill="currentColor">Дом ${b[2]}×${b[3]}</text><text x="${p.w * k / 2}" y="-10" text-anchor="middle" font-size="10" fill="var(--mute)" font-family="JetBrains Mono, monospace">${p.w} 000</text><path d="M${p.w * k - 20} ${p.h * k - 10} l0 -24 m-5 8 l5 -8 l5 8" stroke="var(--blue)" fill="none" stroke-width="1.6"/><text x="${p.w * k - 20}" y="${p.h * k + 8}" text-anchor="middle" font-size="10" fill="var(--blue)">С</text></g></svg>` + note(p.note));
     } else if (cur === 'saved') {
-      h += tile('Сохранённые концепты', tbl(['Концепт', 'Проект', 'Дата', 'Стоимость'], d.concepts, { r: [3] }) + '<div class="btns"><a class="btn pri" href="#/sales/concept">Новый концепт</a></div>');
+      h += tile('Сохранённые концепты', tbl(['Концепт', 'Проект', 'Дата', 'Стоимость'], d.concepts, { r: [3] }) + '<div class="btns"><a class="btn pri" href="#/sales/concept">Новый концепт</a><a class="btn" href="#/sales/concept/3d">3D-модель</a></div>');
     } else {
       const s = 17, X = (x, y, z) => [260 + (x - y) * .866 * s, 210 + (x + y) * .5 * s - z * s], P = (pts, fill, stroke) => `<polygon points="${pts.map((q) => X(...q).map((v) => v.toFixed(1)).join(',')).join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="1.6" stroke-linejoin="round"/>`;
       h += tile('3D-модель концепта · дом 10×12 м', `<svg viewBox="0 0 520 330" class="plansvg" aria-label="3D-модель">${P([[0, 12, 0], [10, 12, 0], [10, 12, 6], [0, 12, 6]], 'rgba(111,163,255,.12)', 'var(--blue)')}${P([[10, 12, 0], [10, 0, 0], [10, 0, 6], [10, 12, 6]], 'rgba(111,163,255,.2)', 'var(--blue)')}${P([[0, 12, 6], [10, 12, 6], [10, 6, 9], [0, 6, 9]], 'rgba(242,107,29,.28)', 'var(--acc)')}${P([[10, 12, 6], [10, 0, 6], [10, 6, 9]], 'rgba(242,107,29,.4)', 'var(--acc)')}</svg>` + note('Вращение и разрезы доступны в Архитекторе. Модель можно сохранить к проекту.') + '<div class="btns"><button class="btn pri" data-toast="Модель сохранена к проекту «Коттедж в BI Village»">Сохранить модель к проекту</button></div>');
@@ -181,8 +181,8 @@
   /* ---------- Задачи: Мои · Команда ---------- */
   S.tasks = function (rt, ctx) {
     const cur = rt.sub[0] || 'mine', d = D3();
-    if (cur === 'team') return head(rt) + stabs('tasks/mine', [['mine', 'Мои'], ['team', 'Команда']], 'team') + tile('Задачи команды', d.teamTasks.map((m) => `<div class="stk"><span><b>${esc(m.who)}</b><small class="mut" style="display:block">${esc(m.role)}</small></span><div class="stkb"><i class="f" style="width:${m.done / (m.done + m.open) * 100}%;background:var(--ok)"></i></div><b class="mono">${m.done} сдано · ${m.open} в работе${m.late ? ' · <span class="bad">' + m.late + ' просрочена</span>' : ''}</b></div>`).join('') + '<div class="btns">' + AQ.lnk('tasks/issued', 'Выдать задание', 'btn pri') + '</div>') + AQ.wasBlock(rt.tObj);
-    return old.tasks(rt, ctx).replace(/(<div class="tabs sc"[\s\S]*?<\/div>)/, '$1' + stabs('tasks/mine', [['mine', 'Мои'], ['team', 'Команда']], 'mine'));
+    if (cur === 'team') return head(rt) + stabs('tasks/mine', [['mine', 'Мои'], ['issued', 'Выданные мной', 'tasks/issued'], ['team', 'Команда']], 'team') + tile('Задачи команды', d.teamTasks.map((m) => `<div class="stk"><span><b>${esc(m.who)}</b><small class="mut" style="display:block">${esc(m.role)}</small></span><div class="stkb"><i class="f" style="width:${m.done / (m.done + m.open) * 100}%;background:var(--ok)"></i></div><b class="mono">${m.done} сдано · ${m.open} в работе${m.late ? ' · <span class="bad">' + m.late + ' просрочена</span>' : ''}</b></div>`).join('') + '<div class="btns">' + AQ.lnk('tasks/issued', 'Выдать задание', 'btn pri') + '</div>') + AQ.wasBlock(rt.tObj);
+    return old.tasks(rt, ctx).replace(/(<div class="tabs sc"[\s\S]*?<\/div>)/, '$1' + stabs('tasks/mine', [['mine', 'Мои'], ['issued', 'Выданные мной', 'tasks/issued'], ['team', 'Команда']], 'mine'));
   };
 
   /* ---------- Проекты: фильтры и «Сроки по всем проектам» ---------- */

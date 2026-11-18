@@ -17,6 +17,7 @@
   };
 
   const TABS = () => { if (!AQ._ht) { AQ._ht = {}; Object.keys(H().tabs).forEach((k) => { AQ._ht[AQ.alias(k)] = H().tabs[k]; }); } return AQ._ht; };
+  AQ.hints.steps = (k) => TABS()[k] || null;
   const slot = (view, html) => {
     const anchor = view.querySelector('.hrow') || view.querySelector('.pdesc') || view.querySelector('.ptitle') || view.querySelector('.tabs.sc');
     if (anchor) anchor.insertAdjacentHTML('afterend', html); else view.insertAdjacentHTML('afterbegin', html);

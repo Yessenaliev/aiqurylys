@@ -63,7 +63,7 @@
       state.i = N; clearTimeout(state.timer); state.tok++; vids.forEach((v) => v.pause()); setBg('finance'); dots(-1);
       const A = AQ.D.agents;
       $('#tbody').classList.add('end');
-      $('#tbody').innerHTML = `<div class="tt"><div class="eyebrow">Знакомство завершено</div><h2>${A.length} ИИ-сотрудников на месте</h2><p class="tlead">Каждый видит только то, что доступно роли. Юрист, Тендеры, Архитектор, Документооборот и Инспектор по технике — без отдельной сцены: подробности на странице отдела.</p><div class="tag-grid">${A.map((a) => `<div>${AQ.agIcon(a.id, 'sm')}<b>${esc(a.n)}</b><small>${esc(a.role)}</small></div>`).join('')}</div><div class="btns"><button class="btn pri" data-go="digital">Познакомиться с каждым подробнее</button><button class="btn" data-act="tour-end">Войти в кабинет</button><button class="btn" data-act="tour-again">Посмотреть ещё раз</button></div></div>`;
+      $('#tbody').innerHTML = `<div class="tt"><div class="eyebrow">Знакомство завершено</div><h2>${A.length} ИИ-сотрудников на месте</h2><p class="tlead">Каждый видит только то, что доступно роли. Юрист, Тендеры, Архитектор, Инженер тех документации и Инспектор техники — без отдельной сцены: подробности на странице отдела.</p><div class="tag-grid">${A.map((a) => `<div>${AQ.agIcon(a.id, 'sm')}<b>${esc(a.n)}</b><small>${esc(a.role)}</small></div>`).join('')}</div><div class="btns"><button class="btn pri" data-go="digital">Познакомиться с каждым подробнее</button><button class="btn" data-act="tour-end">Войти в кабинет</button><button class="btn" data-act="tour-again">Посмотреть ещё раз</button></div></div>`;
       setTimeout(() => { const tt = $('.tt', el); tt && tt.classList.add('on'); }, 40);
     }
     state.go = go; go(0);

@@ -6,7 +6,8 @@
   function tabHead(rt, extra) {
     var t = rt.tObj, s = rt.sObj;
     /* заголовок страницы, как на оригинале, — название раздела; у «Задач» и кабинета компании — название вкладки */
-    return AQ.head(esc(s && !s.nonav ? s.t : t.t), esc(t.d || (s && s.sd) || ''), AQ.crumbs(), AQ.tabBar(rt.sObj, rt.tab)) + (AQ.helpRow ? AQ.helpRow(rt) : '') + (t.give ? AQ.flow(t) : '') + (extra || '');
+    var lead = s && s.id === 'tasks' ? '' : (s && !s.nonav ? (s.lead || t.d || s.sd || '') : (t.d || ''));
+    return AQ.head(esc(s && (!s.nonav || s.id === 'tasks') ? s.t : t.t), esc(lead), AQ.crumbs(), '') + (AQ.helpRow ? AQ.helpRow(rt) : '') + (AQ.projBar ? AQ.projBar(rt) : '') + AQ.tabBar(rt.sObj, rt.tab) + (t.give ? AQ.flow(t) : '') + (extra || '');
   }
   AQ.tabHead = tabHead;
   function tbl(cols, rows, opts) {

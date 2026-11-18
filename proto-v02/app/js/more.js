@@ -11,6 +11,9 @@
     let h = `<div class="more"><h1 class="ptitle">Ещё</h1><p class="mut">Вы вошли как: ${esc(r.n)} · ${esc(r.name)}</p>`;
     h += `<div class="mtop"><button class="btn" data-act="palette">${AQ.ico('search')}<span>Поиск по системе</span></button><button class="btn pri" data-act="new-project">Завести проект</button></div>`;
 
+    /* проект выбирается здесь и действует во всех разделах */
+    h += AQ.state.demo ? `<div class="card" style="margin-top:12px"><div class="chead"><b>Проект</b><span class="mut">действует во всех разделах</span></div><select id="projSel" style="width:100%">${AQ.D.projects.map((p) => `<option value="${p.id}"${p.id === (AQ.ui.proj || 'ceh') ? ' selected' : ''}>${esc(p.n)}</option>`).join('')}</select></div>` : '<div class="card" style="margin-top:12px"><div class="chead"><b>Проект</b></div><p class="mut">Проект не выбран. Заведите первый проект: к нему привяжутся расчёты, акты, задачи и деньги.</p></div>';
+
     /* разделы: то, что было в левом меню */
     h += `<div class="mh2"><h2>Разделы</h2>${owner ? '<a class="lnk" href="#/company/team/sections">Убрать лишние</a>' : ''}</div><p class="mut" style="margin:-4px 0 10px">Рабочие места по должностям — то, что было в левом меню</p>`;
     M.more.forEach((g) => {
@@ -48,10 +51,11 @@
     h += `<div class="mfoot"><div class="seg"><button class="on" data-toast="Язык интерфейса: русский">Рус</button><button data-toast="Қазақша — скоро, в рабочей версии">Қаз</button></div><div class="seg"><button class="${light ? 'on' : ''}" data-act="theme-day">День</button><button class="${light ? '' : 'on'}" data-act="theme-night">Ночь</button></div><button class="btn" data-act="logout">Выйти</button></div>`;
 
     /* режим прототипа */
-    h += `<div class="card protocard"><div class="chead"><b>Режим прототипа</b><span class="tag t-mute">не часть сайта</span></div><div class="pc"><label>Смотреть как <select id="roleSel3">${M.roles.map((x) => `<option value="${x.id}"${x.id === r.id ? ' selected' : ''}>${esc(x.n)}</option>`).join('')}</select></label><span class="demo-toggle${AQ.state.demo ? ' on' : ''}" data-act="demo" role="switch" aria-checked="${AQ.state.demo}" tabindex="0"><span class="sw"></span>Демо-данные</span></div></div></div>`;
-    ctx.after = () => { const rs = AQ.$('#roleSel3'); if (rs) rs.addEventListener('change', () => AQ.setRole(rs.value)); };
+    h += `<div class="card protocard"><div class="chead"><b>Режим прототипа</b><span class="tag t-mute">не часть сайта</span></div><div class="pc"><label>Смотреть как <select id="roleSel3">${M.roles.map((x) => `<option value="${x.id}"${x.id === r.id ? ' selected' : ''}>${esc(x.n)}</option>`).join('')}</select></label><span class="demo-toggle${AQ.state.demo ? ' on' : ''}" data-act="demo" role="switch" aria-checked="${AQ.state.demo}" tabindex="0"><span class="sw"></span>Демо-данные</span><span class="demo-toggle${AQ.state.trial ? ' on' : ''}" data-act="trial-toggle" role="switch" aria-checked="${!!AQ.state.trial}" tabindex="0" title="Работает без демо-данных: как у нового клиента после первого расчёта"><span class="sw"></span>Проба использована</span></div></div></div>`;
+    ctx.after = () => { const rs = AQ.$('#roleSel3'); if (rs) rs.addEventListener('change', () => AQ.setRole(rs.value)); const ps = AQ.$('#projSel'); if (ps) ps.addEventListener('change', () => { AQ.ui.proj = ps.value; AQ.toast('Проект: ' + AQ.projName()); }); };
     return h;
   };
+  AQ.acts['trial-toggle'] = () => { AQ.state.trial = !AQ.state.trial; AQ.store.set('aq02_trial', AQ.state.trial ? '1' : '0'); AQ.render(); AQ.toast(AQ.state.trial ? (AQ.state.demo ? 'Проба использована: включите «Демо-данные» выключенными, чтобы увидеть как у нового клиента' : 'Проба использована: Тендеры и закупки и Себестоимость закрыты до подключения тарифа') : 'Проба снова доступна'); };
   AQ.acts['theme-day'] = () => { document.documentElement.setAttribute('data-theme', 'light'); AQ.store.set('aq02_theme', 'light'); AQ.render(); };
   AQ.acts['theme-night'] = () => { document.documentElement.setAttribute('data-theme', 'dark'); AQ.store.set('aq02_theme', 'dark'); AQ.render(); };
 
@@ -60,7 +64,7 @@
   const prevAR = AQ.afterRender;
   AQ.afterRender = function (route, view) {
     if (prevAR) prevAR(route, view);
-    if (!AQ.state.demo && !route.special && route.sObj && TRIAL.indexOf(route.sec) !== -1 && AQ.role().company) view.insertAdjacentHTML('afterbegin', `<div class="trialbar">Пробный доступ: раздел «${esc(route.sObj.t)}» можно попробовать один раз, файлы — до 2 МБ за один раз.</div>`);
+    if (!AQ.state.demo && !route.special && route.sObj && TRIAL.indexOf(route.sec) !== -1 && AQ.role().company && !AQ.locked(route.sec)) view.insertAdjacentHTML('afterbegin', `<div class="trialbar">Пробный доступ: раздел «${esc(route.sObj.trial || route.sObj.t)}» можно попробовать один раз, файлы — до 2 МБ за один раз.</div>`);
   };
 
   /* Заведующий складом: склад проекта, приход, остатки */
